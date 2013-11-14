@@ -12,6 +12,94 @@ def abort(msg, exitcode=1):
     print >>sys.stderr, msg
     sys.exit(exitcode)
 
+class DependencyDetector:
+    """Class for automatically detecting dependencies between git commits.
+    A dependency is inferred by diffing the commit with each of its
+    parents, and for each resulting hunk, performing a blame to see
+    which commit was responsible for introducing the lines to which
+    the hunk was applied.
+
+    Dependencies can be traversed recursively, building a dependency
+    tree represented (conceptually) by a list of edges.
+    """
+
+    def __init__(self, options, repo_path=None):
+        self.options = options
+
+        if repo_path is None:
+            try:
+                repo_path = pygit2.discover_repository('.')
+            except KeyError:
+                abort("Couldn't find a repository in the current directory.")
+
+        self.repo = pygit2.Repository(repo_path)
+
+        # Nested dict mapping dependents -> dependencies -> files
+        # causing that dependency -> numbers of lines within that file
+        # causing that dependency.  The first two levels form edges in
+        # the dependency graph, and the latter two tell us what caused
+        # those edges.
+        self.dependencies = {}
+
+        # A TODO list (queue) of dependencies which haven't yet been
+        # recursively followed.  Only useful when recursing.
+        self.todo = {}
+
+        # An ordered list of commits whose dependencies we have
+        # already detected.
+        self.done = []
+
+    def find_dependencies(self, dependent_rev):
+        try:
+            dependent = self.repo.revparse_single(dependent_rev)
+        except KeyError:
+            abort("Couldn't parse %s" % dependent_rev)
+
+        for parent in dependent.parents:
+            self.find_dependencies_with_parent(dependent, parent)
+
+        self.done.append(dependent.hex)
+
+    def find_dependencies_with_parent(self, dependent, parent):
+        diff = self.repo.diff(parent, dependent)
+        for patch in diff:
+            path = patch.old_file_path
+            #print(path)
+            for hunk in patch.hunks:
+                self.blame_hunk(dependent, parent, path, hunk)
+
+    def blame_hunk(self, dependent, parent, path, hunk):
+        line_range = "%d,+%d" % (hunk.old_start, hunk.old_lines)
+        # for mode, line in hunk.lines:
+        #     print(mode + line.rstrip())
+        dependent_sha = dependent.hex
+        cmd = [ 'git', 'blame', parent.hex, '--porcelain', '-L', line_range, path ]
+        blame = subprocess.check_output(cmd)
+        for line in blame.split('\n'):
+            m = re.match('^([0-9a-f]{40}) (\d+) (\d+)( \d+)?$', line)
+            if not m:
+                continue
+            dependency_sha, line_num = m.group(1, 2)
+            if dependent_sha not in self.dependencies:
+                self.dependencies[dependent_sha] = {}
+            if dependency_sha not in self.dependencies[dependent_sha]:
+                self.dependencies[dependent_sha][dependency_sha] = {}
+                if dependency_sha not in self.dependencies:
+                    # Add to TODO list in case we want to recurse
+                    self.todo[dependency_sha] = True
+            if path not in self.dependencies[dependent_sha][dependency_sha]:
+                self.dependencies[dependent_sha][dependency_sha][path] = {}
+            if line_num in self.dependencies[dependent_sha][dependency_sha][path]:
+                abort("line %d already found when blaming %s:%s" %
+                      (line_num, dependent.hex[:8], path))
+            self.dependencies[dependent_sha][dependency_sha][path][line_num] = True
+
+    def edges(self):
+        return [
+            [ (dependent, dependency) for dependency in self.dependencies[dependent] ]
+            for dependent in self.dependencies.keys()
+        ]
+
 def parse_args():
     parser = argparse.ArgumentParser(description='Auto-detect inter-commit dependencies.')
     parser.add_argument('--recurse', '-r', dest='recurse', action='store_true',
@@ -24,59 +112,22 @@ def parse_args():
     dependent_rev = args[0]
     return options, dependent_rev
 
-def main():
-    options, dependent_rev = parse_args()
-
-    try:
-        repo_path = pygit2.discover_repository('.')
-    except KeyError:
-        abort("Couldn't find a repository in the current directory.")
-
-    repo = pygit2.Repository(repo_path)
-
-    try:
-        dependent = repo.revparse_single(dependent_rev)
-    except KeyError:
-        abort("Couldn't parse %s" % dependent_rev)
-
-    for parent in dependent.parents:
-        find_dependencies(options, repo, dependent, parent)
-
-def find_dependencies(options, repo, dependent, parent):
-    dependencies = {}
-    diff = repo.diff(parent, dependent)
-    for patch in diff:
-        path = patch.old_file_path
-        #print(path)
-        for hunk in patch.hunks:
-            blame_hunk(options, parent, path, hunk, dependencies)
-    for dependency in dependencies:
-        if options.recurse:
-            print("%s %s" % (dependent.hex, dependency))
+def show_dependencies(detector, dependent):
+    for dependency in detector.dependencies[dependent]:
+        if detector.options.recurse:
+            print("%s %s" % (dependent, dependency))
         else:
             print(dependency)
-        # for path in dependencies[dependency]:
+        # for path in self.dependencies[dependency]:
         #     print("  %s" % path)
-        #     print("    %s" % ", ".join(sorted(dependencies[dependency][path].keys())))
+        #     print("    %s" % ", ".join(sorted(self.dependencies[dependency][path].keys())))
 
-def blame_hunk(options, commit, path, hunk, dependencies):
-    line_range = "%d,+%d" % (hunk.old_start, hunk.old_lines)
-    # for mode, line in hunk.lines:
-    #     print(mode + line.rstrip())
-    cmd = [ 'git', 'blame', commit.hex, '--porcelain', '-L', line_range, path ]
-    blame = subprocess.check_output(cmd)
-    for line in blame.split('\n'):
-        m = re.match('^([0-9a-f]{40}) (\d+) (\d+)( \d+)?$', line)
-        if not m:
-            continue
-        dependency, line_num = m.group(1, 2)
-        if dependency not in dependencies:
-            dependencies[dependency] = {}
-        if path not in dependencies[dependency]:
-            dependencies[dependency][path] = {}
-        if line_num in dependencies[dependency][path]:
-            abort("line %d already found when blaming %s:%s" %
-                  (line_num, commit.hex[:8], path))
-        dependencies[dependency][path][line_num] = True
+def main():
+    options, dependent_rev = parse_args()
+    detector = DependencyDetector(options)
+    detector.find_dependencies(dependent_rev)
+    for done in detector.done:
+        show_dependencies(detector, done)
 
-main()
+if __name__ == "__main__":
+    main()
