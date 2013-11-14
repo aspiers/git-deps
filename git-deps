@@ -1,6 +1,10 @@
 #!/usr/bin/python
 
+from __future__ import print_function
+
 import argparse
+import logging
+import os
 import re
 import sys
 import subprocess
@@ -23,8 +27,11 @@ class DependencyDetector:
     tree represented (conceptually) by a list of edges.
     """
 
-    def __init__(self, options, repo_path=None):
+    def __init__(self, options, repo_path=None, logger=None):
         self.options = options
+
+        if logger is None:
+            self.logger = self.default_logger()
 
         if repo_path is None:
             try:
@@ -43,56 +50,123 @@ class DependencyDetector:
 
         # A TODO list (queue) of dependencies which haven't yet been
         # recursively followed.  Only useful when recursing.
-        self.todo = {}
+        self.todo = []
 
         # An ordered list of commits whose dependencies we have
         # already detected.
         self.done = []
 
-    def find_dependencies(self, dependent_rev):
+        # A cache mapping SHAs to commit objects
+        self.commits = {}
+
+    def default_logger(self):
+        if not self.options.debug:
+            return logging.getLogger(self.__class__.__name__)
+
+        log_format = '%(asctime)-15s %(levelname)-6s %(message)s'
+        date_format = '%b %d %H:%M:%S'
+        formatter = logging.Formatter(fmt=log_format, datefmt=date_format)
+        handler = logging.StreamHandler()
+        handler.setFormatter(formatter)
+        #logger = logging.getLogger(__name__)
+        logger = logging.getLogger(self.__class__.__name__)
+        logger.setLevel(logging.DEBUG)
+        logger.addHandler(handler)
+        return logger
+
+    def get_commit(self, rev):
+        if rev in self.commits:
+            return self.commits[rev]
+
         try:
-            dependent = self.repo.revparse_single(dependent_rev)
+            self.commits[rev] = self.repo.revparse_single(rev)
         except KeyError:
-            abort("Couldn't parse %s" % dependent_rev)
+            abort("Couldn't parse %s" % rev)
 
-        for parent in dependent.parents:
-            self.find_dependencies_with_parent(dependent, parent)
+        return self.commits[rev]
 
-        self.done.append(dependent.hex)
+    def find_dependencies(self, dependent_rev, recurse=None):
+        if recurse is None:
+            recurse = self.options.recurse
+
+        dependent = self.get_commit(dependent_rev)
+        self.todo.append(dependent)
+
+        while self.todo:
+            dependent = self.todo.pop(0)
+            self.logger.debug("Processing %s from TODO list" % dependent.hex[:8])
+
+            for parent in dependent.parents:
+                self.find_dependencies_with_parent(dependent, parent)
+            self.done.append(dependent.hex)
 
     def find_dependencies_with_parent(self, dependent, parent):
+        self.logger.debug("  Finding dependencies of %s via parent %s" %
+                          (dependent.hex[:8], parent.hex[:8]))
         diff = self.repo.diff(parent, dependent)
         for patch in diff:
             path = patch.old_file_path
-            #print(path)
+            self.logger.debug("    Examining hunks in %s" % path)
             for hunk in patch.hunks:
                 self.blame_hunk(dependent, parent, path, hunk)
 
     def blame_hunk(self, dependent, parent, path, hunk):
         line_range = "%d,+%d" % (hunk.old_start, hunk.old_lines)
-        # for mode, line in hunk.lines:
-        #     print(mode + line.rstrip())
-        dependent_sha = dependent.hex
+        self.logger.debug("      Blaming hunk %s" % line_range)
+        for mode, line in hunk.lines:
+            self.logger.debug('      |' + mode + line.rstrip())
+
+        if not self.tree_lookup(path, parent.tree):
+            self.logger.debug("      %s not in %s tree" %
+                              (path, parent.hex[:8]))
+            return
+
         cmd = [ 'git', 'blame', parent.hex, '--porcelain', '-L', line_range, path ]
         blame = subprocess.check_output(cmd)
+
+        dependent_sha = dependent.hex
         for line in blame.split('\n'):
             m = re.match('^([0-9a-f]{40}) (\d+) (\d+)( \d+)?$', line)
             if not m:
                 continue
             dependency_sha, line_num = m.group(1, 2)
+            dependency = self.get_commit(dependency_sha)
+
             if dependent_sha not in self.dependencies:
+                self.logger.debug('        New dependent: %s' % dependent_sha[:8])
                 self.dependencies[dependent_sha] = {}
             if dependency_sha not in self.dependencies[dependent_sha]:
+                self.logger.debug('        New dependency: %s' % dependency_sha[:8])
                 self.dependencies[dependent_sha][dependency_sha] = {}
                 if dependency_sha not in self.dependencies:
-                    # Add to TODO list in case we want to recurse
-                    self.todo[dependency_sha] = True
+                    if self.options.recurse:
+                        self.todo.append(dependency)
+                        self.logger.debug('          added to TODO')
             if path not in self.dependencies[dependent_sha][dependency_sha]:
                 self.dependencies[dependent_sha][dependency_sha][path] = {}
             if line_num in self.dependencies[dependent_sha][dependency_sha][path]:
                 abort("line %d already found when blaming %s:%s" %
                       (line_num, dependent.hex[:8], path))
             self.dependencies[dependent_sha][dependency_sha][path][line_num] = True
+
+    def tree_lookup(self, target_path, tree):
+        segments = target_path.split("/")
+        tree_or_blob = tree
+        path = ''
+        while segments:
+            dirent = segments.pop(0)
+            if isinstance(tree_or_blob, pygit2.Tree):
+                if dirent in tree_or_blob:
+                    tree_or_blob = self.repo[tree_or_blob[dirent].oid]
+                    #self.logger.debug('%s in %s' % (dirent, path))
+                    path += '/' + dirent
+                else:
+                    self.logger.debug('%s not in %s' % (dirent, path))
+                    return None
+            else:
+                self.logger.debug('%s not a tree' % tree_or_blob)
+                return None
+        return tree_or_blob
 
     def edges(self):
         return [
@@ -104,6 +178,10 @@ def parse_args():
     parser = argparse.ArgumentParser(description='Auto-detect inter-commit dependencies.')
     parser.add_argument('--recurse', '-r', dest='recurse', action='store_true',
                         help='Follow dependencies recursively')
+    parser.add_argument('--log', '-l', dest='log', action='store_true',
+                        help='Show commit logs for calculated dependencies')
+    parser.add_argument('--debug', '-d', dest='debug', action='store_true',
+                        help='Show debugging')
 
     options, args = parser.parse_known_args()
 
@@ -112,12 +190,25 @@ def parse_args():
     dependent_rev = args[0]
     return options, dependent_rev
 
-def show_dependencies(detector, dependent):
-    for dependency in detector.dependencies[dependent]:
+def show_dependencies(detector, dependent_sha):
+    for dependency_sha in detector.dependencies[dependent_sha]:
+        if detector.options.log:
+            print()
+
         if detector.options.recurse:
-            print("%s %s" % (dependent, dependency))
+            if detector.options.log:
+                print("\n%s depends on:" % dependent_sha)
+            else:
+                print("%s %s" % (dependent_sha, dependency_sha))
         else:
-            print(dependency)
+            if not detector.options.log:
+                print(dependency_sha)
+
+        if detector.options.log:
+            subprocess.call([ 'git', 'log', "%s^!" % dependency_sha ])
+            # dependency = detector.get_commit(dependency_sha)
+            # print(dependency.message + "\n")
+
         # for path in self.dependencies[dependency]:
         #     print("  %s" % path)
         #     print("    %s" % ", ".join(sorted(self.dependencies[dependency][path].keys())))
