@@ -176,7 +176,8 @@ class DependencyDetector:
                 self.find_dependencies_with_parent(dependent, parent)
             self.done.append(dependent.hex)
             self.logger.debug("Found all dependencies for %s" % dependent.hex[:8])
-            dependencies = self.dependencies[dependent.hex]
+            # A commit won't have any dependencies if it only added new files
+            dependencies = self.dependencies.get(dependent.hex, {})
             self.notify_listeners('dependent_done', dependent, dependencies)
 
     def find_dependencies_with_parent(self, dependent, parent):
