@@ -303,14 +303,14 @@ class DependencyDetector:
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Auto-detect inter-commit dependencies.')
-    parser.add_argument('--recurse', '-r', dest='recurse', action='store_true',
+    parser.add_argument('-r', '--recurse', dest='recurse', action='store_true',
                         help='Follow dependencies recursively')
-    parser.add_argument('--log', '-l', dest='log', action='store_true',
+    parser.add_argument('-l', '--log', dest='log', action='store_true',
                         help='Show commit logs for calculated dependencies')
-    parser.add_argument('--context-lines', '-c', dest='context_lines', type=int,
+    parser.add_argument('-c', '--context-lines', dest='context_lines', type=int,
                         metavar='NUM', default=1,
                         help='Number of lines of diff context to use')
-    parser.add_argument('--debug', '-d', dest='debug', action='store_true',
+    parser.add_argument('-d', '--debug', dest='debug', action='store_true',
                         help='Show debugging')
 
     options, args = parser.parse_known_args()
