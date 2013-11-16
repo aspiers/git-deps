@@ -191,9 +191,10 @@ class DependencyDetector:
 
     def blame_hunk(self, dependent, parent, path, hunk):
         first_line_num = hunk.old_start
-        line_range = "%d,+%d" % (first_line_num, hunk.old_lines)
-        self.logger.debug("      Blaming hunk %s for %s" %
-                          (line_range, parent.hex[:8]))
+        line_range_before = "-%d,%d" % (hunk.old_start, hunk.old_lines)
+        line_range_after  = "+%d,%d" % (hunk.new_start, hunk.new_lines)
+        self.logger.debug("      Blaming hunk %s @ %s" %
+                          (line_range_before, parent.hex[:8]))
 
         if not self.tree_lookup(path, parent):
             # This is probably because dependent added a new directory
@@ -202,7 +203,12 @@ class DependencyDetector:
                               (path, parent.hex[:8]))
             return
 
-        cmd = [ 'git', 'blame', parent.hex, '--porcelain', '-L', line_range, path ]
+        cmd = [
+            'git', 'blame', parent.hex,
+            '--porcelain',
+            '-L', "%d,+%d" % (hunk.old_start, hunk.old_lines),
+            path
+        ]
         blame = subprocess.check_output(cmd)
 
         dependent_sha = dependent.hex
@@ -240,7 +246,10 @@ class DependencyDetector:
             self.notify_listeners('new_line', dependent, dependency, path, line_num)
             line_to_culprit[int(line_num)] = dependency.hex
 
-        line_num = first_line_num
+        diff_format = '      |%8.8s %5s %s%s'
+        hunk_header = '@@ %s %s @@' % (line_range_before, line_range_after)
+        self.logger.debug(diff_format % ('--------', '-----', '', hunk_header))
+        line_num = hunk.old_start
         for mode, line in hunk.lines:
             if mode == '+':
                 rev = ln = ''
@@ -248,7 +257,7 @@ class DependencyDetector:
                 rev = line_to_culprit[line_num]
                 ln = line_num
                 line_num += 1
-            self.logger.debug('      |%8.8s %5s %s%s' % (rev, ln, mode, line.rstrip()))
+            self.logger.debug(diff_format % (rev, ln, mode, line.rstrip()))
 
     def tree_lookup(self, target_path, commit):
         """Navigate to the tree or blob object pointed to by the given target
@@ -265,14 +274,18 @@ class DependencyDetector:
                 if dirent in tree_or_blob:
                     tree_or_blob = self.repo[tree_or_blob[dirent].oid]
                     #self.logger.debug('%s in %s' % (dirent, path))
-                    path += '/' + dirent
+                    if path:
+                        path += '/'
+                    path += dirent
                 else:
                     # This is probably because we were called on a
                     # commit whose parent added a new directory.
-                    self.logger.debug('%s not in %s in %s' % (dirent, path, commit.hex[:8]))
+                    self.logger.debug('      %s not in %s in %s' %
+                                      (dirent, path, commit.hex[:8]))
                     return None
             else:
-                self.logger.debug('%s not a tree in %s' % (tree_or_blob, commit.hex[:8]))
+                self.logger.debug('      %s not a tree in %s' %
+                                  (tree_or_blob, commit.hex[:8]))
                 return None
         return tree_or_blob
 
