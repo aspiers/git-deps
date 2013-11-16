@@ -214,7 +214,8 @@ class DependencyDetector:
 
         dependent_sha = dependent.hex
         if dependent_sha not in self.dependencies:
-            self.logger.debug('        New dependent: %s' % dependent_sha[:8])
+            self.logger.debug('        New dependent: %s (%s)' %
+                              (dependent_sha[:8], self.oneline(dependent)))
             self.dependencies[dependent_sha] = {}
             self.notify_listeners('new_dependent', dependent)
 
@@ -229,8 +230,9 @@ class DependencyDetector:
             dependency = self.get_commit(dependency_sha)
 
             if dependency_sha not in self.dependencies[dependent_sha]:
-                self.logger.debug('        New dependency %s via line %s' %
-                                  (dependency_sha[:8], line_num))
+                self.logger.debug('        New dependency %s via line %s (%s)' %
+                                  (dependency_sha[:8], line_num,
+                                   self.oneline(dependency)))
                 self.dependencies[dependent_sha][dependency_sha] = {}
                 self.notify_listeners('new_dependency', dependent, dependency, path, line_num)
                 if dependency_sha not in self.dependencies:
@@ -259,6 +261,9 @@ class DependencyDetector:
                 ln = line_num
                 line_num += 1
             self.logger.debug(diff_format % (rev, ln, mode, line.rstrip()))
+
+    def oneline(self, commit):
+        return commit.message.split('\n', 1)[0]
 
     def tree_lookup(self, target_path, commit):
         """Navigate to the tree or blob object pointed to by the given target
