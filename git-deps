@@ -50,28 +50,28 @@ class CLIDependencyListener(DependencyListener):
     too long for useful output if recursion is enabled.
     """
 
-    def dependent_done(self, dependent, dependencies):
-        dependent_sha = dependent.hex
+    def new_dependency(self, dependent, dependency, path, line_num):
+        dependent_sha  = dependent.hex
+        dependency_sha = dependency.hex
 
-        for dependency_sha in dependencies:
-            if self.options.recurse:
-                if self.options.log:
-                    print("%s depends on:" % dependent_sha)
-                else:
-                    print("%s %s" % (dependent_sha, dependency_sha))
-            else:
-                if not self.options.log:
-                    print(dependency_sha)
-
+        if self.options.recurse:
             if self.options.log:
-                cmd = [ 'git', '--no-pager', '-c', 'color.ui=always', 'log', '-n1', dependency_sha ]
-                print(subprocess.check_output(cmd))
-                # dependency = detector.get_commit(dependency_sha)
-                # print(dependency.message + "\n")
+                print("%s depends on:" % dependent_sha)
+            else:
+                print("%s %s" % (dependent_sha, dependency_sha))
+        else:
+            if not self.options.log:
+                print(dependency_sha)
 
-            # for path in self.dependencies[dependency]:
-            #     print("  %s" % path)
-            #     print("    %s" % ", ".join(sorted(self.dependencies[dependency][path].keys())))
+        if self.options.log:
+            cmd = [ 'git', '--no-pager', '-c', 'color.ui=always', 'log', '-n1', dependency_sha ]
+            print(subprocess.check_output(cmd))
+            # dependency = detector.get_commit(dependency_sha)
+            # print(dependency.message + "\n")
+
+        # for path in self.dependencies[dependency]:
+        #     print("  %s" % path)
+        #     print("    %s" % ", ".join(sorted(self.dependencies[dependency][path].keys())))
 
 class DependencyDetector(object):
     """Class for automatically detecting dependencies between git commits.
