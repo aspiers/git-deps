@@ -103,7 +103,7 @@ class DependencyDetector:
     def find_dependencies_with_parent(self, dependent, parent):
         self.logger.debug("  Finding dependencies of %s via parent %s" %
                           (dependent.hex[:8], parent.hex[:8]))
-        diff = self.repo.diff(parent, dependent)
+        diff = self.repo.diff(parent, dependent, context_lines=self.options.context_lines)
         for patch in diff:
             path = patch.old_file_path
             self.logger.debug("    Examining hunks in %s" % path)
@@ -180,6 +180,8 @@ def parse_args():
                         help='Follow dependencies recursively')
     parser.add_argument('--log', '-l', dest='log', action='store_true',
                         help='Show commit logs for calculated dependencies')
+    parser.add_argument('--context-lines', '-c', dest='context_lines', type=int,
+                        default=1, help='Number of lines of diff context to use')
     parser.add_argument('--debug', '-d', dest='debug', action='store_true',
                         help='Show debugging')
 
