@@ -300,7 +300,10 @@ class DependencyDetector(object):
         ]
 
 def parse_args():
-    parser = argparse.ArgumentParser(description='Auto-detect inter-commit dependencies.')
+    parser = argparse.ArgumentParser(
+        description='Auto-detect inter-commit dependencies.',
+        usage='%(prog)s [options] COMMIT-ISH [COMMIT-ISH...]'
+    )
     parser.add_argument('-r', '--recurse', dest='recurse', action='store_true',
                         help='Follow dependencies recursively')
     parser.add_argument('-l', '--log', dest='log', action='store_true',
@@ -313,21 +316,23 @@ def parse_args():
 
     options, args = parser.parse_known_args()
 
-    if len(args) != 1:
-        abort("usage: git deps rev")
-    dependent_rev = args[0]
-    return options, dependent_rev
+    if len(args) == 0:
+        parser.print_help()
+        sys.exit(1)
+
+    return options, args
 
 def main():
-    options, dependent_rev = parse_args()
+    options, args = parse_args()
     #rev_list = sys.stdin.readlines()
     listener = CLIDependencyListener(options)
     detector = DependencyDetector(options, listener=listener)
 
-    try:
-        detector.find_dependencies(dependent_rev)
-    except KeyboardInterrupt:
-        pass
+    for dependent_rev in args:
+        try:
+            detector.find_dependencies(dependent_rev)
+        except KeyboardInterrupt:
+            pass
 
 if __name__ == "__main__":
     main()
