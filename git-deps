@@ -320,9 +320,14 @@ def parse_args():
 
 def main():
     options, dependent_rev = parse_args()
+    #rev_list = sys.stdin.readlines()
     listener = CLIDependencyListener(options)
     detector = DependencyDetector(options, listener=listener)
-    detector.find_dependencies(dependent_rev)
+
+    try:
+        detector.find_dependencies(dependent_rev)
+    except KeyboardInterrupt:
+        pass
 
 if __name__ == "__main__":
     main()
