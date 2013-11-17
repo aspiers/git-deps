@@ -337,21 +337,22 @@ class DependencyDetector(object):
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description='Auto-detect inter-commit dependencies.',
+        description='Auto-detects commits which the given commit(s) depend on.',
         usage='%(prog)s [options] COMMIT-ISH [COMMIT-ISH...]'
     )
     parser.add_argument('-l', '--log', dest='log', action='store_true',
-                        help='Show commit logs for calculated dependencies')
+                        help='Show commit logs for calculated dependencies [%(default)s]')
     parser.add_argument('-r', '--recurse', dest='recurse', action='store_true',
-                        help='Follow dependencies recursively')
+                        help='Follow dependencies recursively [%(default)s]')
     parser.add_argument('-e', '--exclude-commits', dest='exclude_commits',
                         action='append', metavar='COMMITISH',
-                        help='Exclude commits which are ancestors of the given COMMITISH')
+                        help='Exclude commits which are ancestors of the given COMMITISH'
+                        ' (can be repeated)')
     parser.add_argument('-c', '--context-lines', dest='context_lines', type=int,
                         metavar='NUM', default=1,
-                        help='Number of lines of diff context to use')
+                        help='Number of lines of diff context to use [%(default)s]')
     parser.add_argument('-d', '--debug', dest='debug', action='store_true',
-                        help='Show debugging')
+                        help='Show debugging [%(default)s]')
 
     options, args = parser.parse_known_args()
 
