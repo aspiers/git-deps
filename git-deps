@@ -224,8 +224,6 @@ class DependencyDetector(object):
         if not self.tree_lookup(path, parent):
             # This is probably because dependent added a new directory
             # which was not previously in the parent.
-            self.logger.debug("      %s not in %s tree" %
-                              (path, parent.hex[:8]))
             return
 
         cmd = [
