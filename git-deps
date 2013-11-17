@@ -116,6 +116,9 @@ class DependencyDetector(object):
         # A cache mapping SHAs to commit objects
         self.commits = {}
 
+        # Memoization for branch_contains()
+        self.branch_contains_cache = {}
+
         # Callbacks to be invoked when a new dependency has been
         # discovered.
         self.listeners = []
@@ -225,7 +228,15 @@ class DependencyDetector(object):
             if not m:
                 continue
             dependency_sha, orig_line_num, line_num = m.group(1, 2, 3)
+            line_num = int(line_num)
             dependency = self.get_commit(dependency_sha)
+            line_to_culprit[line_num] = dependency.hex
+
+            if self.is_excluded(dependency):
+                self.logger.debug('        Excluding dependency %s via line %s (%s)' %
+                                  (dependency_sha[:8], line_num,
+                                   self.oneline(dependency)))
+                continue
 
             if dependency_sha not in self.dependencies[dependent_sha]:
                 self.logger.debug('        New dependency %s via line %s (%s)' %
@@ -245,7 +256,6 @@ class DependencyDetector(object):
                       (line_num, dependent.hex[:8], path))
             self.dependencies[dependent_sha][dependency_sha][path][line_num] = True
             self.notify_listeners('new_line', dependent, dependency, path, line_num)
-            line_to_culprit[int(line_num)] = dependency.hex
 
         diff_format = '      |%8.8s %5s %s%s'
         hunk_header = '@@ %s %s @@' % (line_range_before, line_range_after)
@@ -262,6 +272,32 @@ class DependencyDetector(object):
 
     def oneline(self, commit):
         return commit.message.split('\n', 1)[0]
+
+    def is_excluded(self, commit):
+        for exclude in self.options.exclude_commits:
+            if self.branch_contains(commit, exclude):
+                return True
+        return False
+
+    def branch_contains(self, commit, branch):
+        self.logger.debug("        Does %s contain %s?" % (branch, commit.hex[:8]))
+        branch_commit = self.get_commit(branch)
+
+        if commit.hex not in self.branch_contains_cache:
+            self.branch_contains_cache[commit.hex] = {}
+        if branch_commit.hex in self.branch_contains_cache[commit.hex]:
+            memoized = self.branch_contains_cache[commit.hex][branch_commit.hex]
+            self.logger.debug("          %s (memoized)" % memoized)
+            return memoized
+
+        cmd = [ 'git', 'merge-base', commit.hex, branch_commit.hex ]
+        #self.logger.debug(" ".join(cmd))
+        out = subprocess.check_output(cmd).strip()
+        #self.logger.debug(out)
+        result = out == commit.hex
+        self.logger.debug("          %s" % result)
+        self.branch_contains_cache[commit.hex][branch_commit.hex] = result
+        return result
 
     def tree_lookup(self, target_path, commit):
         """Navigate to the tree or blob object pointed to by the given target
@@ -304,10 +340,13 @@ def parse_args():
         description='Auto-detect inter-commit dependencies.',
         usage='%(prog)s [options] COMMIT-ISH [COMMIT-ISH...]'
     )
-    parser.add_argument('-r', '--recurse', dest='recurse', action='store_true',
-                        help='Follow dependencies recursively')
     parser.add_argument('-l', '--log', dest='log', action='store_true',
                         help='Show commit logs for calculated dependencies')
+    parser.add_argument('-r', '--recurse', dest='recurse', action='store_true',
+                        help='Follow dependencies recursively')
+    parser.add_argument('-e', '--exclude-commits', dest='exclude_commits',
+                        action='append', metavar='COMMITISH',
+                        help='Exclude commits which are ancestors of the given COMMITISH')
     parser.add_argument('-c', '--context-lines', dest='context_lines', type=int,
                         metavar='NUM', default=1,
                         help='Number of lines of diff context to use')
