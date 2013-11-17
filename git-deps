@@ -253,7 +253,7 @@ class DependencyDetector(object):
                 self.notify_listeners('new_path', dependent, dependency, path, line_num)
             if line_num in self.dependencies[dependent_sha][dependency_sha][path]:
                 abort("line %d already found when blaming %s:%s" %
-                      (line_num, dependent.hex[:8], path))
+                      (line_num, parent.hex[:8], path))
             self.dependencies[dependent_sha][dependency_sha][path][line_num] = True
             self.notify_listeners('new_line', dependent, dependency, path, line_num)
 
