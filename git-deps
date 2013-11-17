@@ -121,13 +121,15 @@ class DependencyDetector(object):
         # those edges.
         self.dependencies = {}
 
-        # A TODO list (queue) of dependencies which haven't yet been
-        # recursively followed.  Only useful when recursing.
-        self.todo = []
+        # A TODO list (queue) and dict of dependencies which haven't
+        # yet been recursively followed.  Only useful when recursing.
+        self.todo   = []
+        self.todo_d = {}
 
-        # An ordered list of commits whose dependencies we have
-        # already detected.
-        self.done = []
+        # An ordered list and dict of commits whose dependencies we
+        # have already detected.
+        self.done   = []
+        self.done_d = {}
 
         # A cache mapping SHAs to commit objects
         self.commits = {}
@@ -184,14 +186,19 @@ class DependencyDetector(object):
 
         dependent = self.get_commit(dependent_rev)
         self.todo.append(dependent)
+        self.todo_d[dependent.hex] = True
 
         while self.todo:
+            self.logger.debug("TODO list: %s" %
+                              " ".join([ commit.hex[:8] for commit in self.todo ]))
             dependent = self.todo.pop(0)
+            del self.todo_d[dependent.hex]
             self.logger.debug("Processing %s from TODO list" % dependent.hex[:8])
 
             for parent in dependent.parents:
                 self.find_dependencies_with_parent(dependent, parent)
             self.done.append(dependent.hex)
+            self.done_d[dependent.hex] = True
             self.logger.debug("Found all dependencies for %s" % dependent.hex[:8])
             # A commit won't have any dependencies if it only added new files
             dependencies = self.dependencies.get(dependent.hex, {})
@@ -249,12 +256,22 @@ class DependencyDetector(object):
             line_to_culprit[line_num] = dependency.hex
 
             if self.is_excluded(dependency):
-                self.logger.debug('        Excluding dependency %s via line %s (%s)' %
+                self.logger.debug('        Excluding dependency %s from line %s (%s)' %
                                   (dependency_sha[:8], line_num,
                                    self.oneline(dependency)))
                 continue
 
             if dependency_sha not in self.dependencies[dependent_sha]:
+                if dependency_sha in self.todo_d:
+                    self.logger.debug('        Dependency %s via line %s already in TODO' %
+                                      (dependency_sha[:8], line_num,))
+                    continue
+
+                if dependency_sha in self.done_d:
+                    self.logger.debug('        Dependency %s via line %s already done' %
+                                      (dependency_sha[:8], line_num,))
+                    continue
+
                 self.logger.debug('        New dependency %s via line %s (%s)' %
                                   (dependency_sha[:8], line_num,
                                    self.oneline(dependency)))
@@ -263,13 +280,17 @@ class DependencyDetector(object):
                 if dependency_sha not in self.dependencies:
                     if self.options.recurse:
                         self.todo.append(dependency)
+                        self.todo_d[dependency.hex] = True
                         self.logger.debug('          added to TODO')
+
             if path not in self.dependencies[dependent_sha][dependency_sha]:
                 self.dependencies[dependent_sha][dependency_sha][path] = {}
                 self.notify_listeners('new_path', dependent, dependency, path, line_num)
+
             if line_num in self.dependencies[dependent_sha][dependency_sha][path]:
                 abort("line %d already found when blaming %s:%s" %
                       (line_num, parent.hex[:8], path))
+
             self.dependencies[dependent_sha][dependency_sha][path][line_num] = True
             self.notify_listeners('new_line', dependent, dependency, path, line_num)
 
