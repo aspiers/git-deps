@@ -343,9 +343,10 @@ class DependencyDetector(object):
         return commit.message.split('\n', 1)[0]
 
     def is_excluded(self, commit):
-        for exclude in self.options.exclude_commits:
-            if self.branch_contains(commit, exclude):
-                return True
+        if self.options.exclude_commits is not None:
+            for exclude in self.options.exclude_commits:
+                if self.branch_contains(commit, exclude):
+                    return True
         return False
 
     def branch_contains(self, commit, branch):
