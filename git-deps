@@ -411,9 +411,9 @@ def parse_args():
         usage='%(prog)s [options] COMMIT-ISH [COMMIT-ISH...]'
     )
     parser.add_argument('-l', '--log', dest='log', action='store_true',
-                        help='Show commit logs for calculated dependencies [%(default)s]')
+                        help='Show commit logs for calculated dependencies')
     parser.add_argument('-r', '--recurse', dest='recurse', action='store_true',
-                        help='Follow dependencies recursively [%(default)s]')
+                        help='Follow dependencies recursively')
     parser.add_argument('-e', '--exclude-commits', dest='exclude_commits',
                         action='append', metavar='COMMITISH',
                         help='Exclude commits which are ancestors of the given COMMITISH'
@@ -422,7 +422,7 @@ def parse_args():
                         metavar='NUM', default=1,
                         help='Number of lines of diff context to use [%(default)s]')
     parser.add_argument('-d', '--debug', dest='debug', action='store_true',
-                        help='Show debugging [%(default)s]')
+                        help='Show debugging')
 
     options, args = parser.parse_known_args()
 
