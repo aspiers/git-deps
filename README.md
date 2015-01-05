@@ -89,7 +89,7 @@ first check:
 
 and then file a new issue if yours is not already listed.  Otherwise
 please mail [the `git` mailing list](http://vger.kernel.org/vger-lists.html#git)
-and cc: me (`git at adamspiers dot org`).
+and cc: me `<git at adamspiers dot org>`.
 
 History
 -------
