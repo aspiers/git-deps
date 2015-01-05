@@ -372,24 +372,26 @@ class DependencyDetector(object):
         return False
 
     def branch_contains(self, commit, branch):
+        sha = commit.hex[:8]
         self.logger.debug("        Does %s contain %s?" %
-                          (branch, commit.hex[:8]))
+                          (branch, sha))
         branch_commit = self.get_commit(branch)
+        branch_sha = branch_commit.hex
 
         if commit.hex not in self.branch_contains_cache:
-            self.branch_contains_cache[commit.hex] = {}
-        if branch_commit.hex in self.branch_contains_cache[commit.hex]:
-            memoized = self.branch_contains_cache[commit.hex][branch_commit.hex]
+            self.branch_contains_cache[sha] = {}
+        if branch_sha in self.branch_contains_cache[sha]:
+            memoized = self.branch_contains_cache[sha][branch_sha]
             self.logger.debug("          %s (memoized)" % memoized)
             return memoized
 
-        cmd = ['git', 'merge-base', commit.hex, branch_commit.hex]
+        cmd = ['git', 'merge-base', sha, branch_sha]
         # self.logger.debug(" ".join(cmd))
         out = subprocess.check_output(cmd).strip()
         # self.logger.debug(out)
-        result = out == commit.hex
+        result = out == sha
         self.logger.debug("          %s" % result)
-        self.branch_contains_cache[commit.hex][branch_commit.hex] = result
+        self.branch_contains_cache[sha][branch_sha] = result
         return result
 
     def tree_lookup(self, target_path, commit):
