@@ -1,8 +1,11 @@
+git-deps
+========
+
 `git-deps` is a tool for performing automatic analysis of dependencies
 between commits in a [git](http://git-scm.com/) repository.
 
 Background theory
-=================
+-----------------
 
 It is fairly clear that two git commits within a single repo can be
 considered "independent" from each other in a certain sense, if they
@@ -30,7 +33,7 @@ in a DAG (directed acyclic graph) whose nodes correspond to commits.
 Note that a node can only depend on a subset of its ancestors.
 
 Motivation
-==========
+----------
 
 Sometimes it is useful to understand the nature of parts of this DAG,
 as its nature will impact the success or failure of operations
@@ -65,7 +68,7 @@ usually best practice to logically group such changes together in a
 single commit.)  But this should not stop it from being useful.
 
 Usage
-=====
+-----
 
 The tool is not yet fully documented, but usage is fairly
 self-explanatory if you run with `-h` or `--help`.
@@ -77,7 +80,7 @@ mode, two SHA1s are output per line, indicating that the first depends
 on the second.
 
 Development / support / feedback
-================================
+--------------------------------
 
 Any kind of feedback is very welcome.  For bugs or issues, please
 first check:
@@ -89,7 +92,7 @@ please mail [the `git` mailing list](http://vger.kernel.org/vger-lists.html#git)
 and cc: me (`git at adamspiers dot org`).
 
 History
-=======
+-------
 
 This tool was born from experiences at
 [SUSEcon](http://www.susecon.com/) 2013, when I attempted to help a
