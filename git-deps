@@ -19,6 +19,7 @@
 from __future__ import print_function
 
 import argparse
+import json
 import logging
 import os
 import re
@@ -80,6 +81,9 @@ class DependencyListener(object):
     def dependent_done(self, dependent, dependencies):
         pass
 
+    def all_done(self):
+        pass
+
 
 class CLIDependencyListener(DependencyListener):
     """Dependency listener for use when running in CLI mode.
@@ -120,6 +124,36 @@ class CLIDependencyListener(DependencyListener):
         #     keys = sorted(self.dependencies[dependency][path].keys()
         #     print("    %s" % ", ".join(keys)))
 
+
+class JSONDependencyListener(DependencyListener):
+    """Dependency listener for use when building results in JSON."""
+
+    def __init__(self, options):
+        super(JSONDependencyListener, self).__init__(options)
+        self._nodes = {}
+        self._json = {
+            'links' : [],
+        }
+
+    def new_dependency(self, dependent, dependency, path, line_num):
+        dependent_sha  = dependent.hex
+        dependency_sha = dependency.hex
+
+        new_link = {
+            'dependent' : dependent_sha,
+            'dependency' : dependency_sha,
+        }
+
+        if self.options.log:
+            pass  # FIXME
+
+        self._nodes[dependent_sha] = 1
+        self._nodes[dependency_sha] = 1
+        self._json['links'].append(new_link)
+
+    def all_done(self):
+        self._json['nodes'] = self._nodes.keys()
+        print(json.dumps(self._json, sort_keys=True, indent=4))
 
 class DependencyDetector(object):
     """Class for automatically detecting dependencies between git commits.
@@ -240,6 +274,8 @@ class DependencyDetector(object):
             # A commit won't have any dependencies if it only added new files
             dependencies = self.dependencies.get(dependent.hex, {})
             self.notify_listeners('dependent_done', dependent, dependencies)
+
+        self.notify_listeners('all_done')
 
     def find_dependencies_with_parent(self, dependent, parent):
         """Find all dependencies of the given revision caused by the given
@@ -439,6 +475,8 @@ def parse_args():
     )
     parser.add_argument('-l', '--log', dest='log', action='store_true',
                         help='Show commit logs for calculated dependencies')
+    parser.add_argument('-j', '--json', dest='json', action='store_true',
+                        help='Output dependencies as JSON')
     parser.add_argument('-r', '--recurse', dest='recurse', action='store_true',
                         help='Follow dependencies recursively')
     parser.add_argument('-e', '--exclude-commits', dest='exclude_commits',
@@ -464,7 +502,12 @@ def parse_args():
 def main():
     options, args = parse_args()
     # rev_list = sys.stdin.readlines()
-    listener = CLIDependencyListener(options)
+
+    if options.json:
+        listener = JSONDependencyListener(options)
+    else:
+        listener = CLIDependencyListener(options)
+
     detector = DependencyDetector(options, listener=listener)
 
     for dependent_rev in args:
