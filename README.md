@@ -96,9 +96,10 @@ History
 
 This tool was born from experiences at
 [SUSEcon](http://www.susecon.com/) 2013, when I attempted to help a
-colleague backport a bugfix in OpenStack Nova from the `master` branch
-to a stable release branch.  At first sight it looked like it would
-only require a trivial `git cherry-pick`, but that immediately
+colleague backport a bugfix in [OpenStack](http://www.openstack.org/)
+[Nova](http://docs.openstack.org/developer/nova/) from the `master`
+branch to a stable release branch.  At first sight it looked like it
+would only require a trivial `git cherry-pick`, but that immediately
 revealed conflicts due to related code having changed in `master`
 since the release was made.  I manually found the underlying commit
 which the bugfix required by using `git blame`, and tried another
