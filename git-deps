@@ -470,7 +470,8 @@ class DependencyDetector(object):
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description='Auto-detects commits which the given commit(s) depend on.',
+        description='Auto-detects commits on which the given '
+                    'commit(s) depend.',
         usage='%(prog)s [options] COMMIT-ISH [COMMIT-ISH...]'
     )
     parser.add_argument('-l', '--log', dest='log', action='store_true',
