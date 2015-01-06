@@ -92,20 +92,18 @@ function draw_graph () {
             path.each(function (d) {
                 if (isIE()) this.parentNode.insertBefore(this, this);
             });
-            // draw directed edges with proper padding from node centers
-            path.attr('d', function (d) {
-                var deltaX = d.target.x - d.source.x,
-                    deltaY = d.target.y - d.source.y,
-                    dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY),
-                    normX = deltaX / dist,
-                    normY = deltaY / dist,
-                    sourcePadding = nodeRadius,
-                    targetPadding = nodeRadius + 2,
-                    sourceX = d.source.x + (sourcePadding * normX),
-                    sourceY = d.source.y + (sourcePadding * normY),
-                    targetX = d.target.x - (targetPadding * normX),
-                    targetY = d.target.y - (targetPadding * normY);
-                return 'M' + sourceX + ',' + sourceY + 'L' + targetX + ',' + targetY;
+            path.attr("d", function (d) {
+                cola.vpsc.makeEdgeBetween(
+                    d,
+                    d.source.innerBounds,
+                    d.target.innerBounds,
+                    5  // distance of arrow tip from object it points at
+                );
+                var lineData = [
+                    { x: d.sourceIntersection.x, y: d.sourceIntersection.y },
+                    { x: d.arrowStart.x, y: d.arrowStart.y }
+                ];
+                return lineFunction(lineData);
             });
 
             label.attr("x", function (d) { return d.x; })
