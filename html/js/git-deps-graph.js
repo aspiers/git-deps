@@ -81,6 +81,34 @@ function draw_graph () {
         // label.append("title")
         //     .text(function (d) { return d.name; });
 
+        var lineFunction = d3.svg.line()
+            .x(function (d) { return d.x; })
+            .y(function (d) { return d.y; })
+            .interpolate("linear");
+
+        var routeEdges = function () {
+            d3cola.prepareEdgeRouting(margin/3);
+            path.attr("d", function (d) {
+                return lineFunction(d3cola.routeEdge(d)
+                    // // show visibility graph
+                    //, function (g) {
+                    //    if (d.source.id === 10 && d.target.id === 11) {
+                    //        g.E.forEach(function (e) {
+                    //            vis.append("line").attr("x1", e.source.p.x).attr("y1", e.source.p.y)
+                    //                .attr("x2", e.target.p.x).attr("y2", e.target.p.y)
+                    //                .attr("stroke", "green");
+                    //        });
+                    //    }
+                    // }));
+                );
+            });
+            if (isIE()) {
+                path.each(function (d) {
+                    this.parentNode.insertBefore(this, this);
+                });
+            }
+        };
+
         d3cola.start(10,20,20);
 
         d3cola.on("tick", function () {
@@ -110,6 +138,9 @@ function draw_graph () {
             label.attr("x", function (d) { return d.x; })
                  .attr("y", function (d) { return d.y; });
         });
+
+        d3cola.on("end", routeEdges);
+
         // turn on overlap avoidance after first convergence
         // d3cola.on("end", function () {
         //    if (!d3cola.avoidOverlaps()) {
