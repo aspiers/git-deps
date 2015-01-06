@@ -110,15 +110,15 @@ function draw_graph () {
                  .attr("y", function (d) { return d.y; });
         });
         // turn on overlap avoidance after first convergence
-        //cola.on("end", function () {
-        //    if (!cola.avoidOverlaps()) {
+        // d3cola.on("end", function () {
+        //    if (!d3cola.avoidOverlaps()) {
         //        graph.nodes.forEach(function (v) {
         //            v.width = v.height = 10;
         //        });
-        //        cola.avoidOverlaps(true);
-        //        cola.start();
+        //        d3cola.avoidOverlaps(true);
+        //        d3cola.start();
         //    }
-        //});
+        // });
     });
 }
 
