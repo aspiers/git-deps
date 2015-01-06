@@ -135,10 +135,18 @@ class JSONDependencyListener(DependencyListener):
 
     def __init__(self, options):
         super(JSONDependencyListener, self).__init__(options)
-        self._nodes = {}  # maps node names to indices in the nodes array
+
+        # Map node names to indices in the nodes array
+        self._nodes = {}
+
+        # Maps node names to child node names.  This will be used to
+        # constrain siblings to the same y position.
+        self._deps = {}
+
         self._json = {
             'nodes': [],
             'links': [],
+            'constraints': [],
         }
 
     def abbreviate_sha(self, sha):
@@ -203,8 +211,11 @@ class JSONDependencyListener(DependencyListener):
         self._json['links'].append
 
     def new_dependency(self, dependent, dependency, path, line_num):
-        source_index = self.add_node(dependent.hex)
-        target_index = self.add_node(dependency.hex)
+        parent = dependent.hex
+        child = dependency.hex
+
+        source_index = self.add_node(parent)
+        target_index = self.add_node(child)
 
         new_link = {
             'source': source_index,
@@ -217,7 +228,23 @@ class JSONDependencyListener(DependencyListener):
 
         self._json['links'].append(new_link)
 
+        if parent in self._deps:
+            self._deps[parent].append(child)
+        else:
+            self._deps[parent] = [child]
+
     def json(self):
+        for parent, children in self._deps.iteritems():
+            constraint = {
+                'axis': 'x',
+                'type': 'alignment',
+                'offsets': [
+                    {'node': self._nodes[child], 'offset': 0}
+                    for child in children
+                ]
+            }
+            self._json['constraints'].append(constraint)
+
         return json.dumps(self._json, sort_keys=True, indent=4)
 
     def all_done(self):
