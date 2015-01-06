@@ -15,6 +15,7 @@
     font-size: 16px;
     font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
     text-anchor: middle;
+    alignment-baseline: middle;
     /* cursor: move; */
 }
 

@@ -38,8 +38,8 @@ function draw_graph () {
         d3cola
             .nodes(graph.nodes)
             .links(graph.links)
-            .flowLayout("y", 30)
-            .symmetricDiffLinkLengths(6)
+            .flowLayout("y", 50)
+            .symmetricDiffLinkLengths(16)
             .start(10,20,20);
 
         // define arrow markers for graph links
@@ -59,7 +59,7 @@ function draw_graph () {
           .enter().append('svg:path')
             .attr('class', 'link');
 
-        var margin = 10, pad = 10;
+        var margin = 10, pad = 5;
         var node = fg.selectAll(".node")
                 .data(graph.nodes)
                 .enter().append("rect")
