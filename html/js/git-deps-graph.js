@@ -38,8 +38,9 @@ function draw_graph () {
         d3cola
             .nodes(graph.nodes)
             .links(graph.links)
-            .flowLayout("y", 50)
-            .symmetricDiffLinkLengths(16);
+            .flowLayout("y", 150)
+            .symmetricDiffLinkLengths(30);
+            //.jaccardLinkLengths(100);
 
         // define arrow markers for graph links
         fg.append('svg:defs').append('svg:marker')
