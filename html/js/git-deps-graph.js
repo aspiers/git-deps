@@ -59,18 +59,36 @@ function draw_graph () {
           .enter().append('svg:path')
             .attr('class', 'link');
 
+        var margin = 10, pad = 10;
         var node = fg.selectAll(".node")
-            .data(graph.nodes)
-          .enter().append("circle")
-            .attr("class", "node")
-            .attr("r", nodeRadius)
-            .style("fill", function (d) { return color(d.group); })
-            .call(d3cola.drag);
+                .data(graph.nodes)
+                .enter().append("rect")
+                .attr("class", "node")
+                .attr("rx", 5).attr("ry", 5)
+                .call(d3cola.drag);
 
-        node.append("title")
-            .text(function (d) { return d.name; });
+        var label = fg.selectAll(".label")
+            .data(graph.nodes)
+          .enter().append("text")
+            .attr("class", "label")
+            .text(function (d) { return d.name; })
+            .call(d3cola.drag)
+            .each(function (d) {
+                var b = this.getBBox();
+                var extra = 2 * margin + 2 * pad;
+                d.width = b.width + extra;
+                d.height = b.height + extra;
+            });
+        // label.append("title")
+        //     .text(function (d) { return d.name; });
 
         d3cola.on("tick", function () {
+            node.each(function (d) { d.innerBounds = d.bounds.inflate(-margin); })
+                .attr("x", function (d) { return d.innerBounds.x; })
+                .attr("y", function (d) { return d.innerBounds.y; })
+                .attr("width",  function (d) { return d.innerBounds.width(); })
+                .attr("height", function (d) { return d.innerBounds.height(); });
+
             path.each(function (d) {
                 if (isIE()) this.parentNode.insertBefore(this, this);
             });
@@ -90,8 +108,8 @@ function draw_graph () {
                 return 'M' + sourceX + ',' + sourceY + 'L' + targetX + ',' + targetY;
             });
 
-            node.attr("cx", function (d) { return d.x; })
-                .attr("cy", function (d) { return d.y; });
+            label.attr("x", function (d) { return d.x; })
+                 .attr("y", function (d) { return d.y; });
         });
         // turn on overlap avoidance after first convergence
         //cola.on("end", function () {

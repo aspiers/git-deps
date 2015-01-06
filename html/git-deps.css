@@ -3,8 +3,19 @@
 }
 
 .node {
-    stroke: #fff;
-    stroke-width: 1.5px;
+    /* stroke: black; */
+    stroke: #e5e5e5;
+    stroke-width: 2px;
+    cursor: move;
+    fill: #f2f2ff;
+}
+
+.label {
+    fill: black;
+    font-size: 16px;
+    font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+    text-anchor: middle;
+    /* cursor: move; */
 }
 
 .link {
