@@ -33,10 +33,6 @@ function draw_graph () {
     }
 
     d3.json("test.json", function (error, graph) {
-        var nodeRadius = 5;
-
-        graph.nodes.forEach(function (v) { v.height = v.width = 2 * nodeRadius; });
-
         d3cola
             .nodes(graph.nodes)
             .links(graph.links)
