@@ -39,8 +39,7 @@ function draw_graph () {
             .nodes(graph.nodes)
             .links(graph.links)
             .flowLayout("y", 50)
-            .symmetricDiffLinkLengths(16)
-            .start(10,20,20);
+            .symmetricDiffLinkLengths(16);
 
         // define arrow markers for graph links
         fg.append('svg:defs').append('svg:marker')
@@ -81,6 +80,8 @@ function draw_graph () {
             });
         // label.append("title")
         //     .text(function (d) { return d.name; });
+
+        d3cola.start(10,20,20);
 
         d3cola.on("tick", function () {
             node.each(function (d) { d.innerBounds = d.bounds.inflate(-margin); })
