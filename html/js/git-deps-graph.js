@@ -140,7 +140,7 @@ function draw_graph () {
                  .attr("y", function (d) { return d.y; });
         });
 
-        d3cola.on("end", routeEdges);
+        // d3cola.on("end", routeEdges);
 
         // turn on overlap avoidance after first convergence
         // d3cola.on("end", function () {
