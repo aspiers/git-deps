@@ -7,12 +7,14 @@ var d3cola = cola.d3adaptor()
     .avoidOverlaps(true)
     .size([width, height]);
 
+var svg, fg;
+
 jQuery(function () {
     draw_graph();
 });
 
 function draw_graph () {
-    var svg = d3.select("body").append("svg")
+    svg = d3.select("body").append("svg")
         .attr("width", width)
         .attr("height", height);
 
@@ -22,7 +24,7 @@ function draw_graph () {
         .attr('height', "100%")
         .call(d3.behavior.zoom().on("zoom", redraw));
 
-    var fg = svg.append('g');
+    fg = svg.append('g');
 
     function redraw() {
         fg.attr("transform",
