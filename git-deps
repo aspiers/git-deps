@@ -141,14 +141,63 @@ class JSONDependencyListener(DependencyListener):
             'links': [],
         }
 
-    def add_node(self, name):
+    def abbreviate_sha(self, sha):
+        """Uniquely abbreviates the given SHA1."""
+
+        # For now we invoke git-rev-parse(1), but hopefully eventually
+        # we will be able to do this via pygit2.
+        cmd = ['git', 'rev-parse', '--short', sha]
+        # self.logger.debug(" ".join(cmd))
+        out = subprocess.check_output(cmd).strip()
+        # self.logger.debug(out)
+        return out
+
+    def describe(self, sha):
+        """Returns a human-readable representation of the given SHA1."""
+
+        # For now we invoke git-describe(1), but eventually we will be
+        # able to do this via pygit2, since libgit2 already provides
+        # an API for this:
+        #   https://github.com/libgit2/pygit2/pull/459#issuecomment-68866929
+        #   https://github.com/libgit2/libgit2/pull/2592
+        cmd = [
+            'git', 'describe',
+            '--all',       # look for tags and branches
+            '--long',      # remotes/github/master-0-g2b6d591
+            #'--contains',
+            #'--abbrev',
+            sha
+        ]
+        # self.logger.debug(" ".join(cmd))
+        out = None
+        try:
+            out = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
+        except subprocess.CalledProcessError as e:
+            if e.output.find('No tags can describe') != -1:
+                return ''
+            raise
+
+        out = out.strip()
+        out = re.sub(r'^(heads|remotes)/', '', out)
+        # We already have the abbreviated SHA from abbreviate_sha()
+        out = re.sub(r'-g[0-9a-f]{7,}$', '', out)
+        # self.logger.debug(out)
+        return out
+
+    def add_node(self, sha):
         """Adds the node to the nodes array if it doesn't already exist, and
         returns the node's index in the array."""
-        if name in self._nodes:
-            return self._nodes[name]
-        self._json['nodes'].append({'name': name})
-        self._nodes[name] = len(self._json['nodes']) - 1
-        return self._nodes[name]
+        abbrev = self.abbreviate_sha(sha)
+        if sha in self._nodes:
+            return self._nodes[sha]
+        node = {
+            'name': abbrev,
+            'sha': sha,
+            'describe': self.describe(sha),
+        }
+        self._json['nodes'].append(node)
+        self._nodes[sha] = len(self._json['nodes']) - 1
+        return self._nodes[sha]
 
     def add_link(self, source, target):
         self._json['links'].append
