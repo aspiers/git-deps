@@ -16,6 +16,20 @@ function draw_graph () {
         .attr("width", width)
         .attr("height", height);
 
+    svg.append('rect')
+        .attr('class', 'background')
+        .attr('width', "100%")
+        .attr('height', "100%")
+        .call(d3.behavior.zoom().on("zoom", redraw));
+
+    var fg = svg.append('g');
+
+    function redraw() {
+        fg.attr("transform",
+                "translate(" + d3.event.translate + ")" +
+                " scale(" + d3.event.scale + ")");
+    }
+
     d3.json("test.json", function (error, graph) {
         var nodeRadius = 5;
 
@@ -29,7 +43,7 @@ function draw_graph () {
             .start(10,20,20);
 
         // define arrow markers for graph links
-        svg.append('svg:defs').append('svg:marker')
+        fg.append('svg:defs').append('svg:marker')
             .attr('id', 'end-arrow')
             .attr('viewBox', '0 -5 10 10')
             .attr('refX', 6)
@@ -40,12 +54,12 @@ function draw_graph () {
             .attr('d', 'M0,-5L10,0L0,5')
             .attr('fill', '#000');
 
-        var path = svg.selectAll(".link")
+        var path = fg.selectAll(".link")
             .data(graph.links)
           .enter().append('svg:path')
             .attr('class', 'link');
 
-        var node = svg.selectAll(".node")
+        var node = fg.selectAll(".node")
             .data(graph.nodes)
           .enter().append("circle")
             .attr("class", "node")
