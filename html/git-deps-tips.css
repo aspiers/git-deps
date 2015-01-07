@@ -1,11 +1,11 @@
 .d3-tip {
     line-height: 1;
-    font-weight: bold;
-    padding: 12px;
-    background: rgba(0, 0, 0, 0.8);
-    color: #fff;
+    padding: 5px;
+    background: rgba(247, 251, 252, 0.9);
+    font-family: Helvetica, arial, freesans, clean, sans-serif, 'Segoe UI Emoji', 'Segoe UI Symbol';
     border-radius: 2px;
     pointer-events: none;
+    border: 1px solid #e5e5e5;
 }
 
 /* Creates a small triangle extender for the tooltip */
@@ -52,4 +52,30 @@
     margin: -4px 0 0 -1px;
     top: 50%;
     left: 100%;
+}
+
+.d3-tip p.commit-title {
+    font-weight: bold;
+    color: #4e575b;
+    font-size: 15px;
+    margin: 0.5em 0;
+}
+
+.d3-tip .commit-describe {
+    font-weight: bold;
+    color: #26894d;
+    font-size: 12px;
+    margin: 0.5em 0;
+}
+
+.d3-tip .commit-meta {
+    color: #979a9c;
+    font-size: 11px;
+}
+
+.d3-tip .commit-body pre {
+    color: #596063;
+    margin: 0.5em 0;
+    /* padding-left: 8px; */
+    /* border-left: 1px solid #e5e5e5; */
 }

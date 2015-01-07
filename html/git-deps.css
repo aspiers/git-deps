@@ -11,9 +11,11 @@ g.node rect {
 }
 
 g.node text {
-    fill: black;
+    /* fill: black; */
+    fill: #295b8c;
     font-size: 16px;
     font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+    font-weight: bold;
     text-anchor: middle;
     alignment-baseline: middle;
     cursor: pointer;

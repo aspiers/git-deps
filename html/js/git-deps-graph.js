@@ -10,9 +10,12 @@ var d3cola = cola.d3adaptor()
     .avoidOverlaps(true)
     .size([WIDTH, HEIGHT]);
 
-var svg, fg, node, path, tip;
+var svg, fg, node, path, tip, tip_template;
 
 jQuery(function () {
+    d3.html('tip-template.html', function (error, html) {
+        tip_template = html;
+    });
     draw_graph();
 });
 
@@ -131,7 +134,24 @@ function position_nodes (rect, label, tip) {
 }
 
 function tip_html (d) {
-    return d.describe || d.sha;
+    var fragment = $(tip_template).clone();
+    var title = fragment.find("p.commit-title");
+    title.text(d.title);
+    if (d.describe != "") {
+        title.append("  <span />");
+        var describe = title.children().first();
+        describe.addClass("commit-describe").text(d.describe);
+    }
+    fragment.find("span.commit-author").text(d.author_name);
+    var date = new Date(d.author_time * 1000);
+    fragment.find("time.commit-time")
+        .attr('datetime', date.toISOString())
+        .text(date);
+    fragment.find(".commit-body pre").text(d.body);
+    // Javascript *sucks*.  There's no way to get the outerHTML of a
+    // document fragment, so you have to wrap the whole thing in a
+    // single parent and then look that up via children[0].
+    return fragment[0].children[0].outerHTML;
 }
 
 function tick_handler () {
