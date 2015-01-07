@@ -74,8 +74,8 @@ function draw_nodes (fg, node) {
     // Initialize tooltip
     tip = d3.tip().attr('class', 'd3-tip').html(tip_html);
     fg.call(tip);
-    // Hide tooltip when we start dragging
-    d3cola.drag().on('dragstart', tip.hide);
+    hide_tip_on_drag = d3cola.drag().on('dragstart', tip.hide);
+    node.call(hide_tip_on_drag);
 
     var rect = node.append("rect")
         .attr("rx", 5).attr("ry", 5);
