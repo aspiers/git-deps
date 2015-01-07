@@ -72,6 +72,12 @@ Installation
 
 Just copy or symlink `git-deps` so it's anywhere on your `$PATH`.
 
+To install the required Javascript libraries, you will need
+[`npm`](https://www.npmjs.com/) installed, and then type:
+
+    cd html
+    npm install
+
 Usage
 -----
 
