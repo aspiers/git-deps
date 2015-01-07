@@ -16,6 +16,12 @@ jQuery(function () {
     draw_graph();
 });
 
+function redraw_on_zoom () {
+    fg.attr("transform",
+            "translate(" + d3.event.translate + ")" +
+            " scale(" + d3.event.scale + ")");
+}
+
 function draw_graph () {
     svg = d3.select("body").append("svg")
         .attr("width", WIDTH)
@@ -28,12 +34,6 @@ function draw_graph () {
         .call(d3.behavior.zoom().on("zoom", redraw_on_zoom));
 
     fg = svg.append('g');
-
-    function redraw_on_zoom () {
-        fg.attr("transform",
-                "translate(" + d3.event.translate + ")" +
-                " scale(" + d3.event.scale + ")");
-    }
 
     d3.json("test.json", function (error, graph) {
         d3cola
@@ -92,34 +92,6 @@ function draw_graph () {
         label.attr("x", function (d) { return d.rect_width  / 2; })
              .attr("y", function (d) { return d.rect_height / 2; });
 
-        var lineFunction = d3.svg.line()
-            .x(function (d) { return d.x; })
-            .y(function (d) { return d.y; })
-            .interpolate("linear");
-
-        var routeEdges = function () {
-            d3cola.prepareEdgeRouting(EDGE_ROUTING_MARGIN);
-            path.attr("d", function (d) {
-                return lineFunction(d3cola.routeEdge(d)
-                    // // show visibility graph
-                    //, function (g) {
-                    //    if (d.source.id === 10 && d.target.id === 11) {
-                    //        g.E.forEach(function (e) {
-                    //            vis.append("line").attr("x1", e.source.p.x).attr("y1", e.source.p.y)
-                    //                .attr("x2", e.target.p.x).attr("y2", e.target.p.y)
-                    //                .attr("stroke", "green");
-                    //        });
-                    //    }
-                    // }));
-                );
-            });
-            if (isIE()) {
-                path.each(function (d) {
-                    this.parentNode.insertBefore(this, this);
-                });
-            }
-        };
-
         d3cola.start(10,20,20);
 
         d3cola.on("tick", function () {
@@ -173,6 +145,34 @@ function draw_graph () {
         // });
     });
 }
+
+var lineFunction = d3.svg.line()
+    .x(function (d) { return d.x; })
+    .y(function (d) { return d.y; })
+    .interpolate("linear");
+
+var routeEdges = function () {
+    d3cola.prepareEdgeRouting(EDGE_ROUTING_MARGIN);
+    path.attr("d", function (d) {
+        return lineFunction(d3cola.routeEdge(d)
+            // // show visibility graph
+            //, function (g) {
+            //    if (d.source.id === 10 && d.target.id === 11) {
+            //        g.E.forEach(function (e) {
+            //            vis.append("line").attr("x1", e.source.p.x).attr("y1", e.source.p.y)
+            //                .attr("x2", e.target.p.x).attr("y2", e.target.p.y)
+            //                .attr("stroke", "green");
+            //        });
+            //    }
+            // }));
+        );
+    });
+    if (isIE()) {
+        path.each(function (d) {
+            this.parentNode.insertBefore(this, this);
+        });
+    }
+};
 
 function isIE () {
     return (navigator.appName == 'Microsoft Internet Explorer') ||
