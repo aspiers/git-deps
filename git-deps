@@ -235,14 +235,21 @@ class JSONDependencyListener(DependencyListener):
 
     def json(self):
         for parent, children in self._deps.iteritems():
+            # Try progressive offsets as suggested here:
+            # https://github.com/tgdwyer/WebCola/issues/47#issuecomment-68980159
+            # Doesn't seem to make any difference though.
+            offset = 0
             constraint = {
                 'axis': 'x',
                 'type': 'alignment',
-                'offsets': [
-                    {'node': self._nodes[child], 'offset': 0}
-                    for child in children
-                ]
+                'offsets': [],
             }
+            for child in children:
+                constraint['offsets'].append({
+                    'node': self._nodes[child],
+                    'offset': offset
+                })
+                offset += 100
             self._json['constraints'].append(constraint)
 
         return json.dumps(self._json, sort_keys=True, indent=4)

@@ -9,31 +9,31 @@
                 }, 
                 {
                     "node": 2, 
-                    "offset": 0
+                    "offset": 100
                 }, 
                 {
                     "node": 3, 
-                    "offset": 0
+                    "offset": 200
                 }, 
                 {
                     "node": 4, 
-                    "offset": 0
+                    "offset": 300
                 }, 
                 {
                     "node": 5, 
-                    "offset": 0
+                    "offset": 400
                 }, 
                 {
                     "node": 6, 
-                    "offset": 0
+                    "offset": 500
                 }, 
                 {
                     "node": 7, 
-                    "offset": 0
+                    "offset": 600
                 }, 
                 {
                     "node": 8, 
-                    "offset": 0
+                    "offset": 700
                 }
             ], 
             "type": "alignment"
