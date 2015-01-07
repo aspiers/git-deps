@@ -10,7 +10,7 @@ var d3cola = cola.d3adaptor()
     .avoidOverlaps(true)
     .size([WIDTH, HEIGHT]);
 
-var svg, fg, node, path;
+var svg, fg, node, path, tip;
 
 jQuery(function () {
     draw_graph();
@@ -72,7 +72,7 @@ function draw_graph () {
 
 function draw_nodes (fg, node) {
     // Initialize tooltip
-    var tip = d3.tip().attr('class', 'd3-tip').html(tip_html);
+    tip = d3.tip().attr('class', 'd3-tip').html(tip_html);
     fg.call(tip);
     // Hide tooltip when we start dragging
     d3cola.drag().on('dragstart', tip.hide);
