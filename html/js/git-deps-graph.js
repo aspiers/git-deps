@@ -60,25 +60,26 @@ function draw_graph () {
         var margin = 10, pad = 5;
         var node = fg.selectAll(".node")
                 .data(graph.nodes)
-                .enter().append("rect")
+                .enter().append("g")
                 .attr("class", "node")
-                .attr("rx", 5).attr("ry", 5)
                 .call(d3cola.drag);
 
-        var label = fg.selectAll(".label")
-            .data(graph.nodes)
-          .enter().append("text")
-            .attr("class", "label")
+        var rect = node.append("rect")
+            .attr("rx", 5).attr("ry", 5);
+
+        var label = node.append("text")
             .text(function (d) { return d.name; })
-            .call(d3cola.drag)
             .each(function (d) {
                 var b = this.getBBox();
-                var extra = 2 * margin + 2 * pad;
+                var extra = 2 * margin;
                 d.width = b.width + extra;
                 d.height = b.height + extra;
             });
         // label.append("title")
         //     .text(function (d) { return d.name; });
+
+        rect.attr('width',  function (d, i) { return d.width; })
+            .attr('height', function (d, i) { return d.height; });
 
         var lineFunction = d3.svg.line()
             .x(function (d) { return d.x; })
@@ -112,8 +113,11 @@ function draw_graph () {
 
         d3cola.on("tick", function () {
             node.each(function (d) { d.innerBounds = d.bounds.inflate(-margin); })
-                .attr("x", function (d) { return d.innerBounds.x; })
-                .attr("y", function (d) { return d.innerBounds.y; })
+                .attr("transform", function (d) {
+                    return "translate(" +
+                        d.innerBounds.x + "," +
+                        d.innerBounds.y + ")";
+                })
                 .attr("width",  function (d) { return d.innerBounds.width(); })
                 .attr("height", function (d) { return d.innerBounds.height(); });
 
@@ -134,8 +138,8 @@ function draw_graph () {
                 return lineFunction(lineData);
             });
 
-            label.attr("x", function (d) { return d.x; })
-                 .attr("y", function (d) { return d.y; });
+            label.attr("x", function (d) { return d.bounds.width() / 2; })
+                 .attr("y", function (d) { return d.bounds.height() / 2; });
         });
 
         // d3cola.on("end", routeEdges);

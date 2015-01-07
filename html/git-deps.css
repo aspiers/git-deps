@@ -1,22 +1,22 @@
-.background {
+rect.background {
     fill: white;
+    cursor: move;
 }
 
-.node {
-    /* stroke: black; */
+g.node rect {
     stroke: #e5e5e5;
     stroke-width: 2px;
-    cursor: move;
-    fill: #f2f2ff;
+    fill: rgba(242,242, 255, 0.54);
+    cursor: pointer;
 }
 
-.label {
+g.node text {
     fill: black;
     font-size: 16px;
     font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
     text-anchor: middle;
     alignment-baseline: middle;
-    /* cursor: move; */
+    cursor: pointer;
 }
 
 .link {
