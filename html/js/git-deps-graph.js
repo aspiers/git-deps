@@ -1,5 +1,8 @@
-var WIDTH = 960,
-    HEIGHT = 500;
+var WIDTH   = 960,
+    HEIGHT  = 500,
+    MARGIN  = 14,   // space in between <rects>
+    PADDING =  5,   // space in between <text> label and <rect> border
+    EDGE_ROUTING_MARGIN = 3;
 
 var color = d3.scale.category20();
 
@@ -57,7 +60,6 @@ function draw_graph () {
           .enter().append('svg:path')
             .attr('class', 'link');
 
-        var margin = 10, pad = 5;
         var node = fg.selectAll(".node")
                 .data(graph.nodes)
                 .enter().append("g")
@@ -71,15 +73,24 @@ function draw_graph () {
             .text(function (d) { return d.name; })
             .each(function (d) {
                 var b = this.getBBox();
-                var extra = 2 * margin;
-                d.width = b.width + extra;
-                d.height = b.height + extra;
+                // Calculate width/height of rectangle from text bounding box.
+                d.rect_width  = b.width  + 2 * PADDING;
+                d.rect_height = b.height + 2 * PADDING;
+                // Now set the node width/height as used by cola for
+                // positioning.  This has to include the margin
+                // outside the rectangle.
+                d.width  = d.rect_width  + 2 * MARGIN;
+                d.height = d.rect_height + 2 * MARGIN;
             });
         // label.append("title")
         //     .text(function (d) { return d.name; });
 
-        rect.attr('width',  function (d, i) { return d.width; })
-            .attr('height', function (d, i) { return d.height; });
+        rect.attr('width',  function (d, i) { return d.rect_width;  })
+            .attr('height', function (d, i) { return d.rect_height; });
+
+        // Centre label
+        label.attr("x", function (d) { return d.rect_width  / 2; })
+             .attr("y", function (d) { return d.rect_height / 2; });
 
         var lineFunction = d3.svg.line()
             .x(function (d) { return d.x; })
@@ -87,7 +98,7 @@ function draw_graph () {
             .interpolate("linear");
 
         var routeEdges = function () {
-            d3cola.prepareEdgeRouting(margin/3);
+            d3cola.prepareEdgeRouting(EDGE_ROUTING_MARGIN);
             path.attr("d", function (d) {
                 return lineFunction(d3cola.routeEdge(d)
                     // // show visibility graph
@@ -112,24 +123,33 @@ function draw_graph () {
         d3cola.start(10,20,20);
 
         d3cola.on("tick", function () {
-            node.each(function (d) { d.innerBounds = d.bounds.inflate(-margin); })
-                .attr("transform", function (d) {
-                    return "translate(" +
-                        d.innerBounds.x + "," +
-                        d.innerBounds.y + ")";
-                })
-                .attr("width",  function (d) { return d.innerBounds.width(); })
-                .attr("height", function (d) { return d.innerBounds.height(); });
+            node.each(function (d) {
+                // cola sets the bounds property which is a Rectangle
+                // representing the space which other nodes should not
+                // overlap.  The innerBounds property seems to tell
+                // cola the Rectangle which is the visible part of the
+                // node, minus any blank margin.
+                d.innerBounds = d.bounds.inflate(-MARGIN);
+            });
+
+            node.attr("transform", function (d) {
+                return "translate(" +
+                    d.innerBounds.x + "," +
+                    d.innerBounds.y + ")";
+            });
 
             path.each(function (d) {
                 if (isIE()) this.parentNode.insertBefore(this, this);
             });
             path.attr("d", function (d) {
+                // Undocumented: https://github.com/tgdwyer/WebCola/issues/52
                 cola.vpsc.makeEdgeBetween(
                     d,
                     d.source.innerBounds,
                     d.target.innerBounds,
-                    5  // distance of arrow tip from object it points at
+                    // This value is related to but not equal to the
+                    // distance of arrow tip from object it points at:
+                    5
                 );
                 var lineData = [
                     { x: d.sourceIntersection.x, y: d.sourceIntersection.y },
@@ -137,9 +157,6 @@ function draw_graph () {
                 ];
                 return lineFunction(lineData);
             });
-
-            label.attr("x", function (d) { return d.bounds.width() / 2; })
-                 .attr("y", function (d) { return d.bounds.height() / 2; });
         });
 
         // d3cola.on("end", routeEdges);
