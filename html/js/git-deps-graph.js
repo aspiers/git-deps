@@ -1,11 +1,11 @@
-var width = 960,
-    height = 500;
+var WIDTH = 960,
+    HEIGHT = 500;
 
 var color = d3.scale.category20();
 
 var d3cola = cola.d3adaptor()
     .avoidOverlaps(true)
-    .size([width, height]);
+    .size([WIDTH, HEIGHT]);
 
 var svg, fg;
 
@@ -15,8 +15,8 @@ jQuery(function () {
 
 function draw_graph () {
     svg = d3.select("body").append("svg")
-        .attr("width", width)
-        .attr("height", height);
+        .attr("width", WIDTH)
+        .attr("height", HEIGHT);
 
     svg.append('rect')
         .attr('class', 'background')
