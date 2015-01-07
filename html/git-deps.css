@@ -17,6 +17,7 @@ g.node text {
     text-anchor: middle;
     alignment-baseline: middle;
     cursor: pointer;
+    pointer-events: none;
 }
 
 .link {
