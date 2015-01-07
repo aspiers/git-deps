@@ -66,6 +66,10 @@ function draw_graph () {
                 .attr("class", "node")
                 .call(d3cola.drag);
 
+        // Initialize tooltip
+        var tip = d3.tip().attr('class', 'd3-tip').html(tip_html);
+        fg.call(tip);
+
         var rect = node.append("rect")
             .attr("rx", 5).attr("ry", 5);
 
@@ -86,11 +90,16 @@ function draw_graph () {
         //     .text(function (d) { return d.name; });
 
         rect.attr('width',  function (d, i) { return d.rect_width;  })
-            .attr('height', function (d, i) { return d.rect_height; });
+            .attr('height', function (d, i) { return d.rect_height; })
+            .on('mouseover', tip.show)
+            .on('mouseout',  tip.hide);
 
         // Centre label
-        label.attr("x", function (d) { return d.rect_width  / 2; })
-             .attr("y", function (d) { return d.rect_height / 2; });
+        label
+            .attr("x", function (d) { return d.rect_width  / 2; })
+            .attr("y", function (d) { return d.rect_height / 2; })
+            .on('mouseover', tip.show)
+            .on('mouseout',  tip.hide);
 
         d3cola.start(10,20,20);
 
@@ -144,6 +153,10 @@ function draw_graph () {
         //    }
         // });
     });
+}
+
+function tip_html (d) {
+    return d.describe || d.sha;
 }
 
 var lineFunction = d3.svg.line()
