@@ -67,6 +67,11 @@ to reflect the code changes in commit A.  (Although of course it's
 usually best practice to logically group such changes together in a
 single commit.)  But this should not stop it from being useful.
 
+Installation
+------------
+
+Just copy or symlink `git-deps` so it's anywhere on your `$PATH`.
+
 Usage
 -----
 
