@@ -25,11 +25,11 @@ function draw_graph () {
         .attr('class', 'background')
         .attr('width', "100%")
         .attr('height', "100%")
-        .call(d3.behavior.zoom().on("zoom", redraw));
+        .call(d3.behavior.zoom().on("zoom", redraw_on_zoom));
 
     fg = svg.append('g');
 
-    function redraw() {
+    function redraw_on_zoom () {
         fg.attr("transform",
                 "translate(" + d3.event.translate + ")" +
                 " scale(" + d3.event.scale + ")");
