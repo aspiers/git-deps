@@ -10,6 +10,8 @@ var d3cola = cola.d3adaptor()
     .avoidOverlaps(true)
     .size([WIDTH, HEIGHT]);
 
+var cola_initialized = false;
+
 // The list of nodes, links, and constraints to feed into WebCola.
 // These will be dynamically built as we retrieve them via XHR.
 var nodes = [], links = [], constraints = [];
@@ -175,23 +177,32 @@ function init_svg() {
     fg = svg.append('g');
 }
 
+function init_cola() {
+    if (cola_initialized)
+        return;
+
+    d3cola
+        .nodes(nodes)
+        .links(links)
+        .flowLayout("y", 150)
+        .symmetricDiffLinkLengths(30);
+        //.jaccardLinkLengths(100);
+
+    define_arrow_markers(fg);
+
+    cola_initialized = true;
+}
+
 function draw_graph(commitish) {
     d3.json("deps.json/" + commitish, function (error, data) {
         var new_data = add_data(data);
+
+        init_cola();
 
         if (! new_data) {
             noty_warn('No new commits or dependencies found!');
             return;
         }
-
-        d3cola
-            .nodes(nodes)
-            .links(links)
-            .flowLayout("y", 150)
-            .symmetricDiffLinkLengths(30);
-            //.jaccardLinkLengths(100);
-
-        define_arrow_markers(fg);
 
         path = fg.selectAll(".link")
             .data(links, function (d) {
