@@ -166,12 +166,16 @@ function draw_graph (commitish) {
             .attr('fill', '#000');
 
         path = fg.selectAll(".link")
-            .data(links)
+            .data(links, function (d) {
+                return d.source + " " + d.target;
+            })
           .enter().append('svg:path')
             .attr('class', 'link');
 
         node = fg.selectAll(".node")
-            .data(nodes)
+            .data(nodes, function (d) {
+                return d.sha;
+            })
           .enter().append("g")
             .attr("class", "node")
             .call(d3cola.drag);
