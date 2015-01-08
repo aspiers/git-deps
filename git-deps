@@ -238,10 +238,7 @@ class JSONDependencyListener(DependencyListener):
         self._json['dependencies'].append(new_dependency)
 
     def json(self):
-        return json.dumps(self._json, sort_keys=True, indent=4)
-
-    def all_done(self):
-        print(self.json())
+        return self._json
 
 
 class DependencyDetector(object):
@@ -616,8 +613,11 @@ def cli(options, args):
         except KeyboardInterrupt:
             pass
 
+    if options.json:
+        print(json.dumps(listener.json(), sort_keys=True, indent=4))
 
-def serve():
+
+def serve(options):
     try:
         import flask
         from flask import Flask, send_file, safe_join
@@ -653,6 +653,13 @@ def serve():
         route = '/%s/<path:filename>' % subdir
         webserver.add_url_rule(route, subdir + '_handler', fn)
 
+    @webserver.route('/deps.json/<commitish>')
+    def deps(commitish):
+        listener = JSONDependencyListener(options)
+        detector = DependencyDetector(options, listener=listener)
+        detector.find_dependencies(commitish)
+        return flask.json.jsonify(listener.json())
+
     webserver.run()
 
 
@@ -661,7 +668,7 @@ def main():
     # rev_list = sys.stdin.readlines()
 
     if options.serve:
-        serve()
+        serve(options)
     else:
         cli(options, args)
 
