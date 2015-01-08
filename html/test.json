@@ -83,49 +83,148 @@
     ], 
     "nodes": [
         {
+            "author_mail": "git@adamspiers.org", 
+            "author_name": "Adam Spiers", 
+            "author_offset": 0, 
+            "author_time": 1420486941, 
+            "body": "This creates the JSON which will eventually be consumed by\nthe Javascript visualizer.\n", 
+            "committer_mail": "git@adamspiers.org", 
+            "committer_name": "Adam Spiers", 
+            "committer_offset": 0, 
+            "committer_time": 1420487137, 
             "describe": "tags/test-0", 
             "name": "2b6d591", 
-            "sha": "2b6d5915f6433b9eb1685751b82cfbebcbb37981"
+            "separator": "\n", 
+            "sha": "2b6d5915f6433b9eb1685751b82cfbebcbb37981", 
+            "title": "add JSON listener"
         }, 
         {
+            "author_mail": "git@adamspiers.org", 
+            "author_name": "Adam Spiers", 
+            "author_offset": -300, 
+            "author_time": 1384447153, 
+            "body": "Automatic git commit dependency inference tool.\n\nOriginally committed to:\n\n  https://github.com/aspiers/git-config/blob/master/bin/git-deps\n\nand then split off into this repository via git filter-branch\nand other hackery, preserving history.\n", 
+            "committer_mail": "git@adamspiers.org", 
+            "committer_name": "Adam Spiers", 
+            "committer_offset": 0, 
+            "committer_time": 1420476874, 
             "describe": "", 
             "name": "b196757", 
-            "sha": "b1967573e81a8100a4cc778936de0ba0a8a8f5cb"
+            "separator": "\n", 
+            "sha": "b1967573e81a8100a4cc778936de0ba0a8a8f5cb", 
+            "title": "first prototype of git-deps"
         }, 
         {
+            "author_mail": "git@adamspiers.org", 
+            "author_name": "Adam Spiers", 
+            "author_offset": -300, 
+            "author_time": 1384471712, 
+            "body": "", 
+            "committer_mail": "git@adamspiers.org", 
+            "committer_name": "Adam Spiers", 
+            "committer_offset": 0, 
+            "committer_time": 1420477027, 
             "describe": "", 
             "name": "3a1dd42", 
-            "sha": "3a1dd42fd6114a634ba7cf037ce61e2aee76db73"
+            "separator": "\n", 
+            "sha": "3a1dd42fd6114a634ba7cf037ce61e2aee76db73", 
+            "title": "add logging and recursion"
         }, 
         {
+            "author_mail": "git@adamspiers.org", 
+            "author_name": "Adam Spiers", 
+            "author_offset": -300, 
+            "author_time": 1384563102, 
+            "body": "", 
+            "committer_mail": "git@adamspiers.org", 
+            "committer_name": "Adam Spiers", 
+            "committer_offset": 0, 
+            "committer_time": 1420477027, 
             "describe": "", 
             "name": "3374b84", 
-            "sha": "3374b8419a45d91d3c0631be11c8cf893b272217"
+            "separator": "\n", 
+            "sha": "3374b8419a45d91d3c0631be11c8cf893b272217", 
+            "title": "add listener classes"
         }, 
         {
+            "author_mail": "git@adamspiers.org", 
+            "author_name": "Adam Spiers", 
+            "author_offset": 0, 
+            "author_time": 1420483579, 
+            "body": "", 
+            "committer_mail": "git@adamspiers.org", 
+            "committer_name": "Adam Spiers", 
+            "committer_offset": 0, 
+            "committer_time": 1420483579, 
             "describe": "", 
             "name": "ff82dda", 
-            "sha": "ff82dda196947650bd497301e61b282753193564"
+            "separator": "\n", 
+            "sha": "ff82dda196947650bd497301e61b282753193564", 
+            "title": "fix a bunch of PEP8 issues"
         }, 
         {
+            "author_mail": "git@adamspiers.org", 
+            "author_name": "Adam Spiers", 
+            "author_offset": -300, 
+            "author_time": 1384579026, 
+            "body": "", 
+            "committer_mail": "git@adamspiers.org", 
+            "committer_name": "Adam Spiers", 
+            "committer_offset": 0, 
+            "committer_time": 1420477028, 
             "describe": "", 
             "name": "8d44254", 
-            "sha": "8d442544a20b706b996d66ab390a16fd97b48d6d"
+            "separator": "\n", 
+            "sha": "8d442544a20b706b996d66ab390a16fd97b48d6d", 
+            "title": "use new-style classes"
         }, 
         {
+            "author_mail": "git@adamspiers.org", 
+            "author_name": "Adam Spiers", 
+            "author_offset": -300, 
+            "author_time": 1384452615, 
+            "body": "", 
+            "committer_mail": "git@adamspiers.org", 
+            "committer_name": "Adam Spiers", 
+            "committer_offset": 0, 
+            "committer_time": 1420477027, 
             "describe": "", 
             "name": "b144bfd", 
-            "sha": "b144bfd5feb327ef7ce0c26bbfb6f4da573abfe5"
+            "separator": "\n", 
+            "sha": "b144bfd5feb327ef7ce0c26bbfb6f4da573abfe5", 
+            "title": "refactor into new DependencyDetector class"
         }, 
         {
+            "author_mail": "git@adamspiers.org", 
+            "author_name": "Adam Spiers", 
+            "author_offset": 0, 
+            "author_time": 1420482533, 
+            "body": "", 
+            "committer_mail": "git@adamspiers.org", 
+            "committer_name": "Adam Spiers", 
+            "committer_offset": 0, 
+            "committer_time": 1420482533, 
             "describe": "", 
             "name": "e406002", 
-            "sha": "e40600230d1c3059485437bd4d5690d61c9edb2f"
+            "separator": "\n", 
+            "sha": "e40600230d1c3059485437bd4d5690d61c9edb2f", 
+            "title": "don't show \"[False]\" default for boolean options"
         }, 
         {
+            "author_mail": "git@adamspiers.org", 
+            "author_name": "Adam Spiers", 
+            "author_offset": -300, 
+            "author_time": 1384650040, 
+            "body": "", 
+            "committer_mail": "git@adamspiers.org", 
+            "committer_name": "Adam Spiers", 
+            "committer_offset": 0, 
+            "committer_time": 1420477028, 
             "describe": "", 
             "name": "4f27a1e", 
-            "sha": "4f27a1ee2b5fd63a58311a20e2aed0a24eda8da2"
+            "separator": "\n", 
+            "sha": "4f27a1ee2b5fd63a58311a20e2aed0a24eda8da2", 
+            "title": "add --exclude-commits"
         }
     ]
 }
