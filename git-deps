@@ -625,7 +625,6 @@ def serve(options):
         abort("Cannot find flask module which is required for webserver mode.")
 
     webserver = Flask("git-deps")
-    webserver.debug = True
 
     @webserver.route('/')
     def main_page():
@@ -660,7 +659,15 @@ def serve(options):
         detector.find_dependencies(commitish)
         return flask.json.jsonify(listener.json())
 
-    webserver.run()
+    # We don't want to see double-decker warnings, so check
+    # WERKZEUG_RUN_MAIN which is only set for the first startup, not
+    # on app reloads.
+    if options.debug and not os.getenv('WERKZEUG_RUN_MAIN'):
+        print("!! WARNING!  Debug mode enabled, so webserver is completely "
+              "insecure!")
+        print("!! Arbitrary code can be executed from browser!")
+        print()
+    webserver.run(debug=options.debug)
 
 
 def main():
