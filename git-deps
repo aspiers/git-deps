@@ -658,6 +658,10 @@ def serve(options):
     ##########################################################
     # Dynamic content
 
+    @webserver.route('/options')
+    def send_options():
+        return flask.json.jsonify(options.__dict__)
+
     @webserver.route('/deps.json/<commitish>')
     def deps(commitish):
         listener = JSONDependencyListener(options)

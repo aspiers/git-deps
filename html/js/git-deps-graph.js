@@ -28,10 +28,18 @@ var deps = {};
 // d3 visualization elements.  Kept global to aid in-browser debugging.
 var svg, fg, node, path, tip, tip_template;
 
+// Options will be retrieved from web server
+var options;
+
 jQuery(function () {
+    d3.json('options', function (error, data) {
+        options = data;
+    });
+
     d3.html('tip-template.html', function (error, html) {
         tip_template = html;
     });
+
     //setup_default_form_values();
     $('form.commitish').submit(function (event) {
         event.preventDefault();
