@@ -1,3 +1,7 @@
+body {
+    font-family: Helvetica, arial, freesans, clean, sans-serif, 'Segoe UI Emoji', 'Segoe UI Symbol';
+}
+
 rect.background {
     fill: white;
     cursor: move;
