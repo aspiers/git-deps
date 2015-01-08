@@ -10,6 +10,22 @@ var d3cola = cola.d3adaptor()
     .avoidOverlaps(true)
     .size([WIDTH, HEIGHT]);
 
+// The list of nodes, links, and constraints to feed into WebCola.
+// These will be dynamically built as we retrieve them via XHR.
+var nodes = [], links = [], constraints = [];
+
+// WebCola requires links to refer to nodes by index within the
+// nodes array, so as nodes are dynamically added, we need to
+// be able to retrieve their index efficiently in order to add
+// links to/from them.
+var node_index = {};
+
+// Constraints will be added to try to keep siblings at the same y
+// position.  For this we need to track siblings, which we do by
+// mapping each parent to an array of its siblings in this hash:
+var deps = {};
+
+// d3 visualization elements.  Kept global to aid in-browser debugging.
 var svg, fg, node, path, tip, tip_template;
 
 jQuery(function () {
@@ -25,6 +41,64 @@ function redraw_on_zoom () {
             " scale(" + d3.event.scale + ")");
 }
 
+function add_node (commit) {
+    if (commit.sha in node_index) {
+        return;
+    }
+    nodes.push(commit);
+    node_index[commit.sha] = nodes.length - 1;
+}
+
+function add_link (parent_sha, child_sha) {
+    var pi = node_index[parent_sha];
+    var ci = node_index[child_sha];
+
+    var link = {
+        source: pi,
+        target: ci,
+        value: 1   // no idea what WebCola needs this for
+    };
+    links.push(link);
+
+    if (! (parent_sha in deps)) {
+        deps[parent_sha] = {};
+    }
+    deps[parent_sha][child_sha] = true;
+}
+
+function build_constraints () {
+    constraints = [];  // FIXME: only rebuild constraints which changed
+    for (var parent_sha in deps) {
+        constraints.push(build_constraint(parent_sha));
+    }
+}
+
+function build_constraint (parent_sha) {
+    constraint = {
+        axis: 'x',
+        type: 'alignment',
+        offsets: []
+    };
+    for (var child_sha in deps[parent_sha]) {
+        constraint.offsets.push({
+            node: node_index[child_sha],
+            offset: 0
+        });
+    }
+    return constraint;
+}
+
+function add_data (data) {
+    for (var i in data.commits) {
+        add_node(data.commits[i]);
+    }
+    for (var i in data.dependencies) {
+        var dep = data.dependencies[i];
+        add_link(dep.parent, dep.child);
+    }
+    build_constraints();
+}
+
 function draw_graph () {
     svg = d3.select("body").append("svg")
         .attr("width", WIDTH)
@@ -38,10 +112,12 @@ function draw_graph () {
 
     fg = svg.append('g');
 
-    d3.json("test.json", function (error, graph) {
+    d3.json("test.json", function (error, data) {
+        add_data(data);
+
         d3cola
-            .nodes(graph.nodes)
-            .links(graph.links)
+            .nodes(nodes)
+            .links(links)
             .flowLayout("y", 150)
             .symmetricDiffLinkLengths(30);
             //.jaccardLinkLengths(100);
@@ -59,12 +135,12 @@ function draw_graph () {
             .attr('fill', '#000');
 
         path = fg.selectAll(".link")
-            .data(graph.links)
+            .data(links)
           .enter().append('svg:path')
             .attr('class', 'link');
 
         node = fg.selectAll(".node")
-            .data(graph.nodes)
+            .data(nodes)
           .enter().append("g")
             .attr("class", "node")
             .call(d3cola.drag);
@@ -124,7 +200,7 @@ function position_nodes (rect, label, tip) {
     // turn on overlap avoidance after first convergence
     // d3cola.on("end", function () {
     //    if (!d3cola.avoidOverlaps()) {
-    //        graph.nodes.forEach(function (v) {
+    //        nodes.forEach(function (v) {
     //            v.width = v.height = 10;
     //        });
     //        d3cola.avoidOverlaps(true);

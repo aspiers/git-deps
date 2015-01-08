@@ -1,216 +1,5 @@
 {
-    "constraints": [
-        {
-            "axis": "x", 
-            "offsets": [
-                {
-                    "node": 21, 
-                    "offset": 0
-                }
-            ], 
-            "type": "alignment"
-        }, 
-        {
-            "axis": "x", 
-            "offsets": [
-                {
-                    "node": 1, 
-                    "offset": 0
-                }, 
-                {
-                    "node": 2, 
-                    "offset": 100
-                }, 
-                {
-                    "node": 3, 
-                    "offset": 200
-                }, 
-                {
-                    "node": 4, 
-                    "offset": 300
-                }, 
-                {
-                    "node": 5, 
-                    "offset": 400
-                }, 
-                {
-                    "node": 6, 
-                    "offset": 500
-                }, 
-                {
-                    "node": 7, 
-                    "offset": 600
-                }, 
-                {
-                    "node": 8, 
-                    "offset": 700
-                }
-            ], 
-            "type": "alignment"
-        }, 
-        {
-            "axis": "x", 
-            "offsets": [
-                {
-                    "node": 9, 
-                    "offset": 0
-                }, 
-                {
-                    "node": 10, 
-                    "offset": 100
-                }, 
-                {
-                    "node": 11, 
-                    "offset": 200
-                }, 
-                {
-                    "node": 12, 
-                    "offset": 300
-                }, 
-                {
-                    "node": 13, 
-                    "offset": 400
-                }, 
-                {
-                    "node": 14, 
-                    "offset": 500
-                }, 
-                {
-                    "node": 15, 
-                    "offset": 600
-                }, 
-                {
-                    "node": 16, 
-                    "offset": 700
-                }, 
-                {
-                    "node": 17, 
-                    "offset": 800
-                }, 
-                {
-                    "node": 18, 
-                    "offset": 900
-                }, 
-                {
-                    "node": 19, 
-                    "offset": 1000
-                }, 
-                {
-                    "node": 20, 
-                    "offset": 1100
-                }
-            ], 
-            "type": "alignment"
-        }
-    ], 
-    "links": [
-        {
-            "source": 0, 
-            "target": 1, 
-            "value": 1
-        }, 
-        {
-            "source": 0, 
-            "target": 2, 
-            "value": 1
-        }, 
-        {
-            "source": 0, 
-            "target": 3, 
-            "value": 1
-        }, 
-        {
-            "source": 0, 
-            "target": 4, 
-            "value": 1
-        }, 
-        {
-            "source": 0, 
-            "target": 5, 
-            "value": 1
-        }, 
-        {
-            "source": 0, 
-            "target": 6, 
-            "value": 1
-        }, 
-        {
-            "source": 0, 
-            "target": 7, 
-            "value": 1
-        }, 
-        {
-            "source": 0, 
-            "target": 8, 
-            "value": 1
-        }, 
-        {
-            "source": 4, 
-            "target": 9, 
-            "value": 1
-        }, 
-        {
-            "source": 4, 
-            "target": 10, 
-            "value": 1
-        }, 
-        {
-            "source": 4, 
-            "target": 11, 
-            "value": 1
-        }, 
-        {
-            "source": 4, 
-            "target": 12, 
-            "value": 1
-        }, 
-        {
-            "source": 4, 
-            "target": 13, 
-            "value": 1
-        }, 
-        {
-            "source": 4, 
-            "target": 14, 
-            "value": 1
-        }, 
-        {
-            "source": 4, 
-            "target": 15, 
-            "value": 1
-        }, 
-        {
-            "source": 4, 
-            "target": 16, 
-            "value": 1
-        }, 
-        {
-            "source": 4, 
-            "target": 17, 
-            "value": 1
-        }, 
-        {
-            "source": 4, 
-            "target": 18, 
-            "value": 1
-        }, 
-        {
-            "source": 4, 
-            "target": 19, 
-            "value": 1
-        }, 
-        {
-            "source": 4, 
-            "target": 20, 
-            "value": 1
-        }, 
-        {
-            "source": 11, 
-            "target": 21, 
-            "value": 1
-        }
-    ], 
-    "nodes": [
+    "commits": [
         {
             "author_mail": "git@adamspiers.org", 
             "author_name": "Adam Spiers", 
@@ -562,6 +351,92 @@
             "separator": "\n", 
             "sha": "43649442f49876ad22051b085a9258f39bbcd5c6", 
             "title": "fix error message"
+        }
+    ], 
+    "dependencies": [
+        {
+            "child": "b1967573e81a8100a4cc778936de0ba0a8a8f5cb", 
+            "parent": "2b6d5915f6433b9eb1685751b82cfbebcbb37981"
+        }, 
+        {
+            "child": "3a1dd42fd6114a634ba7cf037ce61e2aee76db73", 
+            "parent": "2b6d5915f6433b9eb1685751b82cfbebcbb37981"
+        }, 
+        {
+            "child": "3374b8419a45d91d3c0631be11c8cf893b272217", 
+            "parent": "2b6d5915f6433b9eb1685751b82cfbebcbb37981"
+        }, 
+        {
+            "child": "ff82dda196947650bd497301e61b282753193564", 
+            "parent": "2b6d5915f6433b9eb1685751b82cfbebcbb37981"
+        }, 
+        {
+            "child": "8d442544a20b706b996d66ab390a16fd97b48d6d", 
+            "parent": "2b6d5915f6433b9eb1685751b82cfbebcbb37981"
+        }, 
+        {
+            "child": "b144bfd5feb327ef7ce0c26bbfb6f4da573abfe5", 
+            "parent": "2b6d5915f6433b9eb1685751b82cfbebcbb37981"
+        }, 
+        {
+            "child": "e40600230d1c3059485437bd4d5690d61c9edb2f", 
+            "parent": "2b6d5915f6433b9eb1685751b82cfbebcbb37981"
+        }, 
+        {
+            "child": "4f27a1ee2b5fd63a58311a20e2aed0a24eda8da2", 
+            "parent": "2b6d5915f6433b9eb1685751b82cfbebcbb37981"
+        }, 
+        {
+            "child": "824f84cd594254d0c87f330b855153fc5ffe5ad3", 
+            "parent": "ff82dda196947650bd497301e61b282753193564"
+        }, 
+        {
+            "child": "62409395e260ad01f9ae7b84869f5516ef80c7aa", 
+            "parent": "ff82dda196947650bd497301e61b282753193564"
+        }, 
+        {
+            "child": "5071249715e82dcf3c1db12eec28c1232aba2142", 
+            "parent": "ff82dda196947650bd497301e61b282753193564"
+        }, 
+        {
+            "child": "6e86e8b7f648bd6a3a6d3216aa5899414b65cbed", 
+            "parent": "ff82dda196947650bd497301e61b282753193564"
+        }, 
+        {
+            "child": "acc24a404d82061bbc6db5afb146d83bf131830b", 
+            "parent": "ff82dda196947650bd497301e61b282753193564"
+        }, 
+        {
+            "child": "5ec5ccbdff508014c61ae9d18f3366a15c0f2689", 
+            "parent": "ff82dda196947650bd497301e61b282753193564"
+        }, 
+        {
+            "child": "f2cddb4aa00de4ddff2cdca251758e25e95e04ad", 
+            "parent": "ff82dda196947650bd497301e61b282753193564"
+        }, 
+        {
+            "child": "1b66efa173a19a8b4c0c47274a1b9cdd8b9912af", 
+            "parent": "ff82dda196947650bd497301e61b282753193564"
+        }, 
+        {
+            "child": "80c247fd21a1e7f476d1c8ba289498e216eff3dc", 
+            "parent": "ff82dda196947650bd497301e61b282753193564"
+        }, 
+        {
+            "child": "2ebcb2b6081e32e9a463519525bd432287b24520", 
+            "parent": "ff82dda196947650bd497301e61b282753193564"
+        }, 
+        {
+            "child": "f7bf058439fd7499aad7a10418a9f516e6949fbc", 
+            "parent": "ff82dda196947650bd497301e61b282753193564"
+        }, 
+        {
+            "child": "2a05400e232e14f0d4c1cbfb548a0871ea57bd44", 
+            "parent": "ff82dda196947650bd497301e61b282753193564"
+        }, 
+        {
+            "child": "43649442f49876ad22051b085a9258f39bbcd5c6", 
+            "parent": "5071249715e82dcf3c1db12eec28c1232aba2142"
         }
     ]
 }

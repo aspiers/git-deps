@@ -127,26 +127,22 @@ class CLIDependencyListener(DependencyListener):
 
 class JSONDependencyListener(DependencyListener):
     """Dependency listener for use when compiling graph data in a JSON
-    format which can be consumed by WebCola / d3.  Each new node has
-    to be added to a 'nodes' array, and its index in that array needs
-    to be tracked so that we can refer to the node by index when
-    specifying links between nodes.
+    format which can be consumed by WebCola / d3.  Each new commit has
+    to be added to a 'commits' array.
     """
 
     def __init__(self, options):
         super(JSONDependencyListener, self).__init__(options)
 
-        # Map node names to indices in the nodes array
-        self._nodes = {}
-
-        # Maps node names to child node names.  This will be used to
-        # constrain siblings to the same y position.
-        self._deps = {}
+        # Map commit names to indices in the commits array.  This is used
+        # to avoid the risk of duplicates in the commits array, which
+        # could happen when recursing, since multiple commits could
+        # potentially depend on the same commit.
+        self._commits = {}
 
         self._json = {
-            'nodes': [],
-            'links': [],
-            'constraints': [],
+            'commits': [],
+            'dependencies': [],
         }
 
     def abbreviate_sha(self, sha):
@@ -192,15 +188,16 @@ class JSONDependencyListener(DependencyListener):
         # self.logger.debug(out)
         return out
 
-    def add_node(self, commit):
-        """Adds the node to the nodes array if it doesn't already exist, and
-        returns the node's index in the array."""
+    def add_commit(self, commit):
+        """Adds the commit to the commits array if it doesn't already exist,
+        and returns the commit's index in the array.
+        """
         sha = commit.hex
         abbrev = self.abbreviate_sha(sha)
-        if sha in self._nodes:
-            return self._nodes[sha]
+        if sha in self._commits:
+            return self._commits[sha]
         title, separator, body = commit.message.partition("\n")
-        node = {
+        commit = {
             'name': abbrev,
             'sha': sha,
             'describe': self.describe(sha),
@@ -217,53 +214,30 @@ class JSONDependencyListener(DependencyListener):
             'separator': separator,
             'body': body.lstrip("\n"),
         }
-        self._json['nodes'].append(node)
-        self._nodes[sha] = len(self._json['nodes']) - 1
-        return self._nodes[sha]
+        self._json['commits'].append(commit)
+        self._commits[sha] = len(self._json['commits']) - 1
+        return self._commits[sha]
 
     def add_link(self, source, target):
-        self._json['links'].append
+        self._json['dependencies'].append
 
     def new_dependency(self, parent, child, path, line_num):
-        source_index = self.add_node(parent)
-        target_index = self.add_node(child)
+        ph = parent.hex
+        ch = child.hex
+        self.add_commit(parent)
+        self.add_commit(child)
 
-        new_link = {
-            'source': source_index,
-            'target': target_index,
-            'value': 1,
+        new_dependency = {
+            'parent': ph,
+            'child': ch,
         }
 
         if self.options.log:
             pass  # FIXME
 
-        self._json['links'].append(new_link)
-
-        ph = parent.hex
-        ch = child.hex
-        if ph not in self._deps:
-            self._deps[ph] = []
-        self._deps[ph].append(ch)
+        self._json['dependencies'].append(new_dependency)
 
     def json(self):
-        for parent, children in self._deps.iteritems():
-            # Try progressive offsets as suggested here:
-            # https://github.com/tgdwyer/WebCola/issues/47#issuecomment-68980159
-            # Doesn't seem to make any difference though.
-            offset = 0
-            constraint = {
-                'axis': 'x',
-                'type': 'alignment',
-                'offsets': [],
-            }
-            for child in children:
-                constraint['offsets'].append({
-                    'node': self._nodes[child],
-                    'offset': offset
-                })
-                offset += 100
-            self._json['constraints'].append(constraint)
-
         return json.dumps(self._json, sort_keys=True, indent=4)
 
     def all_done(self):
