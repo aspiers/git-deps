@@ -17,12 +17,14 @@ var nodes = [], links = [], constraints = [];
 // WebCola requires links to refer to nodes by index within the
 // nodes array, so as nodes are dynamically added, we need to
 // be able to retrieve their index efficiently in order to add
-// links to/from them.
+// links to/from them.  This also allows us to avoid adding the
+// same node twice.
 var node_index = {};
 
 // Constraints will be added to try to keep siblings at the same y
 // position.  For this we need to track siblings, which we do by
-// mapping each parent to an array of its siblings in this hash:
+// mapping each parent to an array of its siblings in this hash.
+// It also enables us to deduplicate links across multiple XHRs.
 var deps = {};
 
 // d3 visualization elements.  Kept global to aid in-browser debugging.
@@ -71,14 +73,17 @@ function redraw_on_zoom() {
             " scale(" + d3.event.scale + ")");
 }
 
+// Returns 1 iff a link was added, otherwise 0.
 function add_node(commit) {
     if (commit.sha in node_index) {
-        return;
+        return 0;
     }
     nodes.push(commit);
     node_index[commit.sha] = nodes.length - 1;
+    return 1;
 }
 
+// Returns 1 iff a link was added, otherwise 0.
 function add_link(parent_sha, child_sha) {
     var pi = node_index[parent_sha];
     var ci = node_index[child_sha];
@@ -88,12 +93,19 @@ function add_link(parent_sha, child_sha) {
         target: ci,
         value: 1   // no idea what WebCola needs this for
     };
-    links.push(link);
 
     if (! (parent_sha in deps)) {
         deps[parent_sha] = {};
     }
+    if (child_sha in deps[parent_sha]) {
+        // We've already got this link, presumably
+        // from a previous XHR.
+        return 0;
+    }
+
     deps[parent_sha][child_sha] = true;
+    links.push(link);
+    return 1;
 }
 
 function build_constraints() {
@@ -119,14 +131,25 @@ function build_constraint(parent_sha) {
     return constraint;
 }
 
+// Returns true iff new data was added.
 function add_data(data) {
+    var new_nodes = 0, new_links = 0;
     $.each(data.commits, function (i, commit) {
-        add_node(commit);
+        new_nodes += add_node(commit);
     });
     $.each(data.dependencies, function (i, dep) {
-        add_link(dep.parent, dep.child);
+        new_links += add_link(dep.parent, dep.child);
     });
-    build_constraints();
+
+    if (new_nodes > 0 || new_links > 0) {
+        if (options.debug) {
+            noty_debug(new_nodes + " new node(s), " +
+                       new_links + " new link(s)");
+        }
+        build_constraints();
+        return true;
+    }
+    return false;
 }
 
 function add_commitish(commitish) {
@@ -150,9 +173,41 @@ function init_svg() {
     fg = svg.append('g');
 }
 
+// Different noty types:
+// alert, success, error, warning, information, confirmation
+function noty_warn(text) {
+    notyfication('warning', text);
+}
+
+function noty_debug(text) {
+    notyfication('information', text);
+}
+
+// Haha, did you see what I did here?
+function notyfication(type, text) {
+    var n = noty({
+        text: text,
+        type: type,
+        layout: 'topRight',
+        theme: 'relax',
+        timeout: 30000,  // ms
+        animation: {
+            open: 'animated bounceInUp',   // Animate.css class names
+            close: 'animated bounceOutUp', // Animate.css class names
+            easing: 'swing',               // unavailable - no need
+            speed: 500                     // unavailable - no need
+        }
+    });
+}
+
 function draw_graph(commitish) {
     d3.json("deps.json/" + commitish, function (error, data) {
-        add_data(data);
+        var new_data = add_data(data);
+
+        if (! new_data) {
+            noty_warn('No new commits or dependencies found!');
+            return;
+        }
 
         d3cola
             .nodes(nodes)
