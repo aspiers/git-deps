@@ -39,8 +39,8 @@ jQuery(function () {
     });
 });
 
-function setup_default_form_values () {
-    $('input[type=text]').each( function () {
+function setup_default_form_values() {
+    $('input[type=text]').each(function () {
         $(this).val($(this).attr('defaultValue'));
         $(this).css({color: 'grey'});
     }).focus(function () {
@@ -57,13 +57,13 @@ function setup_default_form_values () {
     });
 }
 
-function redraw_on_zoom () {
+function redraw_on_zoom() {
     fg.attr("transform",
             "translate(" + d3.event.translate + ")" +
             " scale(" + d3.event.scale + ")");
 }
 
-function add_node (commit) {
+function add_node(commit) {
     if (commit.sha in node_index) {
         return;
     }
@@ -71,7 +71,7 @@ function add_node (commit) {
     node_index[commit.sha] = nodes.length - 1;
 }
 
-function add_link (parent_sha, child_sha) {
+function add_link(parent_sha, child_sha) {
     var pi = node_index[parent_sha];
     var ci = node_index[child_sha];
 
@@ -88,14 +88,14 @@ function add_link (parent_sha, child_sha) {
     deps[parent_sha][child_sha] = true;
 }
 
-function build_constraints () {
+function build_constraints() {
     constraints = [];  // FIXME: only rebuild constraints which changed
     for (var parent_sha in deps) {
         constraints.push(build_constraint(parent_sha));
     }
 }
 
-function build_constraint (parent_sha) {
+function build_constraint(parent_sha) {
     constraint = {
         axis: 'x',
         type: 'alignment',
@@ -110,7 +110,7 @@ function build_constraint (parent_sha) {
     return constraint;
 }
 
-function add_data (data) {
+function add_data(data) {
     for (var i in data.commits) {
         add_node(data.commits[i]);
     }
@@ -121,14 +121,14 @@ function add_data (data) {
     build_constraints();
 }
 
-function add_commitish (commitish) {
+function add_commitish(commitish) {
     if (! svg) {
         init_svg();
     }
     draw_graph(commitish);
 }
 
-function init_svg () {
+function init_svg() {
     svg = d3.select("body").append("svg")
         .attr("width", WIDTH)
         .attr("height", HEIGHT);
@@ -142,7 +142,7 @@ function init_svg () {
     fg = svg.append('g');
 }
 
-function draw_graph (commitish) {
+function draw_graph(commitish) {
     d3.json("deps.json/" + commitish, function (error, data) {
         add_data(data);
 
@@ -184,7 +184,7 @@ function draw_graph (commitish) {
     });
 }
 
-function draw_nodes (fg, node) {
+function draw_nodes(fg, node) {
     // Initialize tooltip
     tip = d3.tip().attr('class', 'd3-tip').html(tip_html);
     fg.call(tip);
@@ -213,7 +213,7 @@ function draw_nodes (fg, node) {
     position_nodes(rect, label, tip);
 }
 
-function position_nodes (rect, label, tip) {
+function position_nodes(rect, label, tip) {
     rect.attr('width',  function (d, i) { return d.rect_width;  })
         .attr('height', function (d, i) { return d.rect_height; })
         .on('mouseover', tip.show)
@@ -244,7 +244,7 @@ function position_nodes (rect, label, tip) {
     // });
 }
 
-function tip_html (d) {
+function tip_html(d) {
     var fragment = $(tip_template).clone();
     var title = fragment.find("p.commit-title");
     title.text(d.title);
@@ -265,7 +265,7 @@ function tip_html (d) {
     return fragment[0].children[0].outerHTML;
 }
 
-function tick_handler () {
+function tick_handler() {
     node.each(function (d) {
         // cola sets the bounds property which is a Rectangle
         // representing the space which other nodes should not
@@ -330,7 +330,7 @@ var routeEdges = function () {
     }
 };
 
-function isIE () {
+function isIE() {
     return (navigator.appName == 'Microsoft Internet Explorer') ||
             ((navigator.appName == 'Netscape') &&
              (new RegExp("Trident/.*rv:([0-9]{1,}[\.0-9]{0,})").exec(navigator.userAgent)
