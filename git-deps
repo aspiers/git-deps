@@ -626,6 +626,9 @@ def serve(options):
 
     webserver = Flask("git-deps")
 
+    ##########################################################
+    # Static content
+
     @webserver.route('/')
     def main_page():
         return send_file('html/git-deps.html')
@@ -651,6 +654,9 @@ def serve(options):
         fn = make_subdir_handler(subdir)
         route = '/%s/<path:filename>' % subdir
         webserver.add_url_rule(route, subdir + '_handler', fn)
+
+    ##########################################################
+    # Dynamic content
 
     @webserver.route('/deps.json/<commitish>')
     def deps(commitish):
