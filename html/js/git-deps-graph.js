@@ -32,8 +32,30 @@ jQuery(function () {
     d3.html('tip-template.html', function (error, html) {
         tip_template = html;
     });
-    draw_graph();
+    //setup_default_form_values();
+    $('form.commitish').submit(function (event) {
+        event.preventDefault();
+        add_commitish($('.commitish input').val());
+    });
 });
+
+function setup_default_form_values () {
+    $('input[type=text]').each( function () {
+        $(this).val($(this).attr('defaultValue'));
+        $(this).css({color: 'grey'});
+    }).focus(function () {
+        if ($(this).val() == $(this).attr('defaultValue')){
+            $(this).val('');
+            $(this).css({color: 'black'});
+        }
+    })
+    .blur(function () {
+        if ($(this).val() == '') {
+            $(this).val($(this).attr('defaultValue'));
+            $(this).css({color: 'grey'});
+        }
+    });
+}
 
 function redraw_on_zoom () {
     fg.attr("transform",
@@ -99,7 +121,14 @@ function add_data (data) {
     build_constraints();
 }
 
-function draw_graph () {
+function add_commitish (commitish) {
+    if (! svg) {
+        init_svg();
+    }
+    draw_graph(commitish);
+}
+
+function init_svg () {
     svg = d3.select("body").append("svg")
         .attr("width", WIDTH)
         .attr("height", HEIGHT);
@@ -111,8 +140,10 @@ function draw_graph () {
         .call(d3.behavior.zoom().on("zoom", redraw_on_zoom));
 
     fg = svg.append('g');
+}
 
-    d3.json("test.json", function (error, data) {
+function draw_graph (commitish) {
+    d3.json("deps.json/" + commitish, function (error, data) {
         add_data(data);
 
         d3cola

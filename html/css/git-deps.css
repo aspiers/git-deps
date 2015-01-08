@@ -29,3 +29,7 @@ g.node text {
     opacity: 0.4;
     marker-end: url(#end-arrow);
 }
+
+.commitish input {
+    font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+}
