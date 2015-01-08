@@ -72,11 +72,16 @@ Installation
 
 Just copy or symlink `git-deps` so it's anywhere on your `$PATH`.
 
-To install the required Javascript libraries, you will need
-[`npm`](https://www.npmjs.com/) installed, and then type:
+If you want to use the graph visualization web server functionality,
+you will need to install some dependencies:
 
-    cd html
-    npm install
+*   To install the required Javascript libraries, you will need
+    [`npm`](https://www.npmjs.com/) installed, and then type:
+
+        cd html
+        npm install
+*   You will need the [Flask](http://flask.pocoo.org/) Python
+    module installed.
 
 Usage
 -----
