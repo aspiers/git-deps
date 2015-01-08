@@ -143,16 +143,11 @@ function add_data(data) {
         new_links += add_link(dep.parent, dep.child);
     });
 
-    noty_info(data.root.commitish + " resolved as " + data.root.sha1);
-
     if (new_nodes > 0 || new_links > 0) {
-        if (options.debug) {
-            noty_debug(new_nodes + " new node(s), " +
-                       new_links + " new link(s)");
-        }
         build_constraints();
-        return true;
+        return [new_nodes, new_links, data.root];
     }
+
     return false;
 }
 
@@ -204,6 +199,8 @@ function draw_graph(commitish) {
             return;
         }
 
+        new_data_notification(new_data);
+
         path = fg.selectAll(".link")
             .data(links, function (d) {
                 return d.source + " " + d.target;
@@ -222,6 +219,27 @@ function draw_graph(commitish) {
 
         draw_nodes(fg, node);
     });
+}
+
+function new_data_notification(new_data) {
+    var new_nodes = new_data[0];
+    var new_links = new_data[1];
+    var root      = new_data[2];
+
+    var notification =
+            '<span class="commit-ref">' +
+            root.commitish +
+            '</span> resolved as ' + root.sha1;
+
+    notification += "<p>" + new_nodes + " new node";
+    if (new_nodes != 1)
+        notification += 's';
+    notification += "; " + new_links + " new link";
+    if (new_nodes != 1)
+        notification += 's';
+    notification += '</p>';
+
+    noty_info(notification);
 }
 
 function define_arrow_markers(fg) {
@@ -303,7 +321,7 @@ function tip_html(d) {
     if (d.describe != "") {
         title.append("  <span />");
         var describe = title.children().first();
-        describe.addClass("commit-describe").text(d.describe);
+        describe.addClass("commit-describe commit-ref").text(d.describe);
     }
     fragment.find("span.commit-author").text(d.author_name);
     var date = new Date(d.author_time * 1000);

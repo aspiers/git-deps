@@ -62,8 +62,6 @@
 }
 
 .d3-tip .commit-describe {
-    font-weight: bold;
-    color: #26894d;
     font-size: 12px;
     margin: 0.5em 0;
 }

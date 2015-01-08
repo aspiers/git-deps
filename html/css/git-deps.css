@@ -37,3 +37,8 @@ g.node text {
 .commitish input {
     font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
 }
+
+.commit-ref {
+    font-weight: bold;
+    color: #26894d;
+}
