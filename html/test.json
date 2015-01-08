@@ -4,6 +4,16 @@
             "axis": "x", 
             "offsets": [
                 {
+                    "node": 21, 
+                    "offset": 0
+                }
+            ], 
+            "type": "alignment"
+        }, 
+        {
+            "axis": "x", 
+            "offsets": [
+                {
                     "node": 1, 
                     "offset": 0
                 }, 
@@ -34,6 +44,60 @@
                 {
                     "node": 8, 
                     "offset": 700
+                }
+            ], 
+            "type": "alignment"
+        }, 
+        {
+            "axis": "x", 
+            "offsets": [
+                {
+                    "node": 9, 
+                    "offset": 0
+                }, 
+                {
+                    "node": 10, 
+                    "offset": 100
+                }, 
+                {
+                    "node": 11, 
+                    "offset": 200
+                }, 
+                {
+                    "node": 12, 
+                    "offset": 300
+                }, 
+                {
+                    "node": 13, 
+                    "offset": 400
+                }, 
+                {
+                    "node": 14, 
+                    "offset": 500
+                }, 
+                {
+                    "node": 15, 
+                    "offset": 600
+                }, 
+                {
+                    "node": 16, 
+                    "offset": 700
+                }, 
+                {
+                    "node": 17, 
+                    "offset": 800
+                }, 
+                {
+                    "node": 18, 
+                    "offset": 900
+                }, 
+                {
+                    "node": 19, 
+                    "offset": 1000
+                }, 
+                {
+                    "node": 20, 
+                    "offset": 1100
                 }
             ], 
             "type": "alignment"
@@ -78,6 +142,71 @@
         {
             "source": 0, 
             "target": 8, 
+            "value": 1
+        }, 
+        {
+            "source": 4, 
+            "target": 9, 
+            "value": 1
+        }, 
+        {
+            "source": 4, 
+            "target": 10, 
+            "value": 1
+        }, 
+        {
+            "source": 4, 
+            "target": 11, 
+            "value": 1
+        }, 
+        {
+            "source": 4, 
+            "target": 12, 
+            "value": 1
+        }, 
+        {
+            "source": 4, 
+            "target": 13, 
+            "value": 1
+        }, 
+        {
+            "source": 4, 
+            "target": 14, 
+            "value": 1
+        }, 
+        {
+            "source": 4, 
+            "target": 15, 
+            "value": 1
+        }, 
+        {
+            "source": 4, 
+            "target": 16, 
+            "value": 1
+        }, 
+        {
+            "source": 4, 
+            "target": 17, 
+            "value": 1
+        }, 
+        {
+            "source": 4, 
+            "target": 18, 
+            "value": 1
+        }, 
+        {
+            "source": 4, 
+            "target": 19, 
+            "value": 1
+        }, 
+        {
+            "source": 4, 
+            "target": 20, 
+            "value": 1
+        }, 
+        {
+            "source": 11, 
+            "target": 21, 
             "value": 1
         }
     ], 
@@ -225,6 +354,214 @@
             "separator": "\n", 
             "sha": "4f27a1ee2b5fd63a58311a20e2aed0a24eda8da2", 
             "title": "add --exclude-commits"
+        }, 
+        {
+            "author_mail": "git@adamspiers.org", 
+            "author_name": "Adam Spiers", 
+            "author_offset": -300, 
+            "author_time": 1384656388, 
+            "body": "", 
+            "committer_mail": "git@adamspiers.org", 
+            "committer_name": "Adam Spiers", 
+            "committer_offset": 0, 
+            "committer_time": 1420477028, 
+            "describe": "", 
+            "name": "824f84c", 
+            "separator": "\n", 
+            "sha": "824f84cd594254d0c87f330b855153fc5ffe5ad3", 
+            "title": "add installation instructions"
+        }, 
+        {
+            "author_mail": "git@adamspiers.org", 
+            "author_name": "Adam Spiers", 
+            "author_offset": -300, 
+            "author_time": 1384579202, 
+            "body": "", 
+            "committer_mail": "git@adamspiers.org", 
+            "committer_name": "Adam Spiers", 
+            "committer_offset": 0, 
+            "committer_time": 1420477028, 
+            "describe": "", 
+            "name": "6240939", 
+            "separator": "\n", 
+            "sha": "62409395e260ad01f9ae7b84869f5516ef80c7aa", 
+            "title": "output dependencies as soon as they're found"
+        }, 
+        {
+            "author_mail": "git@adamspiers.org", 
+            "author_name": "Adam Spiers", 
+            "author_offset": -300, 
+            "author_time": 1384654780, 
+            "body": "", 
+            "committer_mail": "git@adamspiers.org", 
+            "committer_name": "Adam Spiers", 
+            "committer_offset": 0, 
+            "committer_time": 1420477028, 
+            "describe": "", 
+            "name": "5071249", 
+            "separator": "\n", 
+            "sha": "5071249715e82dcf3c1db12eec28c1232aba2142", 
+            "title": "avoid adding entries to TODO queue multiple times"
+        }, 
+        {
+            "author_mail": "git@adamspiers.org", 
+            "author_name": "Adam Spiers", 
+            "author_offset": -300, 
+            "author_time": 1384566591, 
+            "body": "", 
+            "committer_mail": "git@adamspiers.org", 
+            "committer_name": "Adam Spiers", 
+            "committer_offset": 0, 
+            "committer_time": 1420477027, 
+            "describe": "", 
+            "name": "6e86e8b", 
+            "separator": "\n", 
+            "sha": "6e86e8b7f648bd6a3a6d3216aa5899414b65cbed", 
+            "title": "don't crash on commits which only add files"
+        }, 
+        {
+            "author_mail": "git@adamspiers.org", 
+            "author_name": "Adam Spiers", 
+            "author_offset": -300, 
+            "author_time": 1384563081, 
+            "body": "", 
+            "committer_mail": "git@adamspiers.org", 
+            "committer_name": "Adam Spiers", 
+            "committer_offset": 0, 
+            "committer_time": 1420477027, 
+            "describe": "", 
+            "name": "acc24a4", 
+            "separator": "\n", 
+            "sha": "acc24a404d82061bbc6db5afb146d83bf131830b", 
+            "title": "add --context-lines"
+        }, 
+        {
+            "author_mail": "git@adamspiers.org", 
+            "author_name": "Adam Spiers", 
+            "author_offset": -300, 
+            "author_time": 1384567428, 
+            "body": "", 
+            "committer_mail": "git@adamspiers.org", 
+            "committer_name": "Adam Spiers", 
+            "committer_offset": 0, 
+            "committer_time": 1420477028, 
+            "describe": "", 
+            "name": "5ec5ccb", 
+            "separator": "\n", 
+            "sha": "5ec5ccbdff508014c61ae9d18f3366a15c0f2689", 
+            "title": "add first line of commits to debug"
+        }, 
+        {
+            "author_mail": "git@adamspiers.org", 
+            "author_name": "Adam Spiers", 
+            "author_offset": -300, 
+            "author_time": 1384563342, 
+            "body": "", 
+            "committer_mail": "git@adamspiers.org", 
+            "committer_name": "Adam Spiers", 
+            "committer_offset": 0, 
+            "committer_time": 1420477027, 
+            "describe": "", 
+            "name": "f2cddb4", 
+            "separator": "\n", 
+            "sha": "f2cddb4aa00de4ddff2cdca251758e25e95e04ad", 
+            "title": "tweaks to improve debugging"
+        }, 
+        {
+            "author_mail": "git@adamspiers.org", 
+            "author_name": "Adam Spiers", 
+            "author_offset": -300, 
+            "author_time": 1384651799, 
+            "body": "", 
+            "committer_mail": "git@adamspiers.org", 
+            "committer_name": "Adam Spiers", 
+            "committer_offset": 0, 
+            "committer_time": 1420477028, 
+            "describe": "", 
+            "name": "1b66efa", 
+            "separator": "\n", 
+            "sha": "1b66efa173a19a8b4c0c47274a1b9cdd8b9912af", 
+            "title": "improve help text"
+        }, 
+        {
+            "author_mail": "git@adamspiers.org", 
+            "author_name": "Adam Spiers", 
+            "author_offset": -300, 
+            "author_time": 1384567528, 
+            "body": "", 
+            "committer_mail": "git@adamspiers.org", 
+            "committer_name": "Adam Spiers", 
+            "committer_offset": 0, 
+            "committer_time": 1420477028, 
+            "describe": "", 
+            "name": "80c247f", 
+            "separator": "\n", 
+            "sha": "80c247fd21a1e7f476d1c8ba289498e216eff3dc", 
+            "title": "--help: put short options first"
+        }, 
+        {
+            "author_mail": "git@adamspiers.org", 
+            "author_name": "Adam Spiers", 
+            "author_offset": -300, 
+            "author_time": 1384567489, 
+            "body": "", 
+            "committer_mail": "git@adamspiers.org", 
+            "committer_name": "Adam Spiers", 
+            "committer_offset": 0, 
+            "committer_time": 1420477028, 
+            "describe": "", 
+            "name": "2ebcb2b", 
+            "separator": "\n", 
+            "sha": "2ebcb2b6081e32e9a463519525bd432287b24520", 
+            "title": "improve --help for --context-lines"
+        }, 
+        {
+            "author_mail": "git@adamspiers.org", 
+            "author_name": "Adam Spiers", 
+            "author_offset": -300, 
+            "author_time": 1384636660, 
+            "body": "", 
+            "committer_mail": "git@adamspiers.org", 
+            "committer_name": "Adam Spiers", 
+            "committer_offset": 0, 
+            "committer_time": 1420477028, 
+            "describe": "", 
+            "name": "f7bf058", 
+            "separator": "\n", 
+            "sha": "f7bf058439fd7499aad7a10418a9f516e6949fbc", 
+            "title": "allow multiple dependents on ARGV, and fix usage string"
+        }, 
+        {
+            "author_mail": "git@adamspiers.org", 
+            "author_name": "Adam Spiers", 
+            "author_offset": -300, 
+            "author_time": 1384612401, 
+            "body": "", 
+            "committer_mail": "git@adamspiers.org", 
+            "committer_name": "Adam Spiers", 
+            "committer_offset": 0, 
+            "committer_time": 1420477028, 
+            "describe": "", 
+            "name": "2a05400", 
+            "separator": "\n", 
+            "sha": "2a05400e232e14f0d4c1cbfb548a0871ea57bd44", 
+            "title": "ignore KeyboardInterrupt"
+        }, 
+        {
+            "author_mail": "git@adamspiers.org", 
+            "author_name": "Adam Spiers", 
+            "author_offset": -300, 
+            "author_time": 1384652004, 
+            "body": "", 
+            "committer_mail": "git@adamspiers.org", 
+            "committer_name": "Adam Spiers", 
+            "committer_offset": 0, 
+            "committer_time": 1420477028, 
+            "describe": "", 
+            "name": "4364944", 
+            "separator": "\n", 
+            "sha": "43649442f49876ad22051b085a9258f39bbcd5c6", 
+            "title": "fix error message"
         }
     ]
 }
