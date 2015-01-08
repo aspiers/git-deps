@@ -215,9 +215,10 @@ function draw_graph(commitish) {
             .data(nodes, function (d) {
                 return d.sha1;
             })
-          .enter().append("g")
-            .attr("class", "node")
-            .call(d3cola.drag);
+          .call(d3cola.drag);
+
+        node.enter().append("g")
+            .attr("class", "node");
 
         draw_nodes(fg, node);
     });
