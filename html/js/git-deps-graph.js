@@ -202,9 +202,7 @@ function draw_graph(commitish) {
         new_data_notification(new_data);
 
         path = fg.selectAll(".link")
-            .data(links, function (d) {
-                return d.source + " " + d.target;
-            })
+            .data(links, link_key)
           .enter().append('svg:path')
             .attr('class', 'link');
 
@@ -219,6 +217,24 @@ function draw_graph(commitish) {
 
         draw_nodes(fg, node);
     });
+}
+
+// Required for object constancy: http://bost.ocks.org/mike/constancy/ ...
+function link_key(link) {
+    var source = sha1_of_link_pointer(link.source);
+    var target = sha1_of_link_pointer(link.target);
+    var key = source + " " + target;
+    return key;
+}
+
+// ... but even though link sources and targets are initially fed in
+// as indices into the nodes array, webcola then replaces the indices
+// with references to the node objects.  So we have to deal with both
+// cases when ensuring we are uniquely identifying each link.
+function sha1_of_link_pointer(pointer) {
+    if (typeof(pointer) == 'object')
+        return pointer.sha1;
+    return nodes[pointer].sha1;
 }
 
 function new_data_notification(new_data) {
