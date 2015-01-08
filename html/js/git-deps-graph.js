@@ -107,7 +107,8 @@ function build_constraint(parent_sha) {
     constraint = {
         axis: 'x',
         type: 'alignment',
-        offsets: []
+        offsets: [],
+        parent: parent_sha
     };
     for (var child_sha in deps[parent_sha]) {
         constraint.offsets.push({
@@ -270,7 +271,18 @@ function tip_html(d) {
     var pre = fragment.find(".commit-body pre").text(d.body);
 
     if (options.debug) {
-         pre.after("node index: " + node_index[d.sha]);
+        var index = node_index[d.sha];
+        var debug = "node index: " + index;
+        $.each(constraints, function (i, constraint) {
+            if (constraint.parent == d.sha) {
+                var siblings = $.map(constraint.offsets,
+                                     function (offset, i) {
+                                         return offset.node;
+                                     });
+                debug += "<br />constrained children: " + siblings.join(", ");
+            }
+        });
+        pre.after(debug);
     }
 
     // Javascript *sucks*.  There's no way to get the outerHTML of a
