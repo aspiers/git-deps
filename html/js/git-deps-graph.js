@@ -119,7 +119,7 @@ function build_constraints() {
 
 function build_constraint(parent_sha1) {
     constraint = {
-        axis: 'x',
+        axis: 'y',
         type: 'alignment',
         offsets: [],
         parent: parent_sha1
@@ -179,6 +179,7 @@ function init_cola() {
     d3cola
         .nodes(nodes)
         .links(links)
+        .constraints(constraints)
         .flowLayout("y", 150)
         .symmetricDiffLinkLengths(30);
         //.jaccardLinkLengths(100);
