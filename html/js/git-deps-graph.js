@@ -1,5 +1,5 @@
 var WIDTH   = 960,
-    HEIGHT  = 500,
+    HEIGHT  = 800,
     MARGIN  = 14,   // space in between <rects>
     PADDING =  5,   // space in between <text> label and <rect> border
     EDGE_ROUTING_MARGIN = 3;
