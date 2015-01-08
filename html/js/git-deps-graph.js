@@ -141,6 +141,8 @@ function add_data(data) {
         new_links += add_link(dep.parent, dep.child);
     });
 
+    noty_info(data.root.commitish + " resolved as " + data.root.sha1);
+
     if (new_nodes > 0 || new_links > 0) {
         if (options.debug) {
             noty_debug(new_nodes + " new node(s), " +
@@ -177,6 +179,10 @@ function init_svg() {
 // alert, success, error, warning, information, confirmation
 function noty_warn(text) {
     notyfication('warning', text);
+}
+
+function noty_info(text) {
+    notyfication('information', text);
 }
 
 function noty_debug(text) {

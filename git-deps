@@ -666,8 +666,14 @@ def serve(options):
     def deps(commitish):
         listener = JSONDependencyListener(options)
         detector = DependencyDetector(options, listener=listener)
+        sha1 = detector.get_commit(commitish)
         detector.find_dependencies(commitish)
-        return flask.json.jsonify(listener.json())
+        json = listener.json()
+        json['root'] = {
+            'commitish' : commitish,
+            'sha1': sha1.hex,
+        }
+        return flask.json.jsonify(json)
 
     # We don't want to see double-decker warnings, so check
     # WERKZEUG_RUN_MAIN which is only set for the first startup, not
