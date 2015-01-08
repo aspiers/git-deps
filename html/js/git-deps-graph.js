@@ -119,13 +119,12 @@ function build_constraint(parent_sha) {
 }
 
 function add_data(data) {
-    for (var i in data.commits) {
-        add_node(data.commits[i]);
-    }
-    for (var i in data.dependencies) {
-        var dep = data.dependencies[i];
+    $.each(data.commits, function (i, commit) {
+        add_node(commit);
+    });
+    $.each(data.dependencies, function (i, dep) {
         add_link(dep.parent, dep.child);
-    }
+    });
     build_constraints();
 }
 
