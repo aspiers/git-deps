@@ -219,8 +219,6 @@ function draw_nodes(fg, node) {
             d.width  = d.rect_width  + 2 * MARGIN;
             d.height = d.rect_height + 2 * MARGIN;
         });
-    // label.append("title")
-    //     .text(function (d) { return d.name; });
 
     position_nodes(rect, label, tip);
 }
@@ -270,7 +268,12 @@ function tip_html(d) {
     fragment.find("time.commit-time")
         .attr('datetime', date.toISOString())
         .text(date);
-    fragment.find(".commit-body pre").text(d.body);
+    var pre = fragment.find(".commit-body pre").text(d.body);
+
+    if (options.debug) {
+         pre.after("node index: " + node_index[d.sha]);
+    }
+
     // Javascript *sucks*.  There's no way to get the outerHTML of a
     // document fragment, so you have to wrap the whole thing in a
     // single parent and then look that up via children[0].
