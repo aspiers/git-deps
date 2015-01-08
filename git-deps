@@ -593,6 +593,9 @@ def parse_args():
                         help='Show commit logs for calculated dependencies')
     parser.add_argument('-j', '--json', dest='json', action='store_true',
                         help='Output dependencies as JSON')
+    parser.add_argument('-s', '--serve', dest='serve', action='store_true',
+                        help='Run a web server for visualizing the '
+                        'dependency graph')
     parser.add_argument('-r', '--recurse', dest='recurse', action='store_true',
                         help='Follow dependencies recursively')
     parser.add_argument('-e', '--exclude-commits', dest='exclude_commits',
@@ -608,17 +611,24 @@ def parse_args():
 
     options, args = parser.parse_known_args()
 
-    if len(args) == 0:
-        parser.print_help()
-        sys.exit(1)
+    if options.serve:
+        if options.log:
+            parser.error('--log does not make sense in webserver mode.')
+        if options.json:
+            parser.error('--json does not make sense in webserver mode.')
+        if options.recurse:
+            parser.error('--recurse does not make sense in webserver mode.')
+        if len(args) > 0:
+            parser.error('Specifying commit-ishs does not make sense in '
+                         'webserver mode.')
+    else:
+        if len(args) == 0:
+            parser.error('You must specify at least one commit-ish.')
 
     return options, args
 
 
-def main():
-    options, args = parse_args()
-    # rev_list = sys.stdin.readlines()
-
+def cli(options, args):
     if options.json:
         listener = JSONDependencyListener(options)
     else:
@@ -631,6 +641,56 @@ def main():
             detector.find_dependencies(dependent_rev)
         except KeyboardInterrupt:
             pass
+
+
+def serve():
+    try:
+        import flask
+        from flask import Flask, send_file, safe_join
+    except ImportError:
+        abort("Cannot find flask module which is required for webserver mode.")
+
+    webserver = Flask("git-deps")
+    webserver.debug = True
+
+    @webserver.route('/')
+    def main_page():
+        return send_file('html/git-deps.html')
+
+    @webserver.route('/tip-template.html')
+    def tip_template():
+        return send_file('html/tip-template.html')
+
+    @webserver.route('/test.json')
+    def data():
+        return send_file('html/test.json')
+
+    def make_subdir_handler(subdir):
+        def subdir_handler(filename):
+            path = safe_join('html/' + subdir, filename)
+            if os.path.exists(path):
+                return send_file(path)
+            else:
+                flask.abort(404)
+        return subdir_handler
+
+    for subdir in ('node_modules', 'css', 'js'):
+        fn = make_subdir_handler(subdir)
+        route = '/%s/<path:filename>' % subdir
+        webserver.add_url_rule(route, subdir + '_handler', fn)
+
+    webserver.run()
+
+
+def main():
+    options, args = parse_args()
+    # rev_list = sys.stdin.readlines()
+
+    if options.serve:
+        serve()
+    else:
+        cli(options, args)
+
 
 if __name__ == "__main__":
     main()
