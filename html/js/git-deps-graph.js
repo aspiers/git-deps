@@ -75,18 +75,18 @@ function redraw_on_zoom() {
 
 // Returns 1 iff a link was added, otherwise 0.
 function add_node(commit) {
-    if (commit.sha in node_index) {
+    if (commit.sha1 in node_index) {
         return 0;
     }
     nodes.push(commit);
-    node_index[commit.sha] = nodes.length - 1;
+    node_index[commit.sha1] = nodes.length - 1;
     return 1;
 }
 
 // Returns 1 iff a link was added, otherwise 0.
-function add_link(parent_sha, child_sha) {
-    var pi = node_index[parent_sha];
-    var ci = node_index[child_sha];
+function add_link(parent_sha1, child_sha1) {
+    var pi = node_index[parent_sha1];
+    var ci = node_index[child_sha1];
 
     var link = {
         source: pi,
@@ -94,37 +94,37 @@ function add_link(parent_sha, child_sha) {
         value: 1   // no idea what WebCola needs this for
     };
 
-    if (! (parent_sha in deps)) {
-        deps[parent_sha] = {};
+    if (! (parent_sha1 in deps)) {
+        deps[parent_sha1] = {};
     }
-    if (child_sha in deps[parent_sha]) {
+    if (child_sha1 in deps[parent_sha1]) {
         // We've already got this link, presumably
         // from a previous XHR.
         return 0;
     }
 
-    deps[parent_sha][child_sha] = true;
+    deps[parent_sha1][child_sha1] = true;
     links.push(link);
     return 1;
 }
 
 function build_constraints() {
     constraints = [];  // FIXME: only rebuild constraints which changed
-    for (var parent_sha in deps) {
-        constraints.push(build_constraint(parent_sha));
+    for (var parent_sha1 in deps) {
+        constraints.push(build_constraint(parent_sha1));
     }
 }
 
-function build_constraint(parent_sha) {
+function build_constraint(parent_sha1) {
     constraint = {
         axis: 'x',
         type: 'alignment',
         offsets: [],
-        parent: parent_sha
+        parent: parent_sha1
     };
-    for (var child_sha in deps[parent_sha]) {
+    for (var child_sha1 in deps[parent_sha1]) {
         constraint.offsets.push({
-            node: node_index[child_sha],
+            node: node_index[child_sha1],
             offset: 0
         });
     }
@@ -227,7 +227,7 @@ function draw_graph(commitish) {
 
         node = fg.selectAll(".node")
             .data(nodes, function (d) {
-                return d.sha;
+                return d.sha1;
             })
           .enter().append("g")
             .attr("class", "node")
@@ -326,10 +326,10 @@ function tip_html(d) {
     var pre = fragment.find(".commit-body pre").text(d.body);
 
     if (options.debug) {
-        var index = node_index[d.sha];
+        var index = node_index[d.sha1];
         var debug = "node index: " + index;
         $.each(constraints, function (i, constraint) {
-            if (constraint.parent == d.sha) {
+            if (constraint.parent == d.sha1) {
                 var siblings = $.map(constraint.offsets,
                                      function (offset, i) {
                                          return offset.node;
