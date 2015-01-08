@@ -12,6 +12,7 @@
   <script language="javascript" type="text/javascript" src="node_modules/noty/js/noty/packaged/jquery.noty.packaged.min.js"></script>
 
   <script language="javascript" type="text/javascript" src="js/noty.js"></script>
+  <script language="javascript" type="text/javascript" src="js/fullscreen.js"></script>
   <script language="javascript" type="text/javascript" src="js/git-deps-graph.js"></script>
 
   <link rel="stylesheet" type="text/css" href="css/animate.css" />
@@ -34,5 +35,10 @@
            value="master" autofocus />
     <button>Submit</button>
   </form>
+
+  <p>
+    <button onclick="fullScreen(svg[0][0], full_screen_cancel); zoom_to_fit()">Full screen</button>
+    <button onclick="zoom_to_fit()">Zoom to fit (or double click)</button>
+  </p>
 </body>
 </html>

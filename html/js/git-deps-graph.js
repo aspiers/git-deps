@@ -31,6 +31,7 @@ var deps = {};
 
 // d3 visualization elements.  Kept global to aid in-browser debugging.
 var svg, fg, node, path, tip, tip_template;
+var zoom;
 
 // Options will be retrieved from web server
 var options;
@@ -69,10 +70,44 @@ function setup_default_form_values() {
     });
 }
 
-function redraw_on_zoom() {
-    fg.attr("transform",
-            "translate(" + d3.event.translate + ")" +
-            " scale(" + d3.event.scale + ")");
+function redraw(transition) {
+    // if mouse down then we are dragging not panning
+    // if (nodeMouseDown)
+    //     return;
+    (transition ? fg.transition() : fg)
+        .attr("transform",
+              "translate(" + zoom.translate() + ")" +
+              " scale(" + zoom.scale() + ")");
+}
+
+function graph_bounds() {
+    var x = Number.POSITIVE_INFINITY,
+        X = Number.NEGATIVE_INFINITY,
+        y = Number.POSITIVE_INFINITY,
+        Y = Number.NEGATIVE_INFINITY;
+    fg.selectAll(".node").each(function (d) {
+        x = Math.min(x, d.x - d.width / 2);
+        y = Math.min(y, d.y - d.height / 2);
+        X = Math.max(X, d.x + d.width / 2);
+        Y = Math.max(Y, d.y + d.height / 2);
+    });
+    return { x: x, X: X, y: y, Y: Y };
+}
+
+function full_screen_cancel() {
+    svg.attr("width", WIDTH).attr("height", HEIGHT);
+    zoom_to_fit();
+}
+
+function zoom_to_fit() {
+    var b = graph_bounds();
+    var w = b.X - b.x, h = b.Y - b.y;
+    var cw = svg.attr("width"), ch = svg.attr("height");
+    var s = Math.min(cw / w, ch / h);
+    var tx = (-b.x * s + (cw / s - w) * s / 2),
+        ty = (-b.y * s + (ch / s - h) * s / 2);
+    zoom.translate([tx, ty]).scale(s);
+    redraw(true);
 }
 
 // Returns 1 iff a link was added, otherwise 0.
@@ -163,11 +198,14 @@ function init_svg() {
         .attr("width", WIDTH)
         .attr("height", HEIGHT);
 
+    zoom = d3.behavior.zoom();
+
     svg.append('rect')
         .attr('class', 'background')
         .attr('width', "100%")
         .attr('height', "100%")
-        .call(d3.behavior.zoom().on("zoom", redraw_on_zoom));
+        .call(zoom.on("zoom", redraw))
+        .on('dblclick.zoom', zoom_to_fit);
 
     fg = svg.append('g');
 }
