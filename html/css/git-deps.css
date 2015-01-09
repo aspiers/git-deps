@@ -61,3 +61,8 @@ g.node text {
     font-weight: bold;
     color: #26894d;
 }
+
+.noty_text p {
+    margin-top: 6px;
+    margin-bottom: 6px;
+}
