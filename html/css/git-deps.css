@@ -1,5 +1,23 @@
 body {
     font-family: Helvetica, arial, freesans, clean, sans-serif, 'Segoe UI Emoji', 'Segoe UI Symbol';
+    width: 100vw;
+    height: 100vh;
+    margin: 0px;
+}
+
+#page {
+    margin: 8px;
+    display: flex;  /* use the flex model */
+    flex-direction: column;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+#svg-container {
+    flex: 1;
 }
 
 rect.background {

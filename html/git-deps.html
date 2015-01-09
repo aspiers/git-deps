@@ -21,24 +21,30 @@
 </head>
 
 <body>
-  <h1>git commit dependency graph</h1>
+  <div id="page">
+    <div id="top">
+      <h1>git commit dependency graph</h1>
 
-  <p>
-    Use mouse-wheel to zoom.
-    Drag background to pan.
-    Hover over a commit for more information.
-  </p>
+      <p>
+        Use mouse-wheel to zoom.
+        Drag background to pan.
+        Hover over a commit for more information.
+      </p>
 
-  <form class="commitish" action="#">
-    Detect dependencies for commit:
-    <input type="text" name="commitish" size="20"
-           value="master" autofocus />
-    <button>Submit</button>
-  </form>
+      <form class="commitish" action="#">
+        Detect dependencies for commit:
+        <input type="text" name="commitish" size="20"
+               value="master" autofocus />
+        <button>Submit</button>
+      </form>
 
-  <p>
-    <button onclick="fullScreen(svg[0][0], full_screen_cancel); zoom_to_fit()">Full screen</button>
-    <button onclick="zoom_to_fit()">Zoom to fit (or double click)</button>
-  </p>
+      <p>
+        <button onclick="full_screen_click()">Full screen</button>
+        <button onclick="zoom_to_fit()">Zoom to fit (or double click)</button>
+      </p>
+    </div>
+
+    <div id="svg-container" />
+  </div>
 </body>
 </html>

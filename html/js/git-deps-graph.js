@@ -1,14 +1,15 @@
-var WIDTH   = 960,
-    HEIGHT  = 800,
+var SVG_MARGIN = 0,    // space around <svg>
     RECT_MARGIN = 14,  // space in between <rects>
-    PADDING =  5,      // space in between <text> label and <rect> border
+    PADDING =  5,  // space in between <text> label and <rect> border
     EDGE_ROUTING_MARGIN = 3;
+
+var svg_width  = 960, old_svg_width,
+    svg_height = 800, old_svg_height;
 
 var color = d3.scale.category20();
 
 var d3cola = cola.d3adaptor()
-    .avoidOverlaps(true)
-    .size([WIDTH, HEIGHT]);
+    .avoidOverlaps(true);
 
 var cola_initialized = false;
 
@@ -30,7 +31,7 @@ var node_index = {};
 var deps = {};
 
 // d3 visualization elements.  Kept global to aid in-browser debugging.
-var svg, fg, node, path, tip, tip_template;
+var container, svg, fg, node, path, tip, tip_template;
 var zoom;
 
 // Options will be retrieved from web server
@@ -70,6 +71,13 @@ function setup_default_form_values() {
     });
 }
 
+function resize_window() {
+    calculate_svg_size_from_container();
+    console.log("new size: " + svg_width + "x" + svg_height);
+    fit_svg_to_container();
+    redraw(true);
+}
+
 function redraw(transition) {
     // if mouse down then we are dragging not panning
     // if (nodeMouseDown)
@@ -94,9 +102,23 @@ function graph_bounds() {
     return { x: x, X: X, y: y, Y: Y };
 }
 
+function fit_svg_to_container() {
+    svg.attr("width", svg_width).attr("height", svg_height);
+}
+
 function full_screen_cancel() {
-    svg.attr("width", WIDTH).attr("height", HEIGHT);
-    zoom_to_fit();
+    svg_width = old_svg_width;
+    svg_height = old_svg_height;
+    fit_svg_to_container();
+    //zoom_to_fit();
+    resize_window();
+}
+
+function full_screen_click() {
+    fullScreen(container[0][0], full_screen_cancel);
+    fit_svg_to_container();
+    resize_window();
+    //zoom_to_fit();
 }
 
 function zoom_to_fit() {
@@ -104,8 +126,8 @@ function zoom_to_fit() {
     var w = b.X - b.x, h = b.Y - b.y;
     var cw = svg.attr("width"), ch = svg.attr("height");
     var s = Math.min(cw / w, ch / h);
-    var tx = (-b.x * s + (cw / s - w) * s / 2),
-        ty = (-b.y * s + (ch / s - h) * s / 2);
+    var tx = -b.x * s + (cw/s - w) * s/2,
+        ty = -b.y * s + (ch/s - h) * s/2;
     zoom.translate([tx, ty]).scale(s);
     redraw(true);
 }
@@ -193,10 +215,22 @@ function add_commitish(commitish) {
     draw_graph(commitish);
 }
 
+function calculate_svg_size_from_container() {
+    old_svg_width = svg_width;
+    old_svg_height = svg_height;
+    svg_width  = container[0][0].offsetWidth  - SVG_MARGIN;
+    svg_height = container[0][0].offsetHeight - SVG_MARGIN;
+}
+
 function init_svg() {
-    svg = d3.select("body").append("svg")
-        .attr("width", WIDTH)
-        .attr("height", HEIGHT);
+    container = d3.select('#svg-container');
+    calculate_svg_size_from_container();
+    svg = container.append('svg')
+        .attr('width', svg_width)
+        .attr('height', svg_height);
+    d3cola.size([svg_width, svg_height]);
+
+    d3.select(window).on('resize', resize_window);
 
     zoom = d3.behavior.zoom();
 
