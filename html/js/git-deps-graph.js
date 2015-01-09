@@ -59,7 +59,6 @@ function setup_default_form_values() {
 
 function resize_window() {
     calculate_svg_size_from_container();
-    console.log("new size: " + svg_width + "x" + svg_height);
     fit_svg_to_container();
     redraw(true);
 }
