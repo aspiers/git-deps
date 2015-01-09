@@ -8,10 +8,13 @@ var svg_width  = 960, old_svg_width,
 
 var color = d3.scale.category20();
 
-var d3cola = cola.d3adaptor()
+var d3cola = cola.d3adaptor();
+d3cola
+    .flowLayout("y", 150)
+    .linkDistance(60)
+    //.symmetricDiffLinkLengths(30)
+    //.jaccardLinkLengths(100);
     .avoidOverlaps(true);
-
-var cola_initialized = false;
 
 // The list of nodes, links, and constraints to feed into WebCola.
 // These will be dynamically built as we retrieve them via XHR.
@@ -132,7 +135,7 @@ function zoom_to_fit() {
     redraw(true);
 }
 
-// Returns 1 iff a link was added, otherwise 0.
+// Returns 1 iff a node was added, otherwise 0.
 function add_node(commit) {
     if (commit.sha1 in node_index) {
         return 0;
@@ -142,17 +145,8 @@ function add_node(commit) {
     return 1;
 }
 
-// Returns 1 iff a link was added, otherwise 0.
-function add_link(parent_sha1, child_sha1) {
-    var pi = node_index[parent_sha1];
-    var ci = node_index[child_sha1];
-
-    var link = {
-        source: pi,
-        target: ci,
-        value: 1   // no idea what WebCola needs this for
-    };
-
+// Returns 1 iff a dependency was added, otherwise 0.
+function add_dependency(parent_sha1, child_sha1) {
     if (! (parent_sha1 in deps)) {
         deps[parent_sha1] = {};
     }
@@ -163,8 +157,23 @@ function add_link(parent_sha1, child_sha1) {
     }
 
     deps[parent_sha1][child_sha1] = true;
-    links.push(link);
+
+    add_link(parent_sha1, child_sha1);
+
     return 1;
+}
+
+function add_link(parent_sha1, child_sha1) {
+    var pi = node_index[parent_sha1];
+    var ci = node_index[child_sha1];
+
+    var link = {
+        source: pi,
+        target: ci,
+        value: 1   // no idea what WebCola needs this for
+    };
+
+    links.push(link);
 }
 
 function build_constraints() {
@@ -192,17 +201,17 @@ function build_constraint(parent_sha1) {
 
 // Returns true iff new data was added.
 function add_data(data) {
-    var new_nodes = 0, new_links = 0;
+    var new_nodes = 0, new_deps = 0;
     $.each(data.commits, function (i, commit) {
         new_nodes += add_node(commit);
     });
     $.each(data.dependencies, function (i, dep) {
-        new_links += add_link(dep.parent, dep.child);
+        new_deps += add_dependency(dep.parent, dep.child);
     });
 
-    if (new_nodes > 0 || new_links > 0) {
+    if (new_nodes > 0 || new_deps > 0) {
         build_constraints();
-        return [new_nodes, new_links, data.root];
+        return [new_nodes, new_deps, data.root];
     }
 
     return false;
@@ -242,23 +251,14 @@ function init_svg() {
         .on('dblclick.zoom', zoom_to_fit);
 
     fg = svg.append('g');
+    define_arrow_markers(fg);
 }
 
-function init_cola() {
-    if (cola_initialized)
-        return;
-
+function update_cola() {
     d3cola
         .nodes(nodes)
         .links(links)
-        .constraints(constraints)
-        .flowLayout("y", 150)
-        .symmetricDiffLinkLengths(30);
-        //.jaccardLinkLengths(100);
-
-    define_arrow_markers(fg);
-
-    cola_initialized = true;
+        .constraints(constraints);
 }
 
 function draw_graph(commitish) {
@@ -271,18 +271,19 @@ function draw_graph(commitish) {
 
         var new_data = add_data(data);
 
-        init_cola();
-
         if (! new_data) {
             noty_warn('No new commits or dependencies found!');
             return;
         }
 
+        update_cola();
+
         new_data_notification(new_data);
 
         path = fg.selectAll(".link")
-            .data(links, link_key)
-          .enter().append('svg:path')
+            .data(links, link_key);
+
+        path.enter().append('svg:path')
             .attr('class', 'link');
 
         node = fg.selectAll(".node")
@@ -318,7 +319,7 @@ function sha1_of_link_pointer(pointer) {
 
 function new_data_notification(new_data) {
     var new_nodes = new_data[0];
-    var new_links = new_data[1];
+    var new_deps  = new_data[1];
     var root      = new_data[2];
 
     var notification =
@@ -326,12 +327,10 @@ function new_data_notification(new_data) {
             root.commitish +
             '</span> resolved as ' + root.sha1;
 
-    notification += "<p>" + new_nodes + " new node";
-    if (new_nodes != 1)
-        notification += 's';
-    notification += "; " + new_links + " new link";
-    if (new_nodes != 1)
-        notification += 's';
+    notification += "<p>" + new_nodes + " new commit" +
+        ((new_nodes == 1) ? '' : 's');
+    notification += "; " + new_deps + " new " +
+        ((new_nodes == 1) ? 'dependency' : 'dependencies');
     notification += '</p>';
 
     noty_success(notification);
