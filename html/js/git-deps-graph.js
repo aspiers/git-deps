@@ -334,7 +334,7 @@ function new_data_notification(new_data) {
         notification += 's';
     notification += '</p>';
 
-    noty_info(notification);
+    noty_success(notification);
 }
 
 function define_arrow_markers(fg) {

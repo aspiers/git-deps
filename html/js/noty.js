@@ -8,6 +8,10 @@ function noty_warn(text) {
     notyfication('warning', text);
 }
 
+function noty_success(text) {
+    notyfication('success', text);
+}
+
 function noty_info(text) {
     notyfication('information', text);
 }
