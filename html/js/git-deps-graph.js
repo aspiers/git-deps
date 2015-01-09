@@ -1,7 +1,7 @@
 var WIDTH   = 960,
     HEIGHT  = 800,
-    MARGIN  = 14,   // space in between <rects>
-    PADDING =  5,   // space in between <text> label and <rect> border
+    RECT_MARGIN = 14,  // space in between <rects>
+    PADDING =  5,      // space in between <text> label and <rect> border
     EDGE_ROUTING_MARGIN = 3;
 
 var color = d3.scale.category20();
@@ -331,8 +331,8 @@ function draw_nodes(fg, node) {
             // Now set the node width/height as used by cola for
             // positioning.  This has to include the margin
             // outside the rectangle.
-            d.width  = d.rect_width  + 2 * MARGIN;
-            d.height = d.rect_height + 2 * MARGIN;
+            d.width  = d.rect_width  + 2 * RECT_MARGIN;
+            d.height = d.rect_height + 2 * RECT_MARGIN;
         });
 
     position_nodes(rect, label, tip);
@@ -413,7 +413,7 @@ function tick_handler() {
         // overlap.  The innerBounds property seems to tell
         // cola the Rectangle which is the visible part of the
         // node, minus any blank margin.
-        d.innerBounds = d.bounds.inflate(-MARGIN);
+        d.innerBounds = d.bounds.inflate(-RECT_MARGIN);
     });
 
     node.attr("transform", function (d) {
