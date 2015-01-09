@@ -263,6 +263,12 @@ function init_cola() {
 
 function draw_graph(commitish) {
     d3.json("deps.json/" + commitish, function (error, data) {
+        if (error) {
+            var details = JSON.parse(error.responseText);
+            noty_error(details.message);
+            return;
+        }
+
         var new_data = add_data(data);
 
         init_cola();

@@ -241,6 +241,14 @@ class JSONDependencyListener(DependencyListener):
         return self._json
 
 
+class InvalidCommitish(StandardError):
+    def __init__(self, commitish):
+        self.commitish = commitish
+
+    def message(self):
+        return "Couldn't resolve commitish %s" % self.commitish
+
+
 class DependencyDetector(object):
     """Class for automatically detecting dependencies between git commits.
     A dependency is inferred by diffing the commit with each of its
@@ -328,7 +336,7 @@ class DependencyDetector(object):
         try:
             self.commits[rev] = self.repo.revparse_single(rev)
         except KeyError:
-            abort("Couldn't parse %s" % rev)
+            raise InvalidCommitish(rev)
 
         return self.commits[rev]
 
@@ -339,7 +347,11 @@ class DependencyDetector(object):
         if recurse is None:
             recurse = self.options.recurse
 
-        dependent = self.get_commit(dependent_rev)
+        try:
+            dependent = self.get_commit(dependent_rev)
+        except InvalidCommitish as e:
+            abort(e.message())
+
         self.todo.append(dependent)
         self.todo_d[dependent.hex] = True
 
@@ -659,6 +671,17 @@ def serve(options):
     ##########################################################
     # Dynamic content
 
+    def json_error(status_code, error_class, message, **extra):
+        json = {
+            'status': status_code,
+            'error_class': error_class,
+            'message': message,
+        }
+        json.update(extra)
+        response = jsonify(json)
+        response.status_code = status_code
+        return response
+
     @webserver.route('/options')
     def send_options():
         return jsonify(options.__dict__)
@@ -667,7 +690,14 @@ def serve(options):
     def deps(commitish):
         listener = JSONDependencyListener(options)
         detector = DependencyDetector(options, listener=listener)
-        sha1 = detector.get_commit(commitish)
+        try:
+            sha1 = detector.get_commit(commitish)
+        except InvalidCommitish as e:
+            return json_error(
+                422, 'Invalid commitish',
+                "Could not resolve commitish '%s'" % commitish,
+                commitish=commitish)
+
         detector.find_dependencies(commitish)
         json = listener.json()
         json['root'] = {

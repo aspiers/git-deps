@@ -1,5 +1,9 @@
 // Different noty types:
 // alert, success, error, warning, information, confirmation
+function noty_error(text) {
+    notyfication('error', text);
+}
+
 function noty_warn(text) {
     notyfication('warning', text);
 }
