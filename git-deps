@@ -621,6 +621,7 @@ def serve(options):
     try:
         import flask
         from flask import Flask, send_file, safe_join
+        from flask.json import jsonify
     except ImportError:
         abort("Cannot find flask module which is required for webserver mode.")
 
@@ -660,7 +661,7 @@ def serve(options):
 
     @webserver.route('/options')
     def send_options():
-        return flask.json.jsonify(options.__dict__)
+        return jsonify(options.__dict__)
 
     @webserver.route('/deps.json/<commitish>')
     def deps(commitish):
@@ -673,7 +674,7 @@ def serve(options):
             'commitish' : commitish,
             'sha1': sha1.hex,
         }
-        return flask.json.jsonify(json)
+        return jsonify(json)
 
     # We don't want to see double-decker warnings, so check
     # WERKZEUG_RUN_MAIN which is only set for the first startup, not
