@@ -18,6 +18,7 @@ body {
 
 #svg-container {
     flex: 1;
+    border: 1px solid #ccc;     /* width has to be half of SVG_MARGIN */
 }
 
 rect.background {

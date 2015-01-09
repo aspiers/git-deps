@@ -1,4 +1,4 @@
-var SVG_MARGIN = 0,    // space around <svg>
+var SVG_MARGIN = 2,  // space around <svg>, matching #svg-container border
     RECT_MARGIN = 14,  // space in between <rects>
     PADDING =  5,  // space in between <text> label and <rect> border
     EDGE_ROUTING_MARGIN = 3;
