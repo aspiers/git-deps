@@ -324,26 +324,27 @@ function position_nodes(rect, label, tip) {
 
 function tip_html(d) {
     var fragment = $(tip_template).clone();
-    var title = fragment.find("p.commit-title");
+    var top = fragment.find("#fragment");
+    var title = top.find("p.commit-title");
     title.text(d.title);
     if (d.describe != "") {
         title.append("  <span />");
         var describe = title.children().first();
         describe.addClass("commit-describe commit-ref").text(d.describe);
     }
-    fragment.find("span.commit-author").text(d.author_name);
+    top.find("span.commit-author").text(d.author_name);
     var date = new Date(d.author_time * 1000);
-    fragment.find("time.commit-time")
+    top.find("time.commit-time")
         .attr('datetime', date.toISOString())
         .text(date);
-    var pre = fragment.find(".commit-body pre").text(d.body);
+    var pre = top.find(".commit-body pre").text(d.body);
 
     if (options.debug) {
         var index = gdd.node_index[d.sha1];
         var debug = "node index: " + index;
         var dagre_node = gdl.g.graph.node(d.sha1);
         debug += "<br />dagre: (" + dagre_node.x + ", " + dagre_node.y + ")";
-        pre.after(debug);
+        top.append(debug);
     }
 
     // Javascript *sucks*.  There's no way to get the outerHTML of a
