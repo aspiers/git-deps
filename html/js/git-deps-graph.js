@@ -6,6 +6,7 @@ d3tip(d3);
 
 global.gdn = require('./git-deps-noty');
 global.gdd = require('./git-deps-data');
+global.gdl = require('./git-deps-layout');
 
 require('./fullscreen');
 
@@ -166,10 +167,12 @@ function init_svg() {
 }
 
 function update_cola() {
+    gdl.build_constraints();
+
     d3cola
         .nodes(gdd.nodes)
         .links(gdd.links)
-        .constraints(gdd.constraints);
+        .constraints(gdl.constraints);
 }
 
 function draw_graph(commitish) {
@@ -338,15 +341,8 @@ function tip_html(d) {
     if (options.debug) {
         var index = gdd.node_index[d.sha1];
         var debug = "node index: " + index;
-        $.each(gdd.constraints, function (i, constraint) {
-            if (constraint.parent == d.sha1) {
-                var siblings = $.map(constraint.offsets,
-                                     function (offset, i) {
-                                         return offset.node;
-                                     });
-                debug += "<br />constrained children: " + siblings.join(", ");
-            }
-        });
+        var dagre_node = gdl.g.graph.node(d.sha1);
+        debug += "<br />dagre: (" + dagre_node.x + ", " + dagre_node.y + ")";
         pre.after(debug);
     }
 

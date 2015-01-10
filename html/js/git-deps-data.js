@@ -1,8 +1,8 @@
 var $ = require('jquery');
 
-// The list of nodes, links, and constraints to feed into WebCola.
+// The list of nodes and links to feed into WebCola.
 // These will be dynamically built as we retrieve them via XHR.
-var nodes = [], links = [], constraints = [];
+var nodes = [], links = [];
 
 // WebCola requires links to refer to nodes by index within the
 // nodes array, so as nodes are dynamically added, we need to
@@ -58,29 +58,6 @@ function add_link(parent_sha1, child_sha1) {
     links.push(link);
 }
 
-function build_constraints() {
-    constraints.length = 0;  // FIXME: only rebuild constraints which changed
-    for (var parent_sha1 in deps) {
-        constraints.push(build_constraint(parent_sha1));
-    }
-}
-
-function build_constraint(parent_sha1) {
-    constraint = {
-        axis: 'y',
-        type: 'alignment',
-        offsets: [],
-        parent: parent_sha1
-    };
-    for (var child_sha1 in deps[parent_sha1]) {
-        constraint.offsets.push({
-            node: node_index[child_sha1],
-            offset: 0
-        });
-    }
-    return constraint;
-}
-
 // Returns true iff new data was added.
 function add_data(data) {
     var new_nodes = 0, new_deps = 0;
@@ -92,7 +69,6 @@ function add_data(data) {
     });
 
     if (new_nodes > 0 || new_deps > 0) {
-        build_constraints();
         return [new_nodes, new_deps, data.root];
     }
 
@@ -103,7 +79,6 @@ module.exports = {
     // Variables
     nodes: nodes,
     links: links,
-    constraints: constraints,
     node_index: node_index,
     deps: deps,
 
