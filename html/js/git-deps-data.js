@@ -75,6 +75,15 @@ function add_data(data) {
     return false;
 }
 
+function node(sha1) {
+    var i = node_index[sha1];
+    if (! i) {
+        console.error("No index for SHA1 '" + sha1 + "'");
+        return null;
+    }
+    return nodes[i];
+}
+
 module.exports = {
     // Variables
     nodes: nodes,
@@ -84,4 +93,5 @@ module.exports = {
 
     // Functions
     add: add_data,
+    node: node
 };
