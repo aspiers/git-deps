@@ -44,3 +44,5 @@ function isFullScreen() {
     var fullscreenEnabled = document.fullscreenEnabled || document.mozFullScreenEnabled || document.webkitFullscreenEnabled;
     return fullscreenEnabled;
 }
+
+module.exports = fullScreen;

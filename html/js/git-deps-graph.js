@@ -8,7 +8,7 @@ global.gdn = require('./git-deps-noty');
 global.gdd = require('./git-deps-data');
 global.gdl = require('./git-deps-layout');
 
-require('./fullscreen');
+var fullScreen = require('./fullscreen');
 
 var SVG_MARGIN = 2,  // space around <svg>, matching #svg-container border
     RECT_MARGIN = 14,  // space in between <rects>
@@ -128,6 +128,9 @@ function zoom_to_fit() {
     zoom.translate([tx, ty]).scale(s);
     redraw(true);
 }
+
+window.full_screen_click = full_screen_click;
+window.zoom_to_fit = zoom_to_fit;
 
 function add_commitish(commitish) {
     if (! svg) {
