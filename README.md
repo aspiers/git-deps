@@ -89,7 +89,7 @@ Usage
 -----
 
 The tool is not yet fully documented, but usage is fairly
-self-explanatory if you run with `-h` or `--help`.
+self-explanatory if you run with `-h`.
 
 By default it will output all dependencies of the given commit-ish(s),
 one per line.  With `--recurse`, it will traverse dependencies of
