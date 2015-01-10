@@ -106,7 +106,7 @@ function build_alignment_constraint(row_nodes) {
     constraint = {
         axis: 'y',
         type: 'alignment',
-        offsets: [],
+        offsets: []
     };
     for (var i in row_nodes) {
         var node = row_nodes[i];
