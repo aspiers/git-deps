@@ -27,9 +27,13 @@
     "dependencies": {
         "d3-tip": "~0.6.6",
         "d3": "~3.5.3",
-        "webcola": "~0.1.1",
+        "webcola": "aspiers/WebCola#fix/main-entrypoints",
         "jquery": "~2.1.3",
-        "noty": "~2.3.0"
+        "noty": "aspiers/noty#fix/commonjs",
+        "browserify": "*"
+    },
+    "devDependencies": {
+        "watchify": "*"
     },
     "directories": {
         "test": "test"

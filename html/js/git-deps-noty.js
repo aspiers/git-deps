@@ -1,3 +1,5 @@
+require('noty');
+
 // Different noty types:
 // alert, success, error, warning, information, confirmation
 function noty_error(text) {
@@ -22,7 +24,7 @@ function noty_debug(text) {
 
 // Haha, did you see what I did here?
 function notyfication(type, text) {
-    var n = noty({
+    var n = window.noty({
         text: text,
         type: type,
         layout: 'topRight',
@@ -36,3 +38,11 @@ function notyfication(type, text) {
         }
     });
 }
+
+module.exports = {
+    error: noty_error,
+    warn: noty_warn,
+    success: noty_success,
+    info: noty_info,
+    debug: noty_debug
+};

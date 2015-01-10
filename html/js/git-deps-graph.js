@@ -1,3 +1,14 @@
+var jQuery = require('jquery');
+var $ = jQuery;
+var d3 = require('d3');
+var d3tip = require('d3-tip');
+d3tip(d3);
+
+global.gdn = require('./git-deps-noty');
+global.gdd = require('./git-deps-data');
+
+require('./fullscreen');
+
 var SVG_MARGIN = 2,  // space around <svg>, matching #svg-container border
     RECT_MARGIN = 14,  // space in between <rects>
     PADDING =  5,  // space in between <text> label and <rect> border
@@ -8,7 +19,7 @@ var svg_width  = 960, old_svg_width,
 
 var color = d3.scale.category20();
 
-var d3cola = cola.d3adaptor();
+global.d3cola = cola.d3adaptor();
 d3cola
     .flowLayout("y", 150)
     .linkDistance(60)
@@ -156,23 +167,23 @@ function init_svg() {
 
 function update_cola() {
     d3cola
-        .nodes(nodes)
-        .links(links)
-        .constraints(constraints);
+        .nodes(gdd.nodes)
+        .links(gdd.links)
+        .constraints(gdd.constraints);
 }
 
 function draw_graph(commitish) {
     d3.json("deps.json/" + commitish, function (error, data) {
         if (error) {
             var details = JSON.parse(error.responseText);
-            noty_error(details.message);
+            gdn.error(details.message);
             return;
         }
 
-        var new_data = add_data(data);
+        var new_data = gdd.add(data);
 
         if (! new_data) {
-            noty_warn('No new commits or dependencies found!');
+            gdn.warn('No new commits or dependencies found!');
             return;
         }
 
@@ -181,13 +192,13 @@ function draw_graph(commitish) {
         new_data_notification(new_data);
 
         path = fg.selectAll(".link")
-            .data(links, link_key);
+            .data(gdd.links, link_key);
 
         path.enter().append('svg:path')
             .attr('class', 'link');
 
         node = fg.selectAll(".node")
-            .data(nodes, function (d) {
+            .data(gdd.nodes, function (d) {
                 return d.sha1;
             })
           .call(d3cola.drag);
@@ -214,7 +225,7 @@ function link_key(link) {
 function sha1_of_link_pointer(pointer) {
     if (typeof(pointer) == 'object')
         return pointer.sha1;
-    return nodes[pointer].sha1;
+    return gdd.nodes[pointer].sha1;
 }
 
 function new_data_notification(new_data) {
@@ -233,7 +244,7 @@ function new_data_notification(new_data) {
         ((new_nodes == 1) ? 'dependency' : 'dependencies');
     notification += '</p>';
 
-    noty_success(notification);
+    gdn.success(notification);
 }
 
 function define_arrow_markers(fg) {
@@ -299,7 +310,7 @@ function position_nodes(rect, label, tip) {
     // turn on overlap avoidance after first convergence
     // d3cola.on("end", function () {
     //    if (!d3cola.avoidOverlaps()) {
-    //        nodes.forEach(function (v) {
+    //        gdd.nodes.forEach(function (v) {
     //            v.width = v.height = 10;
     //        });
     //        d3cola.avoidOverlaps(true);
@@ -325,9 +336,9 @@ function tip_html(d) {
     var pre = fragment.find(".commit-body pre").text(d.body);
 
     if (options.debug) {
-        var index = node_index[d.sha1];
+        var index = gdd.node_index[d.sha1];
         var debug = "node index: " + index;
-        $.each(constraints, function (i, constraint) {
+        $.each(gdd.constraints, function (i, constraint) {
             if (constraint.parent == d.sha1) {
                 var siblings = $.map(constraint.offsets,
                                      function (offset, i) {

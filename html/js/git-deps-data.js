@@ -1,3 +1,5 @@
+var $ = require('jquery');
+
 // The list of nodes, links, and constraints to feed into WebCola.
 // These will be dynamically built as we retrieve them via XHR.
 var nodes = [], links = [], constraints = [];
@@ -57,7 +59,7 @@ function add_link(parent_sha1, child_sha1) {
 }
 
 function build_constraints() {
-    constraints = [];  // FIXME: only rebuild constraints which changed
+    constraints.length = 0;  // FIXME: only rebuild constraints which changed
     for (var parent_sha1 in deps) {
         constraints.push(build_constraint(parent_sha1));
     }
@@ -97,3 +99,14 @@ function add_data(data) {
     return false;
 }
 
+module.exports = {
+    // Variables
+    nodes: nodes,
+    links: links,
+    constraints: constraints,
+    node_index: node_index,
+    deps: deps,
+
+    // Functions
+    add: add_data,
+};
