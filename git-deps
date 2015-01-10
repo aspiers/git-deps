@@ -637,26 +637,30 @@ def serve(options):
     except ImportError:
         abort("Cannot find flask module which is required for webserver mode.")
 
-    webserver = Flask("git-deps")
+    webserver = Flask('git-deps')
+    here = os.path.dirname(os.path.realpath(__file__))
+    root = os.path.join(here, 'html')
+    webserver.root_path = root
 
     ##########################################################
     # Static content
 
     @webserver.route('/')
     def main_page():
-        return send_file('html/git-deps.html')
+        return send_file('git-deps.html')
 
     @webserver.route('/tip-template.html')
     def tip_template():
-        return send_file('html/tip-template.html')
+        return send_file('tip-template.html')
 
     @webserver.route('/test.json')
     def data():
-        return send_file('html/test.json')
+        return send_file('test.json')
 
     def make_subdir_handler(subdir):
         def subdir_handler(filename):
-            path = safe_join('html/' + subdir, filename)
+            path = safe_join(root, subdir)
+            path = safe_join(path, filename)
             if os.path.exists(path):
                 return send_file(path)
             else:
