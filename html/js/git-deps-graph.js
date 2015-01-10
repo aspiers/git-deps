@@ -340,8 +340,18 @@ function tip_html(d) {
     var pre = top.find(".commit-body pre").text(d.body);
 
     if (options.debug) {
+        // var deps = gdd.deps[d.sha1];
+        // if (deps) {
+        //     deps = Object.keys(deps);
+        //     var sha1s = $.map(deps, function (sha1, i) {
+        //         var node = gdd.node(sha1);
+        //         return node.name;
+        //     });
+        //     top.append("<br />Dependencies: " + sha1s.join(", "));
+        // }
+
         var index = gdd.node_index[d.sha1];
-        var debug = "node index: " + index;
+        var debug = "<br />node index: " + index;
         var dagre_node = gdl.g.graph.node(d.sha1);
         debug += "<br />dagre: (" + dagre_node.x + ", " + dagre_node.y + ")";
         top.append(debug);
