@@ -192,10 +192,9 @@ function draw_graph(commitish) {
             gdn.warn('No new commits or dependencies found!');
             return;
         }
+        new_data_notification(new_data);
 
         update_cola();
-
-        new_data_notification(new_data);
 
         path = fg.selectAll(".link")
             .data(gdd.links, link_key);
