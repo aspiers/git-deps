@@ -25,7 +25,7 @@ d3cola
     .flowLayout("y", 150)
     .linkDistance(60)
     //.symmetricDiffLinkLengths(30)
-    //.jaccardLinkLengths(100);
+    //.jaccardLinkLengths(100)
     .avoidOverlaps(true);
 
 // d3 visualization elements.  Kept global to aid in-browser debugging.
