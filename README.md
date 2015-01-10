@@ -97,6 +97,10 @@ dependencies, and so on until it cannot find any more.  In recursion
 mode, two SHA1s are output per line, indicating that the first depends
 on the second.
 
+If you run with the `--serve` option then it will start a lightweight
+webserver and output a URL you can connect to for dynamically
+visualizing and navigating the dependency graph.
+
 Development / support / feedback
 --------------------------------
 
