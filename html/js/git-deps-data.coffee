@@ -28,7 +28,7 @@ add_node = (commit) ->
 # Returns 1 iff a dependency was added, otherwise 0.
 add_dependency = (parent_sha1, child_sha1) ->
     deps[parent_sha1] = {}  unless parent_sha1 of deps
-    
+
     # We've already got this link, presumably
     # from a previous XHR.
     return 0 if child_sha1 of deps[parent_sha1]
@@ -79,7 +79,7 @@ module.exports =
     links: links
     node_index: node_index
     deps: deps
-    
+
     # Functions
     add: add_data
     node: node

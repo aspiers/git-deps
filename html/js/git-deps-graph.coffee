@@ -262,11 +262,11 @@ draw_nodes = (fg, node) ->
         d.name
     ).each((d) ->
         b = @getBBox()
-        
+
         # Calculate width/height of rectangle from text bounding box.
         d.rect_width = b.width + 2 * PADDING
         d.rect_height = b.height + 2 * PADDING
-        
+
         # Now set the node width/height as used by cola for
         # positioning.  This has to include the margin
         # outside the rectangle.
@@ -280,7 +280,7 @@ position_nodes = (rect, label, tip) ->
         .attr("height", (d, i) -> d.rect_height) \
         .on("mouseover", tip.show) \
         .on("mouseout", tip.hide)
-    
+
     # Centre label
     label \
         .attr("x", (d) -> d.rect_width / 2) \
@@ -317,7 +317,7 @@ tip_html = (d) ->
         .attr("datetime", date.toISOString()) \
         .text(date)
     pre = top.find(".commit-body pre").text(d.body)
-        
+
     if options.debug
         # deps = gdd.deps[d.sha1]
         # if deps
@@ -328,7 +328,7 @@ tip_html = (d) ->
         dagre_node = gdl.g.graph.node(d.sha1)
         debug += "<br />dagre: (" + dagre_node.x + ", " + dagre_node.y + ")"
         top.append debug
-    
+
     # Javascript *sucks*.  There's no way to get the outerHTML of a
     # document fragment, so you have to wrap the whole thing in a
     # single parent and then look that up via children[0].
@@ -353,7 +353,7 @@ tick_handler = ->
         @parentNode.insertBefore this, this if isIE()
 
     path.attr "d", (d) ->
-        
+
         # Undocumented: https://github.com/tgdwyer/WebCola/issues/52
         cola.vpsc.makeEdgeBetween \
             d,

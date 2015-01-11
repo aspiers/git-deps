@@ -21,10 +21,10 @@ externs = {}
 dagre_layout = ->
     g = new dagre.graphlib.Graph()
     externs.graph = g
-    
+
     # Set an object for the graph label
     g.setGraph {}
-    
+
     # Default to assigning a new object as a label for each new edge.
     g.setDefaultEdgeLabel -> {}
 
@@ -58,16 +58,16 @@ build_constraints = ->
     row_groups = dagre_row_groups()
 
     constraints.length = 0 # FIXME: only rebuild constraints which changed
-    
+
     # We want alignment constraints between all nodes which dagre
     # assigned the same y value.
     for y of row_groups
         row_nodes = row_groups[y]
-        
+
         # No point having an alignment group with only one node in.
         if row_nodes.length > 1
             constraints.push build_alignment_constraint(row_nodes)
-    
+
     # We also need separation constraints ensuring that the
     # top-to-bottom ordering assigned by dagre is preserved.  Since
     # all nodes within a single row are already constrained to the
@@ -110,7 +110,7 @@ module.exports =
     # Variables
     constraints: constraints
     g: externs
-    
+
     # Functions
     build_constraints: build_constraints
     node: node
