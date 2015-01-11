@@ -366,6 +366,10 @@ function tip_html(d) {
     return fragment[0].children[0].outerHTML;
 }
 
+function translate(x, y) {
+    return "translate(" + x + "," + y + ")";
+}
+
 function tick_handler() {
     node.each(function (d) {
         // cola sets the bounds property which is a Rectangle
@@ -377,9 +381,7 @@ function tick_handler() {
     });
 
     node.attr("transform", function (d) {
-        return "translate(" +
-            d.innerBounds.x + "," +
-            d.innerBounds.y + ")";
+        return translate(d.innerBounds.x, d.innerBounds.y);
     });
 
     path.each(function (d) {
