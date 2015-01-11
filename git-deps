@@ -182,7 +182,7 @@ class JSONDependencyListener(DependencyListener):
             raise
 
         out = out.strip()
-        out = re.sub(r'^(heads|remotes)/', '', out)
+        out = re.sub(r'^(heads|tags|remotes)/', '', out)
         # We already have the abbreviated SHA1 from abbreviate_sha1()
         out = re.sub(r'-g[0-9a-f]{7,}$', '', out)
         # self.logger.debug(out)
