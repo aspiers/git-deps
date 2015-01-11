@@ -207,6 +207,7 @@ function draw_graph(commitish) {
                 return d.sha1;
             })
           .call(d3cola.drag);
+        global.node = node;
 
         node.enter().append("g")
             .attr("class", "node");
