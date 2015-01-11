@@ -66,6 +66,12 @@ class DependencyListener(object):
     def __init__(self, options):
         self.options = options
 
+    def set_detector(self, detector):
+        self.detector = detector
+
+    def repo(self):
+        return self.detector.repo
+
     def new_commit(self, commit):
         pass
 
@@ -277,7 +283,7 @@ class DependencyDetector(object):
     tree represented (conceptually) by a list of edges.
     """
 
-    def __init__(self, options, repo_path=None, logger=None, listener=None):
+    def __init__(self, options, repo_path=None, logger=None):
         self.options = options
 
         if logger is None:
@@ -318,13 +324,11 @@ class DependencyDetector(object):
         # discovered.
         self.listeners = []
 
-        if listener:
-            self.listeners.append(listener)
-
     def add_listener(self, listener):
-        if not isinstance(listener, types.Functiontype):
-            raise RuntimeError("listener must be a function")
-        self.listener.append(listener)
+        if not isinstance(listener, DependencyListener):
+            raise RuntimeError("Listener must be a DependencyListener")
+        self.listeners.append(listener)
+        listener.set_detector(self)
 
     def notify_listeners(self, event, *args):
         for listener in self.listeners:
@@ -631,12 +635,14 @@ def parse_args():
 
 
 def cli(options, args):
+    detector = DependencyDetector(options)
+
     if options.json:
         listener = JSONDependencyListener(options)
     else:
         listener = CLIDependencyListener(options)
 
-    detector = DependencyDetector(options, listener=listener)
+    detector.add_listener(listener)
 
     for dependent_rev in args:
         try:
@@ -711,8 +717,10 @@ def serve(options):
 
     @webserver.route('/deps.json/<commitish>')
     def deps(commitish):
+        detector = DependencyDetector(options)
         listener = JSONDependencyListener(options)
-        detector = DependencyDetector(options, listener=listener)
+        detector.add_listener(listener)
+
         try:
             sha1 = detector.get_commit(commitish)
         except InvalidCommitish as e:
