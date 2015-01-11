@@ -108,14 +108,7 @@ visualizing and navigating the dependency graph.
 Development / support / feedback
 --------------------------------
 
-Any kind of feedback is very welcome; please first check that your bug
-/ issue / enhancement request is not already listed here:
-
-*   https://github.com/aspiers/git-deps/issues
-
-and if not then file a new issue.  If you prefer, you can mail
-[the `git` mailing list](http://vger.kernel.org/vger-lists.html#git)
-and cc: me `<git at adamspiers dot org>`.
+Please see [the CONTRIBUTING file](CONTRIBUTING.md).
 
 History
 -------
