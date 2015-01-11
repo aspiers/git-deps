@@ -318,10 +318,11 @@ tip_html = (d) ->
     title = top.find("p.commit-title")
     title.text d.title
 
-    unless d.describe is ""
+    if d.refs
         title.append "  <span />"
-        describe = title.children().first()
-        describe.addClass("commit-describe commit-ref").text(d.describe)
+        refs = title.children().first()
+        refs.addClass("commit-describe commit-ref") \
+            .text(d.refs.join(" "))
 
     top.find("span.commit-author").text(d.author_name)
     date = new Date(d.author_time * 1000)
