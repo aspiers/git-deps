@@ -2,6 +2,12 @@
 
 here=$(dirname $0)
 
+tag () {
+    git tag "$@"
+    echo -n "Hit Enter to continue ..."
+    read
+}
+
 test_repo=$here/test-repo
 
 rm -rf $test_repo
@@ -28,32 +34,32 @@ EOF
 
 git add one
 git commit -m 'one'
-git tag one
+tag one
 
 for f in two three; do
     cp one $f
     git add $f
     git commit -m "$f"
-    git tag "$f"
+    tag "$f"
 done
 
 # Now start making changes
 
 sed -i 's/three/three a/' one
 git commit -am 'one: change three to three a'
-git tag one-three-a  # depends on one
+tag one-three-a  # depends on one
 
 sed -i 's/three/three a/' two
 git commit -am 'two: change three to three a'
-git tag two-three-a  # depends on two
+tag two-three-a  # depends on two
 
 # Change non-overlapping part of previously changed file
 sed -i 's/eight/eight a/' one
 git commit -am 'one: change eight to eight a'
-git tag one-eight-a  # depends on one
+tag one-eight-a  # depends on one
 
 # Change previously changed line
 sed -i 's/three a/three b/' one
 git commit -am 'one: change three a to three b'
-git tag one-three-b  # depends on one-three-a
+tag one-three-b  # depends on one-three-a
 
