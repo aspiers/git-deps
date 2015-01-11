@@ -222,9 +222,12 @@ new_data_notification = (new_data) ->
     new_nodes = new_data[0]
     new_deps = new_data[1]
     root = new_data[2]
-    notification = \
-        "<span class=\"commit-ref\">#{root.commitish}</span>
-            resolved as " + root.sha1
+    notification =
+        if root.commitish == root.sha1
+            "Analysed dependencies of #{root.abbrev}"
+        else
+            "<span class=\"commit-ref\">#{root.commitish}</span>
+                resolved as #{root.sha1}"
     notification += "<p>#{new_nodes} new commit"
     notification += "s" unless new_nodes == 1
     notification += "; #{new_deps} new " +

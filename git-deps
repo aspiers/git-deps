@@ -735,7 +735,7 @@ def serve(options):
         detector.add_listener(listener)
 
         try:
-            sha1 = detector.get_commit(commitish)
+            root_commit = detector.get_commit(commitish)
         except InvalidCommitish as e:
             return json_error(
                 422, 'Invalid commitish',
@@ -746,7 +746,8 @@ def serve(options):
         json = listener.json()
         json['root'] = {
             'commitish': commitish,
-            'sha1': sha1.hex,
+            'sha1': root_commit.hex,
+            'abbrev': GitUtils.abbreviate_sha1(root_commit.hex),
         }
         return jsonify(json)
 
