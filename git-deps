@@ -66,6 +66,9 @@ class DependencyListener(object):
     def __init__(self, options):
         self.options = options
 
+    def new_commit(self, commit):
+        pass
+
     def new_dependent(self, dependent):
         pass
 
@@ -183,11 +186,12 @@ class JSONDependencyListener(DependencyListener):
     def add_link(self, source, target):
         self._json['dependencies'].append
 
+    def new_commit(self, commit):
+        self.add_commit(commit)
+
     def new_dependency(self, parent, child, path, line_num):
         ph = parent.hex
         ch = child.hex
-        self.add_commit(parent)
-        self.add_commit(child)
 
         new_dep = {
             'parent': ph,
@@ -375,6 +379,7 @@ class DependencyDetector(object):
             del self.todo_d[dependent.hex]
             self.logger.debug("Processing %s from TODO list" %
                               dependent.hex[:8])
+            self.notify_listeners('new_commit', dependent)
 
             for parent in dependent.parents:
                 self.find_dependencies_with_parent(dependent, parent)
@@ -472,6 +477,7 @@ class DependencyDetector(object):
                     '        New dependency %s via line %s (%s)' %
                     (dependency_sha1[:8], line_num, self.oneline(dependency)))
                 self.dependencies[dependent_sha1][dependency_sha1] = {}
+                self.notify_listeners('new_commit', dependency)
                 self.notify_listeners('new_dependency',
                                       dependent, dependency, path, line_num)
                 if dependency_sha1 not in self.dependencies:
