@@ -211,6 +211,13 @@ function draw_graph(commitish) {
 
         node.enter().append("g")
             .attr("class", "node");
+            // Failed attempt to use dagre layout as starting positions
+            // https://github.com/tgdwyer/WebCola/issues/63
+            // .each(function (d, i) {
+            //     var n = gdl.node(d.sha1);
+            //     d.x = n.x;
+            //     d.y = n.y;
+            // });
 
         draw_nodes(fg, node);
     });
