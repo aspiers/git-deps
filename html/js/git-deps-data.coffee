@@ -70,7 +70,7 @@ add_data = (data) ->
 
 node = (sha1) ->
     i = node_index[sha1]
-    unless i
+    unless i?
         console.error "No index for SHA1 '#{sha1}'"
         return null
     return nodes[i]
