@@ -180,6 +180,7 @@ draw_graph = (commitish) ->
 
         unless new_data
             gdn.warn "No new commits or dependencies found!"
+            update_rect_explored()
             return
         new_data_notification new_data
 
@@ -255,7 +256,18 @@ draw_nodes = (fg, node) ->
     hide_tip_on_drag = d3cola.drag().on("dragstart", tip.hide)
     node.call hide_tip_on_drag
 
-    rect = node.append("rect").attr("rx", 5).attr("ry", 5)
+    rect = node.append("rect") \
+        .attr("rx", 5) \
+        .attr("ry", 5)
+
+    update_rect_explored()
+
+    rect.on "dblclick", (d) ->
+        if d.explored
+            gdn.warn "Commit #{d.name} already explored"
+        else
+            add_commitish d.sha1
+
     label = node.append("text").text((d) ->
         d.name
     ).each((d) ->
@@ -271,6 +283,7 @@ draw_nodes = (fg, node) ->
         d.width = d.rect_width + 2 * RECT_MARGIN
         d.height = d.rect_height + 2 * RECT_MARGIN
     )
+
     position_nodes rect, label, tip
 
 position_nodes = (rect, label, tip) ->
@@ -297,6 +310,11 @@ position_nodes = (rect, label, tip) ->
     #            v.width = v.height = 10
     #        d3cola.avoidOverlaps true
     #        d3cola.start
+
+update_rect_explored = () ->
+    d3.selectAll(".node rect").attr "class", (d) ->
+        console.log "rect #{d.name}: #{d.explored}"
+        if d.explored then "explored" else "unexplored"
 
 tip_html = (d) ->
     fragment = $(tip_template).clone()

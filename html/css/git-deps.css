@@ -29,8 +29,15 @@ rect.background {
 g.node rect {
     stroke: #e5e5e5;
     stroke-width: 2px;
-    fill: rgba(242,242, 255, 0.54);
     cursor: pointer;
+}
+
+g.node rect.explored {
+    fill: rgba(167, 224, 196, 0.54);
+}
+
+g.node rect.unexplored {
+    fill: rgba(242, 242, 255, 0.54);
 }
 
 g.node text {
