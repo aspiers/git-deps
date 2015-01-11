@@ -29,6 +29,7 @@ function notyfication(type, text) {
         type: type,
         layout: 'topRight',
         theme: 'relax',
+        maxVisible: 15,
         timeout: 30000,  // ms
         animation: {
             open: 'animated bounceInUp',   // Animate.css class names
