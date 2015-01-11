@@ -1,5 +1,3 @@
-$ = require("jquery")
-
 # The list of nodes and links to feed into WebCola.
 # These will be dynamically built as we retrieve them via XHR.
 nodes = []
@@ -55,10 +53,10 @@ add_link = (parent_sha1, child_sha1) ->
 add_data = (data) ->
     new_nodes = 0
     new_deps = 0
-    $.each data.commits, (i, commit) ->
+    for commit in data.commits
         new_nodes += add_node(commit)
 
-    $.each data.dependencies, (i, dep) ->
+    for dep in data.dependencies
         new_deps += add_dependency(dep.parent, dep.child)
 
     if new_nodes > 0 or new_deps > 0

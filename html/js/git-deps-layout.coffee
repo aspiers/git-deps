@@ -1,4 +1,3 @@
-$ = require "jquery"
 dagre = require "dagre"
 
 gdd = require "./git-deps-data.coffee"
@@ -28,14 +27,14 @@ dagre_layout = ->
     # Default to assigning a new object as a label for each new edge.
     g.setDefaultEdgeLabel -> {}
 
-    $.each gdd.nodes, (i, node) ->
+    for node in gdd.nodes
         g.setNode node.sha1,
             label: node.name
             width: node.rect_width or 70
             height: node.rect_height or 30
 
-    $.each gdd.deps, (parent_sha1, children) ->
-        $.each children, (child_sha1, bool) ->
+    for parent_sha1, children of gdd.deps
+        for child_sha1, bool of children
             g.setEdge parent_sha1, child_sha1
 
     dagre.layout g
@@ -45,7 +44,7 @@ dagre_row_groups = ->
     g = dagre_layout()
     row_groups = {}
     externs.row_groups = row_groups
-    g.nodes().forEach (sha1) ->
+    for sha1 in g.nodes
         x = g.node(sha1).x
         y = g.node(sha1).y
         row_groups[y] = []  unless y of row_groups
