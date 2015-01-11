@@ -74,12 +74,11 @@ resize_window = ->
 
 redraw = (transition) ->
     # if mouse down then we are dragging not panning
-    # if (nodeMouseDown)
-    #     return;
+    # if nodeMouseDown
+    #     return
     ((if transition then fg.transition() else fg)) \
         .attr "transform",
-                    "translate(" + zoom.translate() + ")" +
-                    " scale(" + zoom.scale() + ")"
+              "translate(#{zoom.translate()}) scale(#{zoom.scale()})"
 
 graph_bounds = ->
     x = Number.POSITIVE_INFINITY
@@ -226,13 +225,12 @@ new_data_notification = (new_data) ->
     new_deps = new_data[1]
     root = new_data[2]
     notification = \
-        "<span class=\"commit-ref\">" +
-        root.commitish +
-        "</span> resolved as " + root.sha1
-    notification += "<p>" + new_nodes + " new commit" +
-        ((if (new_nodes is 1) then "" else "s"))
-    notification += "; " + new_deps + " new " +
-        ((if (new_nodes is 1) then "dependency" else "dependencies"))
+        "<span class=\"commit-ref\">#{root.commitish}</span>
+            resolved as " + root.sha1
+    notification += "<p>#{new_nodes} new commit"
+    notification += "s" unless new_nodes == 1
+    notification += "; #{new_deps} new " +
+        ((if new_nodes == 1 then "dependency" else "dependencies"))
     notification += "</p>"
 
     gdn.success notification
@@ -326,7 +324,7 @@ tip_html = (d) ->
         index = gdd.node_index[d.sha1]
         debug = "<br />node index: " + index
         dagre_node = gdl.g.graph.node(d.sha1)
-        debug += "<br />dagre: (" + dagre_node.x + ", " + dagre_node.y + ")"
+        debug += "<br />dagre: (#{dagre_node.x}, #{dagre_node.y})"
         top.append debug
 
     # Javascript *sucks*.  There's no way to get the outerHTML of a
@@ -335,7 +333,7 @@ tip_html = (d) ->
     return fragment[0].children[0].outerHTML
 
 translate = (x, y) ->
-    "translate(" + x + "," + y + ")"
+    "translate(#{x},#{y})"
 
 tick_handler = ->
     node.each (d) ->
