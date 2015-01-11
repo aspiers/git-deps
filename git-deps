@@ -163,14 +163,13 @@ class JSONDependencyListener(DependencyListener):
         and returns the commit's index in the array.
         """
         sha1 = commit.hex
-        abbrev = GitUtils.abbreviate_sha1(sha1)
         if sha1 in self._commits:
             return self._commits[sha1]
         title, separator, body = commit.message.partition("\n")
         commit = {
             'explored': False,
-            'name': abbrev,
             'sha1': sha1,
+            'name': GitUtils.abbreviate_sha1(sha1),
             'describe': GitUtils.describe(sha1),
             'author_name': commit.author.name,
             'author_mail': commit.author.email,
