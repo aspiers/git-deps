@@ -70,10 +70,17 @@ single commit.)  But this should not stop it from being useful.
 Installation
 ------------
 
-Just copy or symlink `git-deps` so it's anywhere on your `$PATH`.
+`git-deps` requires [Pygit2](http://www.pygit2.org/), so first
+[install that](http://www.pygit2.org/install.html).  If you are using
+Linux, there is a good chance that your distribution already offers
+packages for it.  For example, on openSUSE, just do:
 
-If you want to use the graph visualization web server functionality,
-you will need to install some dependencies:
+    sudo zypper install python-pygit2
+
+Then just copy or symlink `git-deps` so it's anywhere on your `$PATH`.
+
+If you want to use the shiny new graph visualization web server
+functionality, you will need to install some dependencies:
 
 *   To install the required Javascript libraries, you will need
     [`npm`](https://www.npmjs.com/) installed, and then type:
