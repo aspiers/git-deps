@@ -27,13 +27,13 @@ body {
 
 rect.background {
     fill: white;
-    cursor: move;
+    cursor: all-scroll;
 }
 
 g.node rect {
     stroke: #e5e5e5;
     stroke-width: 2px;
-    cursor: pointer;
+    cursor: pointer;  /* move is semantically better but looks the same as all-scroll */
 }
 
 g.node rect.explored {
