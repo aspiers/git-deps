@@ -90,7 +90,7 @@ graph_bounds = ->
         y = Math.min(y, d.y - d.height / 2)
         X = Math.max(X, d.x + d.width / 2)
         Y = Math.max(Y, d.y + d.height / 2)
-    return \
+    return {} =
         x: x
         X: X
         y: y
@@ -121,10 +121,7 @@ zoom_to_fit = ->
     s = Math.min(cw / w, ch / h)
     tx = -b.x * s + (cw / s - w) * s / 2
     ty = -b.y * s + (ch / s - h) * s / 2
-    zoom.translate([
-        tx
-        ty
-    ]).scale s
+    zoom.translate([tx, ty]).scale s
     redraw true
 
 window.full_screen_click = full_screen_click
