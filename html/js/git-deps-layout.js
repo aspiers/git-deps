@@ -118,11 +118,16 @@ function build_alignment_constraint(row_nodes) {
     return constraint;
 }
 
+function node(sha1) {
+    return externs.graph.node(sha1);
+}
+
 module.exports = {
     // Variables
     constraints: constraints,
     g: externs,
 
     // Functions
-    build_constraints: build_constraints
+    build_constraints: build_constraints,
+    node: node
 };
