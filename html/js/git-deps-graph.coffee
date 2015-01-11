@@ -313,7 +313,6 @@ position_nodes = (rect, label, tip) ->
 
 update_rect_explored = () ->
     d3.selectAll(".node rect").attr "class", (d) ->
-        console.log "rect #{d.name}: #{d.explored}"
         if d.explored then "explored" else "unexplored"
 
 tip_html = (d) ->
