@@ -231,7 +231,7 @@ new_data_notification = (new_data) ->
     notification += "<p>#{new_nodes} new commit"
     notification += "s" unless new_nodes == 1
     notification += "; #{new_deps} new " +
-        ((if new_nodes == 1 then "dependency" else "dependencies"))
+        (if new_deps == 1 then "dependency" else "dependencies")
     notification += "</p>"
 
     gdn.success notification
