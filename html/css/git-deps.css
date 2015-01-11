@@ -17,7 +17,7 @@ body {
 }
 
 #top p {
-    margin-right: 300px; /* Avoid overlap with noty boxes */
+    margin-right: 320px; /* Avoid overlap with noty boxes */
 }
 
 #svg-container {
