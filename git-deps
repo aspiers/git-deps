@@ -224,8 +224,8 @@ class GitUtils(object):
             'git', 'describe',
             '--all',       # look for tags and branches
             '--long',      # remotes/github/master-0-g2b6d591
-            #'--contains',
-            #'--abbrev',
+            # '--contains',
+            # '--abbrev',
             sha1
         ]
         # cls.logger.debug(" ".join(cmd))
@@ -709,7 +709,7 @@ def serve(options):
         detector.find_dependencies(commitish)
         json = listener.json()
         json['root'] = {
-            'commitish' : commitish,
+            'commitish': commitish,
             'sha1': sha1.hex,
         }
         return jsonify(json)
