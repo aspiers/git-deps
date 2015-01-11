@@ -189,7 +189,7 @@ class JSONDependencyListener(DependencyListener):
         self.add_commit(parent)
         self.add_commit(child)
 
-        new_dependency = {
+        new_dep = {
             'parent': ph,
             'child': ch,
         }
@@ -197,7 +197,7 @@ class JSONDependencyListener(DependencyListener):
         if self.options.log:
             pass  # FIXME
 
-        self._json['dependencies'].append(new_dependency)
+        self._json['dependencies'].append(new_dep)
 
     def dependent_done(self, dependent, dependencies):
         commit = self.get_commit(dependent.hex)
