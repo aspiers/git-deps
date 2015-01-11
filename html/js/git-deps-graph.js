@@ -28,7 +28,7 @@ d3cola
     //.jaccardLinkLengths(100)
     .avoidOverlaps(true);
 
-// d3 visualization elements.  Kept global to aid in-browser debugging.
+// d3 visualization elements
 var container, svg, fg, node, path, tip, tip_template;
 var zoom;
 
