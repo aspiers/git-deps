@@ -20,7 +20,11 @@ deps = {}
 
 # Returns 1 iff a node was added, otherwise 0.
 add_node = (commit) ->
-    return 0 if commit.sha1 of node_index
+    if commit.sha1 of node_index
+        n = node commit.sha1
+        n.explored ||= commit.explored
+        return 0
+
     nodes.push commit
     node_index[commit.sha1] = nodes.length - 1
     return 1

@@ -145,6 +145,10 @@ class JSONDependencyListener(DependencyListener):
             'dependencies': [],
         }
 
+    def get_commit(self, sha1):
+        i = self._commits[sha1]
+        return self._json['commits'][i]
+
     def add_commit(self, commit):
         """Adds the commit to the commits array if it doesn't already exist,
         and returns the commit's index in the array.
@@ -155,6 +159,7 @@ class JSONDependencyListener(DependencyListener):
             return self._commits[sha1]
         title, separator, body = commit.message.partition("\n")
         commit = {
+            'explored': False,
             'name': abbrev,
             'sha1': sha1,
             'describe': GitUtils.describe(sha1),
@@ -193,6 +198,10 @@ class JSONDependencyListener(DependencyListener):
             pass  # FIXME
 
         self._json['dependencies'].append(new_dependency)
+
+    def dependent_done(self, dependent, dependencies):
+        commit = self.get_commit(dependent.hex)
+        commit['explored'] = True
 
     def json(self):
         return self._json
