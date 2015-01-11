@@ -80,7 +80,7 @@ you will need to install some dependencies:
 
         cd html
         npm install
-        browserify -d js/git-deps-graph.js -o js/bundle.js
+        browserify -t coffeeify -d js/git-deps-graph.js -o js/bundle.js
 
 *   You will need the [Flask](http://flask.pocoo.org/) Python
     module installed.
