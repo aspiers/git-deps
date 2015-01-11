@@ -89,7 +89,11 @@ Usage
 -----
 
 The tool is not yet fully documented, but usage is fairly
-self-explanatory if you run with `-h`.
+self-explanatory if you run `git deps -h`.
+
+Currently you should run it from the root (i.e. top directory) of the
+git repository you want to examine; this is a
+[known limitation](https://github.com/aspiers/git-deps/issues/27).
 
 By default it will output all dependencies of the given commit-ish(s),
 one per line.  With `--recurse`, it will traverse dependencies of
