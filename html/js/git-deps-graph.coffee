@@ -182,7 +182,7 @@ draw_graph = (commitish) ->
             update_rect_explored()
             return
         new_data_notification new_data
-        d3.select('.commitish input').node().focus()
+        focus_commitish_input()
 
         update_cola()
 
@@ -207,9 +207,15 @@ draw_graph = (commitish) ->
         nodes.call(d3cola.drag)
 
         init_tip() unless tip?
+        # Event handlers need to be updated every time new nodes are added.
+        init_tip_event_handlers(nodes)
+
         [rects, labels] = draw_new_nodes fg, g_enter
         position_nodes(rects, labels)
         update_rect_explored()
+
+focus_commitish_input = () ->
+    d3.select('.commitish input').node().focus()
 
 # Required for object constancy: http://bost.ocks.org/mike/constancy/ ...
 link_key = (link) ->
@@ -219,9 +225,52 @@ link_key = (link) ->
 
 init_tip = () ->
     tip = d3.tip().attr("class", "d3-tip").html(tip_html)
+    global.tip = tip
     fg.call tip
-    hide_tip_on_drag = d3cola.drag().on("dragstart", tip.hide)
-    nodes.call hide_tip_on_drag
+
+# This hack is to work around something which looks like a bug in d3
+# or d3-tip.  tip.show is defined as:
+#
+#   function() {
+#       var args = Array.prototype.slice.call(arguments)
+#       if(args[args.length - 1] instanceof SVGElement) target = args.pop()
+#       ...
+#
+# and there's also:
+#
+#   function getScreenBBox() {
+#       var targetel   = target || d3.event.target;
+#       ...
+#
+# which I'm guessing normally uses d3.event.target.  However for some
+# reason when using tip.show as the dragend handler, d3.event.target
+# points to a function rather than the expected DOM element, which
+# appears to be exactly the same problem described here:
+#
+#   http://stackoverflow.com/questions/12934731/d3-event-targets
+#
+# However I tried rects.call ... instead of nodes.call as suggested in
+# that SO article, but it resulted in the callback not being triggered
+# at all.  By *always* providing the exact SVGElement the tip is
+# supposed to target, the desired behaviour is obtained.  If tip_show
+# is only used in tip_dragend_handler then the target gets memoised,
+# and a normal hover-based tip.show shows the target last shown by a
+# drag, rather than the node being hovered over.  Weird, and annoying.
+tip_show = (d, i) ->
+    tip.show d, i, nodes[0][i]
+
+tip_dragend_handler = (d, i, elt) ->
+    focus_commitish_input()
+    tip_show d, i
+
+init_tip_event_handlers = (selection) ->
+    # We have to reuse the same drag object, otherwise only one
+    # of the event handlers will work.
+    drag = d3cola.drag()
+    hide_tip_on_drag = drag.on("drag", tip.hide)
+    on_dragend       = drag.on("dragend", tip_dragend_handler)
+    selection.call hide_tip_on_drag
+    selection.call on_dragend
 
 draw_new_nodes = (fg, g_enter) ->
     rects = g_enter.append('rect')
@@ -327,14 +376,14 @@ position_nodes = (rects, labels) ->
     rects
         .attr("width", (d, i) -> d.rect_width)
         .attr("height", (d, i) -> d.rect_height)
-        .on("mouseover", tip.show)
+        .on("mouseover", tip_show)
         .on("mouseout", tip.hide)
 
     # Centre labels
     labels
         .attr("x", (d) -> d.rect_width / 2)
         .attr("y", (d) -> d.rect_height / 2)
-        .on("mouseover", tip.show)
+        .on("mouseover", tip_show)
         .on("mouseout", tip.hide)
 
     d3cola.start 10, 20, 20
