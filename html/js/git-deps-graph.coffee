@@ -223,6 +223,14 @@ link_key = (link) ->
     target = sha1_of_link_pointer(link.target)
     return source + " " + target
 
+# ... but even though link sources and targets are initially fed in
+# as indices into the nodes array, webcola then replaces the indices
+# with references to the node objects.  So we have to deal with both
+# cases when ensuring we are uniquely identifying each link.
+sha1_of_link_pointer = (pointer) ->
+    return pointer.sha1 if typeof (pointer) is "object"
+    return gdd.nodes[pointer].sha1
+
 init_tip = () ->
     tip = d3.tip().attr("class", "d3-tip").html(tip_html)
     global.tip = tip
@@ -301,14 +309,6 @@ explore_node = (d) ->
         gdn.warn "Commit #{d.name} already explored"
     else
         add_commitish d.sha1
-
-# ... but even though link sources and targets are initially fed in
-# as indices into the nodes array, webcola then replaces the indices
-# with references to the node objects.  So we have to deal with both
-# cases when ensuring we are uniquely identifying each link.
-sha1_of_link_pointer = (pointer) ->
-    return pointer.sha1 if typeof (pointer) is "object"
-    return gdd.nodes[pointer].sha1
 
 new_data_notification = (new_data) ->
     new_nodes = new_data[0]
