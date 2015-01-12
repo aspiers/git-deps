@@ -615,6 +615,9 @@ def parse_args():
     parser.add_argument('-s', '--serve', dest='serve', action='store_true',
                         help='Run a web server for visualizing the '
                         'dependency graph')
+    parser.add_argument('-p', '--port', dest='port', type=int, metavar='PORT',
+                        default=5000,
+                        help='Port number for webserver [%(default)s]')
     parser.add_argument('-r', '--recurse', dest='recurse', action='store_true',
                         help='Follow dependencies recursively')
     parser.add_argument('-e', '--exclude-commits', dest='exclude_commits',
@@ -761,7 +764,7 @@ def serve(options):
               "insecure!")
         print("!! Arbitrary code can be executed from browser!")
         print()
-    webserver.run(debug=options.debug)
+    webserver.run(port=options.port, debug=options.debug)
 
 
 def main():
