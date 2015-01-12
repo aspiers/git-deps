@@ -250,6 +250,12 @@ define_arrow_markers = (fg) ->
         .attr("d", "M0,-5L10,0L0,5")
         .attr "fill", "#000"
 
+explore_node = (d) ->
+    if d.explored
+        gdn.warn "Commit #{d.name} already explored"
+    else
+        add_commitish d.sha1
+
 draw_nodes = (fg, node) ->
     # Initialize tooltip
     tip = d3.tip().attr("class", "d3-tip").html(tip_html)
@@ -263,11 +269,7 @@ draw_nodes = (fg, node) ->
 
     update_rect_explored()
 
-    rect.on "dblclick", (d) ->
-        if d.explored
-            gdn.warn "Commit #{d.name} already explored"
-        else
-            add_commitish d.sha1
+    rect.on "dblclick", (d) -> explore_node d
 
     label = node.append("text").text((d) ->
         d.name
