@@ -23,8 +23,8 @@ old_svg_width = undefined
 color = d3.scale.category20()
 
 global.d3cola = cola.d3adaptor()
-d3cola \
-    .flowLayout("y", 150) \
+d3cola
+    .flowLayout("y", 150)
     .avoidOverlaps(true)
     #.linkDistance(60)
     #.symmetricDiffLinkLengths(30)
@@ -76,7 +76,7 @@ redraw = (transition) ->
     # if mouse down then we are dragging not panning
     # if nodeMouseDown
     #     return
-    ((if transition then fg.transition() else fg)) \
+    ((if transition then fg.transition() else fg))
         .attr "transform",
               "translate(#{zoom.translate()}) scale(#{zoom.scale()})"
 
@@ -140,8 +140,8 @@ calculate_svg_size_from_container = ->
 init_svg = ->
     container = d3.select("#svg-container")
     calculate_svg_size_from_container()
-    svg = container.append("svg") \
-        .attr("width", svg_width) \
+    svg = container.append("svg")
+        .attr("width", svg_width)
         .attr("height", svg_height)
     d3cola.size [svg_width, svg_height]
 
@@ -149,11 +149,11 @@ init_svg = ->
 
     zoom = d3.behavior.zoom()
 
-    svg.append("rect") \
-        .attr("class", "background") \
-        .attr("width", "100%") \
-        .attr("height", "100%") \
-        .call(zoom.on("zoom", redraw)) \
+    svg.append("rect")
+        .attr("class", "background")
+        .attr("width", "100%")
+        .attr("height", "100%")
+        .call(zoom.on("zoom", redraw))
         .on("dblclick.zoom", zoom_to_fit)
 
     fg = svg.append("g")
@@ -161,9 +161,9 @@ init_svg = ->
 
 update_cola = ->
     gdl.build_constraints()
-    d3cola \
-        .nodes(gdd.nodes) \
-        .links(gdd.links) \
+    d3cola
+        .nodes(gdd.nodes)
+        .links(gdd.links)
         .constraints(gdl.constraints)
 
 draw_graph = (commitish) ->
@@ -183,16 +183,16 @@ draw_graph = (commitish) ->
 
         update_cola()
 
-        path = fg.selectAll(".link") \
+        path = fg.selectAll(".link")
             .data(gdd.links, link_key)
-        path.enter().append("svg:path") \
+        path.enter().append("svg:path")
             .attr("class", "link")
-        node = fg.selectAll(".node") \
-            .data(gdd.nodes, (d) -> d.sha1) \
+        node = fg.selectAll(".node")
+            .data(gdd.nodes, (d) -> d.sha1)
             .call(d3cola.drag)
         global.node = node
 
-        node.enter().append("g") \
+        node.enter().append("g")
             .attr("class", "node")
             # Failed attempt to use dagre layout as starting positions
             # https://github.com/tgdwyer/WebCola/issues/63
@@ -238,15 +238,15 @@ new_data_notification = (new_data) ->
 
 define_arrow_markers = (fg) ->
     # define arrow markers for graph links
-    fg.append("svg:defs").append("svg:marker") \
-        .attr("id", "end-arrow") \
-        .attr("viewBox", "0 -5 10 10") \
-        .attr("refX", 6) \
-        .attr("markerWidth", 8) \
-        .attr("markerHeight", 8) \
-        .attr("orient", "auto") \
-      .append("svg:path") \
-        .attr("d", "M0,-5L10,0L0,5") \
+    fg.append("svg:defs").append("svg:marker")
+        .attr("id", "end-arrow")
+        .attr("viewBox", "0 -5 10 10")
+        .attr("refX", 6)
+        .attr("markerWidth", 8)
+        .attr("markerHeight", 8)
+        .attr("orient", "auto")
+      .append("svg:path")
+        .attr("d", "M0,-5L10,0L0,5")
         .attr "fill", "#000"
 
 draw_nodes = (fg, node) ->
@@ -256,8 +256,8 @@ draw_nodes = (fg, node) ->
     hide_tip_on_drag = d3cola.drag().on("dragstart", tip.hide)
     node.call hide_tip_on_drag
 
-    rect = node.append("rect") \
-        .attr("rx", 5) \
+    rect = node.append("rect")
+        .attr("rx", 5)
         .attr("ry", 5)
 
     update_rect_explored()
@@ -287,16 +287,16 @@ draw_nodes = (fg, node) ->
     position_nodes rect, label, tip
 
 position_nodes = (rect, label, tip) ->
-    rect.attr("width", (d, i) -> d.rect_width) \
-        .attr("height", (d, i) -> d.rect_height) \
-        .on("mouseover", tip.show) \
+    rect.attr("width", (d, i) -> d.rect_width)
+        .attr("height", (d, i) -> d.rect_height)
+        .on("mouseover", tip.show)
         .on("mouseout", tip.hide)
 
     # Centre label
-    label \
-        .attr("x", (d) -> d.rect_width / 2) \
-        .attr("y", (d) -> d.rect_height / 2) \
-        .on("mouseover", tip.show) \
+    label
+        .attr("x", (d) -> d.rect_width / 2)
+        .attr("y", (d) -> d.rect_height / 2)
+        .on("mouseover", tip.show)
         .on("mouseout", tip.hide)
     d3cola.start 10, 20, 20
     d3cola.on("tick", tick_handler)
@@ -324,13 +324,13 @@ tip_html = (d) ->
     if d.refs
         title.append "  <span />"
         refs = title.children().first()
-        refs.addClass("commit-describe commit-ref") \
+        refs.addClass("commit-describe commit-ref")
             .text(d.refs.join(" "))
 
     top.find("span.commit-author").text(d.author_name)
     date = new Date(d.author_time * 1000)
-    top.find("time.commit-time") \
-        .attr("datetime", date.toISOString()) \
+    top.find("time.commit-time")
+        .attr("datetime", date.toISOString())
         .text(date)
     pre = top.find(".commit-body pre").text(d.body)
 
@@ -385,9 +385,9 @@ tick_handler = ->
         ]
         return lineFunction lineData
 
-lineFunction = d3.svg.line() \
-    .x((d) -> d.x) \
-    .y((d) -> d.y) \
+lineFunction = d3.svg.line()
+    .x((d) -> d.x)
+    .y((d) -> d.y)
     .interpolate("linear")
 
 routeEdges = ->
