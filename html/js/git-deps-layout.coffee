@@ -1,3 +1,10 @@
+DEBUG = true
+
+MIN_ROW_GAP = 80
+MIN_NODE_X_GAP = 50
+MAX_NODE_X_GAP = 200
+MAX_NODE_Y_GAP = 100
+
 dagre = require "dagre"
 
 gdd = require "./git-deps-data.coffee"
@@ -9,6 +16,10 @@ constraints = []
 # dagre's layout().  This will map a y coordinate onto all nodes
 # within that row.
 row_groups = {}
+
+debug = (msg) ->
+    if DEBUG
+        console.log msg
 
 dagre_layout = ->
     g = new dagre.graphlib.Graph()
@@ -52,21 +63,90 @@ dagre_row_groups = ->
 
 build_constraints = ->
     row_groups = dagre_row_groups()
+    debug "build_constraints"
+    for y, row_nodes of row_groups
+        debug y
+        debug row_nodes
 
     constraints.length = 0 # FIXME: only rebuild constraints which changed
 
     # We want alignment constraints between all nodes which dagre
     # assigned the same y value.
+    row_alignment_constraints(row_groups)
+
+    # We need separation constraints ensuring that the left-to-right
+    # ordering within each row assigned by dagre is preserved.
     for y, row_nodes of row_groups
         # No point having an alignment group with only one node in.
-        if row_nodes.length > 1
-            constraints.push build_alignment_constraint(row_nodes)
+        continue if row_nodes.length <= 1
 
-    # We also need separation constraints ensuring that the
+        # Multiple constraints per row.
+        row_node_ordering_constraints(row_nodes)
+
+    # Finally we need separation constraints ensuring that the
     # top-to-bottom ordering assigned by dagre is preserved.  Since
     # all nodes within a single row are already constrained to the
     # same y coordinate from above, it should be enough to only
     # have separation between a single node in adjacent rows.
+    row_ordering_constraints(row_groups)
+
+debug_constraints = () ->
+    for c in constraints
+        debug c
+
+row_alignment_constraints = (row_groups) ->
+    row_alignment_constraint(row_nodes) \
+        for y, row_nodes of row_groups when row_nodes.length > 1
+
+row_alignment_constraint = (row_nodes) ->
+    debug 'row_alignment_constraint'
+    # A standard alignment constraint (one per row) is too strict
+    # because it doesn't give cola enough "wiggle room":
+    #
+    #   constraint =
+    #       axis: "y"
+    #       type: "alignment"
+    #       offsets: []
+    #
+    #   for node in row_nodes
+    #       constraint.offsets.push
+    #           node: gdd.node_index[node.sha1],
+    #           offset: 0
+    #
+    #   constraints.push constraint
+    #
+    # So instead we use vertical min/max separation constraints:
+    i = 0
+    while i < row_nodes.length - 1
+        left  = row_nodes[i]
+        right = row_nodes[i+1]
+        mm = max_unordered_separation_constraints \
+            'y', MAX_NODE_Y_GAP,
+            gdd.node_index[left.sha1],
+            gdd.node_index[right.sha1]
+        exports.constraints = constraints = constraints.concat mm
+        i++
+    debug_constraints()
+    return
+
+row_node_ordering_constraints = (row_nodes) ->
+    debug 'row_node_ordering_constraints'
+    i = 0
+    while i < row_nodes.length - 1
+        left  = row_nodes[i]
+        right = row_nodes[i+1]
+        mm = min_max_ordered_separation_constraints \
+            'x', MIN_NODE_X_GAP, MAX_NODE_X_GAP,
+            gdd.node_index[left.sha1],
+            gdd.node_index[right.sha1]
+        exports.constraints = constraints = constraints.concat mm
+
+        i++
+    debug_constraints()
+    return
+
+row_ordering_constraints = (row_groups) ->
+    debug 'row_ordering_constraints'
     row_y_coords = Object.keys(row_groups).sort()
 
     i = 0
@@ -75,27 +155,54 @@ build_constraints = ->
         lower_y = row_y_coords[i + 1]
         upper_node = row_groups[upper_y][0]
         lower_node = row_groups[lower_y][0]
-        constraints.push
-            gap: 30
-            axis: "y"
-            left: gdd.node_index[upper_node.sha1]
-            right: gdd.node_index[lower_node.sha1]
+        constraints.push \
+            min_separation_constraint \
+                MIN_ROW_GAP, 'y',
+                gdd.node_index[upper_node.sha1],
+                gdd.node_index[lower_node.sha1]
 
         i++
+    debug_constraints()
+    return
 
-build_alignment_constraint = (row_nodes) ->
-    constraint =
-        axis: "y"
-        type: "alignment"
-        offsets: []
+##################################################################
+# helpers
 
-    for i of row_nodes
-        node = row_nodes[i]
-        constraint.offsets.push
-            node: gdd.node_index[node.sha1]
-            offset: 0
+# Uses approach explained here:
+# https://github.com/tgdwyer/WebCola/issues/62#issuecomment-69571870
+min_max_ordered_separation_constraints = (axis, min, max, left, right) ->
+    return [
+        min_separation_constraint(axis, min, left, right),
+        max_separation_constraint(axis, max, left, right)
+    ]
 
-    return constraint
+# https://github.com/tgdwyer/WebCola/issues/66
+max_unordered_separation_constraints = (axis, max, left, right) ->
+    return [
+        max_separation_constraint(axis, max, left, right),
+        max_separation_constraint(axis, max, right, left)
+    ]
+
+min_separation_constraint = (axis, gap, left, right) ->
+    {} =
+        axis: axis
+        gap: gap
+        left: left
+        right: right
+
+# We use a negative gap and reverse the inequality, in order to
+# achieve a maximum rather than minimum separation gap.  However this
+# does not prevent the nodes from overlapping or even swapping order.
+# For that you also need a min_separation_constraint, but it's more
+# convenient to use min_max_ordered_separation_constraints.  See
+# https://github.com/tgdwyer/WebCola/issues/62#issuecomment-69571870
+# for more details.
+max_separation_constraint = (axis, gap, left, right) ->
+    {} =
+        axis: axis
+        gap: -gap
+        left: right
+        right: left
 
 node = (sha1) ->
     exports.graph.node sha1
