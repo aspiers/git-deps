@@ -1,4 +1,4 @@
-DEBUG = true
+DEBUG = false
 
 MIN_ROW_GAP = 80
 MIN_NODE_X_GAP = 50
