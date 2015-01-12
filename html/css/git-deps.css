@@ -56,6 +56,14 @@ g.node text {
     pointer-events: none;
 }
 
+.plus-icon use {
+    display: none;
+}
+
+.plus-icon:hover use {
+    display: visible;
+}
+
 .link {
     fill: none;
     stroke: #000;

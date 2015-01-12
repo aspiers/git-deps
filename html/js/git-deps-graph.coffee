@@ -14,6 +14,7 @@ SVG_MARGIN = 2    # space around <svg>, matching #svg-container border
 RECT_MARGIN = 14  # space in between <rects>
 PADDING = 5       # space in between <text> label and <rect> border
 EDGE_ROUTING_MARGIN = 3
+PLUS_ICON_WIDTH = 14
 
 svg_width = 960
 svg_height = 800
@@ -158,7 +159,7 @@ init_svg = ->
         .on("dblclick.zoom", zoom_to_fit)
 
     fg = svg.append("g")
-    define_arrow_markers fg
+    svg_defs fg
 
 update_cola = ->
     gdl.build_constraints()
@@ -237,9 +238,11 @@ new_data_notification = (new_data) ->
 
     gdn.success notification
 
-define_arrow_markers = (fg) ->
+svg_defs = () ->
     # define arrow markers for graph links
-    fg.append("svg:defs").append("svg:marker")
+    defs = svg.insert("svg:defs")
+
+    defs.append("svg:marker")
         .attr("id", "end-arrow")
         .attr("viewBox", "0 -5 10 10")
         .attr("refX", 6)
@@ -248,7 +251,36 @@ define_arrow_markers = (fg) ->
         .attr("orient", "auto")
       .append("svg:path")
         .attr("d", "M0,-5L10,0L0,5")
-        .attr "fill", "#000"
+        .attr("fill", "#000")
+
+    plus_icon = defs.append("svg:symbol")
+        .attr("id", "plus-icon")
+        .attr("viewBox", "-51 -51 102 102") # allow for stroke-width 1
+    # border
+    plus_icon.append("svg:rect")
+        .attr("width", 100)
+        .attr("height", 100)
+        .attr("fill", "#295b8c")
+        .attr("stroke", "rgb(106, 136, 200)")
+        .attr("x", -50)
+        .attr("y", -50)
+        .attr("rx", 20)
+        .attr("ry", 20)
+    # plus sign
+    plus_icon.append("svg:path")
+        .attr("d", "M-30,0 H30 M0,-30 V30")
+        .attr("stroke", "white")
+        .attr("stroke-width", 10)
+        .attr("stroke-linecap", "round")
+
+    # Uncomment to see a large version:
+    # fg.append("use")
+    #     .attr("class", "plus-icon")
+    #     .attr("xlink:href", "#plus-icon")
+    #     .attr("width", "200")
+    #     .attr("height", "200")
+    #     .attr("x", 400)
+    #     .attr("y", 200)
 
 explore_node = (d) ->
     if d.explored
@@ -266,8 +298,6 @@ draw_nodes = (fg, node) ->
     rect = node.append("rect")
         .attr("rx", 5)
         .attr("ry", 5)
-
-    update_rect_explored()
 
     rect.on "dblclick", (d) -> explore_node d
 
@@ -288,6 +318,7 @@ draw_nodes = (fg, node) ->
     )
 
     position_nodes rect, label, tip
+    update_rect_explored()
 
 position_nodes = (rect, label, tip) ->
     rect.attr("width", (d, i) -> d.rect_width)
@@ -317,6 +348,51 @@ position_nodes = (rect, label, tip) ->
 update_rect_explored = () ->
     d3.selectAll(".node rect").attr "class", (d) ->
         if d.explored then "explored" else "unexplored"
+    node.each (d) ->
+        existing_icon = d3.select(this).select("use.plus-icon")
+        if d.explored
+            existing_icon.remove()
+        else if existing_icon.empty()
+            add_plus_icon this
+
+add_plus_icon = (node_element) ->
+    n = d3.select(node_element)
+    rw = node_element.__data__.rect_width
+    rh = node_element.__data__.rect_height
+
+    icon = n.insert('use')
+        .attr('class', 'plus-icon')
+        .attr('xlink:href', '#plus-icon')
+        .attr('x', rw/2 - PLUS_ICON_WIDTH/2)
+        .attr('y', rh   - PLUS_ICON_WIDTH/2)
+        .attr('width',  0)
+        .attr('height', 0)
+    icon
+        .on('mouseover', (d, i) -> icon_ease_in icon, rw)
+        .on('mouseout',  (d, i) -> icon_ease_out icon, rw)
+        .on('click', (d) -> explore_node d)
+
+    n
+        .on('mouseover', (d, i) -> icon_ease_in icon, rw)
+        .on('mouseout',  (d, i) -> icon_ease_out icon, rw)
+
+icon_ease_in = (icon, rw) ->
+    icon.transition()
+        .ease('cubic-out')
+        .duration(200)
+        .attr('width',  PLUS_ICON_WIDTH)
+        .attr('height', PLUS_ICON_WIDTH)
+        .attrTween('x', (d, i, a) ->
+            d3.interpolateNumber(rw/2, rw/2 - PLUS_ICON_WIDTH/2))
+
+icon_ease_out = (icon, rw) ->
+    icon.transition()
+        .ease('cubic-out')
+        .duration(200)
+        .attr('width',  0)
+        .attr('height', 0)
+        .attrTween('x', (d, i, a) ->
+            d3.interpolateNumber(rw/2 - PLUS_ICON_WIDTH/2, rw/2))
 
 tip_html = (d) ->
     fragment = $(tip_template).clone()
