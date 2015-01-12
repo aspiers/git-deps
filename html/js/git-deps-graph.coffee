@@ -131,6 +131,7 @@ window.full_screen_click = full_screen_click
 window.zoom_to_fit = zoom_to_fit
 
 add_commitish = (commitish) ->
+    tip.hide() if tip?
     draw_graph commitish
 
 calculate_svg_size_from_container = ->
