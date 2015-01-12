@@ -284,7 +284,7 @@ draw_new_nodes = (fg, g_enter) ->
     rects = g_enter.append('rect')
         .attr('rx', 5)
         .attr('ry', 5)
-        .on('dblclick', (d) -> explore_node d)
+        .on('dblclick', (d) -> launch_viewer d)
 
     labels = g_enter.append('text').text((d) ->
         d.name
@@ -309,6 +309,9 @@ explore_node = (d) ->
         gdn.warn "Commit #{d.name} already explored"
     else
         add_commitish d.sha1
+
+launch_viewer = (d) ->
+    window.location.assign "gitfile://#{options.repo_path}##{d.sha1}"
 
 new_data_notification = (new_data) ->
     new_nodes = new_data[0]

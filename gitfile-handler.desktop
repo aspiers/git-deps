@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=gitk launcher
+Exec=gitfile-handler %u
+# Icon=emacs-icon
+Type=Application
+Terminal=false
+MimeType=x-scheme-handler/gitfile;

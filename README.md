@@ -112,6 +112,25 @@ If you run with the `--serve` option then it will start a lightweight
 webserver and output a URL you can connect to for dynamically
 visualizing and navigating the dependency graph.
 
+### Setting up a `gitfile://` URL handler
+
+If you double-click any commit node on the dependency graph, your
+browser will be asked to launch a handler for a `gitfile://...` URL
+which points to that commit within the repository path on your local
+filesystem.  So if you configure your browser desktop environment,
+you can have a program such as [`gitk`](http://git-scm.com/docs/gitk)
+launch for viewing further details of that commit.  Obviously this
+only makes sense when viewing the graph via http://localhost.
+
+On most Linux machines, this can be set up via something like the
+following:
+
+    # First cd to the top of this git-deps repo.
+    repo="`pwd`"
+    ln -sf $repo/gitfile-handler ~/bin
+    ln -sf $repo/gitfile-handler.desktop ~/.local/share/applications
+    xdg-mime default gitfile-handler.desktop x-scheme-handler/gitfile
+
 Development / support / feedback
 --------------------------------
 

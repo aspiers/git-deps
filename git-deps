@@ -726,7 +726,9 @@ def serve(options):
 
     @webserver.route('/options')
     def send_options():
-        return jsonify(options.__dict__)
+        client_options = options.__dict__
+        client_options['repo_path'] = os.getcwd()
+        return jsonify(client_options)
 
     @webserver.route('/deps.json/<commitish>')
     def deps(commitish):
