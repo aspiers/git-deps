@@ -110,7 +110,7 @@ full_screen_cancel = ->
     resize_window()
 
 full_screen_click = ->
-    fullScreen container[0][0], full_screen_cancel
+    fullScreen container.node(), full_screen_cancel
     fit_svg_to_container()
     resize_window()
     #zoom_to_fit();
@@ -136,8 +136,8 @@ add_commitish = (commitish) ->
 calculate_svg_size_from_container = ->
     old_svg_width = svg_width
     old_svg_height = svg_height
-    svg_width = container[0][0].offsetWidth - SVG_MARGIN
-    svg_height = container[0][0].offsetHeight - SVG_MARGIN
+    svg_width = container.node().offsetWidth - SVG_MARGIN
+    svg_height = container.node().offsetHeight - SVG_MARGIN
 
 init_svg = ->
     container = d3.select("#svg-container")
