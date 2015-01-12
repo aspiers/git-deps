@@ -192,7 +192,6 @@ draw_graph = (commitish) ->
             .attr("class", "link")
         nodes = fg.selectAll(".node")
             .data(gdd.nodes, (d) -> d.sha1)
-            .call(d3cola.drag)
         global.nodes = nodes
 
         nodes.enter().append("g")
@@ -203,6 +202,9 @@ draw_graph = (commitish) ->
             #     n = gdl.node d.sha1
             #     d.x = n.x
             #     d.y = n.y
+
+        # N.B. has to be done on the update selection, i.e. *after* the enter!
+        nodes.call(d3cola.drag)
 
         init_tip() unless tip?
         draw_nodes fg, nodes
