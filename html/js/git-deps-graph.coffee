@@ -182,6 +182,7 @@ draw_graph = (commitish) ->
             update_rect_explored()
             return
         new_data_notification new_data
+        d3.select('.commitish input').node().focus()
 
         update_cola()
 
