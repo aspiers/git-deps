@@ -37,7 +37,7 @@ g.node rect {
 }
 
 g.node rect.explored {
-    fill: rgba(167, 224, 196, 0.54);
+    fill: rgba(206, 236, 221, 0.54);
 }
 
 g.node rect.unexplored {
