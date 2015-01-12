@@ -204,7 +204,14 @@ draw_graph = (commitish) ->
             #     d.y = n.y;
             # });
 
+        init_tip() unless tip?
         draw_nodes fg, nodes
+
+init_tip = () ->
+    tip = d3.tip().attr("class", "d3-tip").html(tip_html)
+    fg.call tip
+    hide_tip_on_drag = d3cola.drag().on("dragstart", tip.hide)
+    nodes.call hide_tip_on_drag
 
 # Required for object constancy: http://bost.ocks.org/mike/constancy/ ...
 link_key = (link) ->
@@ -289,12 +296,6 @@ explore_node = (d) ->
         add_commitish d.sha1
 
 draw_nodes = (fg, nodes) ->
-    # Initialize tooltip
-    tip = d3.tip().attr("class", "d3-tip").html(tip_html)
-    fg.call tip
-    hide_tip_on_drag = d3cola.drag().on("dragstart", tip.hide)
-    nodes.call hide_tip_on_drag
-
     rect = nodes.append("rect")
         .attr("rx", 5)
         .attr("ry", 5)
