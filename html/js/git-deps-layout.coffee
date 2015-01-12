@@ -44,7 +44,7 @@ dagre_row_groups = ->
     g = dagre_layout()
     row_groups = {}
     externs.row_groups = row_groups
-    for sha1 in g.nodes
+    for sha1 in g.nodes()
         x = g.node(sha1).x
         y = g.node(sha1).y
         row_groups[y] = []  unless y of row_groups
