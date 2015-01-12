@@ -35,7 +35,7 @@ d3cola
 container = undefined
 svg = undefined
 fg = undefined
-node = undefined
+nodes = undefined
 path = undefined
 tip = undefined
 tip_template = undefined
@@ -189,12 +189,12 @@ draw_graph = (commitish) ->
             .data(gdd.links, link_key)
         path.enter().append("svg:path")
             .attr("class", "link")
-        node = fg.selectAll(".node")
+        nodes = fg.selectAll(".node")
             .data(gdd.nodes, (d) -> d.sha1)
             .call(d3cola.drag)
-        global.node = node
+        global.nodes = nodes
 
-        node.enter().append("g")
+        nodes.enter().append("g")
             .attr("class", "node")
             # Failed attempt to use dagre layout as starting positions
             # https://github.com/tgdwyer/WebCola/issues/63
@@ -204,7 +204,7 @@ draw_graph = (commitish) ->
             #     d.y = n.y;
             # });
 
-        draw_nodes fg, node
+        draw_nodes fg, nodes
 
 # Required for object constancy: http://bost.ocks.org/mike/constancy/ ...
 link_key = (link) ->
@@ -288,20 +288,20 @@ explore_node = (d) ->
     else
         add_commitish d.sha1
 
-draw_nodes = (fg, node) ->
+draw_nodes = (fg, nodes) ->
     # Initialize tooltip
     tip = d3.tip().attr("class", "d3-tip").html(tip_html)
     fg.call tip
     hide_tip_on_drag = d3cola.drag().on("dragstart", tip.hide)
-    node.call hide_tip_on_drag
+    nodes.call hide_tip_on_drag
 
-    rect = node.append("rect")
+    rect = nodes.append("rect")
         .attr("rx", 5)
         .attr("ry", 5)
 
     rect.on "dblclick", (d) -> explore_node d
 
-    label = node.append("text").text((d) ->
+    label = nodes.append("text").text((d) ->
         d.name
     ).each((d) ->
         b = @getBBox()
@@ -348,7 +348,7 @@ position_nodes = (rect, label, tip) ->
 update_rect_explored = () ->
     d3.selectAll(".node rect").attr "class", (d) ->
         if d.explored then "explored" else "unexplored"
-    node.each (d) ->
+    nodes.each (d) ->
         existing_icon = d3.select(this).select("use.plus-icon")
         if d.explored
             existing_icon.remove()
@@ -433,7 +433,7 @@ translate = (x, y) ->
     "translate(#{x},#{y})"
 
 tick_handler = ->
-    node.each (d) ->
+    nodes.each (d) ->
         # cola sets the bounds property which is a Rectangle
         # representing the space which other nodes should not
         # overlap.  The innerBounds property seems to tell
@@ -441,7 +441,7 @@ tick_handler = ->
         # node, minus any blank margin.
         d.innerBounds = d.bounds.inflate(-RECT_MARGIN)
 
-    node.attr "transform", (d) ->
+    nodes.attr "transform", (d) ->
         translate d.innerBounds.x, d.innerBounds.y
 
     path.each (d) ->
