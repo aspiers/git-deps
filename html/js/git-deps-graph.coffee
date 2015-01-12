@@ -474,7 +474,7 @@ tip_html = (d) ->
         #     top.append("<br />Dependencies: " + sha1s.join(", "));
         index = gdd.node_index[d.sha1]
         debug = "<br />node index: " + index
-        dagre_node = gdl.g.graph.node(d.sha1)
+        dagre_node = gdl.graph.node(d.sha1)
         debug += "<br />dagre: (#{dagre_node.x}, #{dagre_node.y})"
         top.append debug
 

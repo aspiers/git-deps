@@ -76,7 +76,8 @@ node = (sha1) ->
     return nodes[i]
 
 module.exports =
-    # Variables
+    # Variables (N.B. if these variables are reinitialised at any
+    # point, the values here will become stale and require updating)
     nodes: nodes
     links: links
     node_index: node_index

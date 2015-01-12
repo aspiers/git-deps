@@ -10,16 +10,9 @@ constraints = []
 # within that row.
 row_groups = {}
 
-# Expose a container for externally accessible objects.  We can't
-# directly expose the objects themselves because the references
-# change each time they're constructed.  However we don't need this
-# trick for the constraints arrays since we can easily empty that by
-# setting length to 0.
-externs = {}
-
 dagre_layout = ->
     g = new dagre.graphlib.Graph()
-    externs.graph = g
+    exports.graph = g
 
     # Set an object for the graph label
     g.setGraph {}
@@ -43,7 +36,7 @@ dagre_layout = ->
 dagre_row_groups = ->
     g = dagre_layout()
     row_groups = {}
-    externs.row_groups = row_groups
+    exports.row_groups = row_groups
     for sha1 in g.nodes()
         x = g.node(sha1).x
         y = g.node(sha1).y
@@ -105,12 +98,11 @@ build_alignment_constraint = (row_nodes) ->
     return constraint
 
 node = (sha1) ->
-    externs.graph.node sha1
+    exports.graph.node sha1
 
-module.exports =
-    # Variables
-    constraints: constraints
-    g: externs
+module.exports = exports =
+    # Variables have to be exported every time they're assigned,
+    # since assignment creates a new object and associated reference
 
     # Functions
     build_constraints: build_constraints
