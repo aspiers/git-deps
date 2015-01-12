@@ -36,7 +36,7 @@ container = undefined
 svg = undefined
 fg = undefined
 nodes = undefined
-path = undefined
+paths = undefined
 tip = undefined
 tip_template = undefined
 zoom = undefined
@@ -185,9 +185,9 @@ draw_graph = (commitish) ->
 
         update_cola()
 
-        path = fg.selectAll(".link")
+        paths = fg.selectAll(".link")
             .data(gdd.links, link_key)
-        path.enter().append("svg:path")
+        paths.enter().append("svg:path")
             .attr("class", "link")
         nodes = fg.selectAll(".node")
             .data(gdd.nodes, (d) -> d.sha1)
@@ -444,10 +444,10 @@ tick_handler = ->
     nodes.attr "transform", (d) ->
         translate d.innerBounds.x, d.innerBounds.y
 
-    path.each (d) ->
+    paths.each (d) ->
         @parentNode.insertBefore this, this if isIE()
 
-    path.attr "d", (d) ->
+    paths.attr "d", (d) ->
 
         # Undocumented: https://github.com/tgdwyer/WebCola/issues/52
         cola.vpsc.makeEdgeBetween \
@@ -471,7 +471,7 @@ lineFunction = d3.svg.line()
 
 routeEdges = ->
     d3cola.prepareEdgeRouting EDGE_ROUTING_MARGIN
-    path.attr "d", (d) ->
+    paths.attr "d", (d) ->
         lineFunction d3cola.routeEdge(d)
         # show visibility graph
         # (g) ->
@@ -482,7 +482,7 @@ routeEdges = ->
         #                .attr("stroke", "green")
 
     if isIE()
-        path.each (d) ->
+        paths.each (d) ->
             @parentNode.insertBefore this, this
 
 isIE = ->
