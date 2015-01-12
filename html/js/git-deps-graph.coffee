@@ -54,6 +54,8 @@ jQuery ->
         event.preventDefault()
         add_commitish $(".commitish input").val()
 
+    init_svg()
+
 setup_default_form_values = ->
     $("input[type=text]").each(->
         $(this).val $(this).attr("defaultValue")
@@ -128,7 +130,6 @@ window.full_screen_click = full_screen_click
 window.zoom_to_fit = zoom_to_fit
 
 add_commitish = (commitish) ->
-    init_svg()  unless svg
     draw_graph commitish
 
 calculate_svg_size_from_container = ->
