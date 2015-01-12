@@ -51,6 +51,10 @@ dagre_row_groups = ->
         row_groups[y].push
             sha1: sha1
             x: x
+
+    for y, nodes of row_groups
+        nodes.sort (n) -> -n.x
+
     return row_groups
 
 build_constraints = ->
