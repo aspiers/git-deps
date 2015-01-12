@@ -60,9 +60,7 @@ build_constraints = ->
 
     # We want alignment constraints between all nodes which dagre
     # assigned the same y value.
-    for y of row_groups
-        row_nodes = row_groups[y]
-
+    for y, row_nodes of row_groups
         # No point having an alignment group with only one node in.
         if row_nodes.length > 1
             constraints.push build_alignment_constraint(row_nodes)
