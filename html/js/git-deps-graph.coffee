@@ -194,7 +194,7 @@ draw_graph = (commitish) ->
             .data(gdd.nodes, (d) -> d.sha1)
         global.nodes = nodes
 
-        nodes.enter().append("g")
+        g_enter = nodes.enter().append("g")
             .attr("class", "node")
             # Failed attempt to use dagre layout as starting positions
             # https://github.com/tgdwyer/WebCola/issues/63
@@ -207,7 +207,15 @@ draw_graph = (commitish) ->
         nodes.call(d3cola.drag)
 
         init_tip() unless tip?
-        draw_nodes fg, nodes
+        [rects, labels] = draw_new_nodes fg, g_enter
+        position_nodes(rects, labels)
+        update_rect_explored()
+
+# Required for object constancy: http://bost.ocks.org/mike/constancy/ ...
+link_key = (link) ->
+    source = sha1_of_link_pointer(link.source)
+    target = sha1_of_link_pointer(link.target)
+    return source + " " + target
 
 init_tip = () ->
     tip = d3.tip().attr("class", "d3-tip").html(tip_html)
@@ -215,11 +223,35 @@ init_tip = () ->
     hide_tip_on_drag = d3cola.drag().on("dragstart", tip.hide)
     nodes.call hide_tip_on_drag
 
-# Required for object constancy: http://bost.ocks.org/mike/constancy/ ...
-link_key = (link) ->
-    source = sha1_of_link_pointer(link.source)
-    target = sha1_of_link_pointer(link.target)
-    return source + " " + target
+draw_new_nodes = (fg, g_enter) ->
+    rects = g_enter.append('rect')
+        .attr('rx', 5)
+        .attr('ry', 5)
+        .on('dblclick', (d) -> explore_node d)
+
+    labels = g_enter.append('text').text((d) ->
+        d.name
+    ).each((d) ->
+        b = @getBBox()
+
+        # Calculate width/height of rectangle from text bounding box.
+        d.rect_width = b.width + 2 * PADDING
+        d.rect_height = b.height + 2 * PADDING
+
+        # Now set the node width/height as used by cola for
+        # positioning.  This has to include the margin
+        # outside the rectangle.
+        d.width = d.rect_width + 2 * RECT_MARGIN
+        d.height = d.rect_height + 2 * RECT_MARGIN
+    )
+
+    return [rects, labels]
+
+explore_node = (d) ->
+    if d.explored
+        gdn.warn "Commit #{d.name} already explored"
+    else
+        add_commitish d.sha1
 
 # ... but even though link sources and targets are initially fed in
 # as indices into the nodes array, webcola then replaces the indices
@@ -291,50 +323,20 @@ svg_defs = () ->
     #     .attr("x", 400)
     #     .attr("y", 200)
 
-explore_node = (d) ->
-    if d.explored
-        gdn.warn "Commit #{d.name} already explored"
-    else
-        add_commitish d.sha1
-
-draw_nodes = (fg, nodes) ->
-    rect = nodes.append("rect")
-        .attr("rx", 5)
-        .attr("ry", 5)
-
-    rect.on "dblclick", (d) -> explore_node d
-
-    label = nodes.append("text").text((d) ->
-        d.name
-    ).each((d) ->
-        b = @getBBox()
-
-        # Calculate width/height of rectangle from text bounding box.
-        d.rect_width = b.width + 2 * PADDING
-        d.rect_height = b.height + 2 * PADDING
-
-        # Now set the node width/height as used by cola for
-        # positioning.  This has to include the margin
-        # outside the rectangle.
-        d.width = d.rect_width + 2 * RECT_MARGIN
-        d.height = d.rect_height + 2 * RECT_MARGIN
-    )
-
-    position_nodes rect, label, tip
-    update_rect_explored()
-
-position_nodes = (rect, label, tip) ->
-    rect.attr("width", (d, i) -> d.rect_width)
+position_nodes = (rects, labels) ->
+    rects
+        .attr("width", (d, i) -> d.rect_width)
         .attr("height", (d, i) -> d.rect_height)
         .on("mouseover", tip.show)
         .on("mouseout", tip.hide)
 
-    # Centre label
-    label
+    # Centre labels
+    labels
         .attr("x", (d) -> d.rect_width / 2)
         .attr("y", (d) -> d.rect_height / 2)
         .on("mouseover", tip.show)
         .on("mouseout", tip.hide)
+
     d3cola.start 10, 20, 20
     d3cola.on("tick", tick_handler)
 
