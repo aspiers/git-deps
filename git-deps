@@ -369,7 +369,7 @@ class DependencyDetector(object):
 
         try:
             self.commits[rev] = self.repo.revparse_single(rev)
-        except KeyError:
+        except (KeyError, ValueError):
             raise InvalidCommitish(rev)
 
         return self.commits[rev]
