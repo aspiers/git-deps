@@ -114,6 +114,7 @@ full_screen_click = ->
     fit_svg_to_container()
     resize_window()
     #zoom_to_fit();
+    return false
 
 zoom_to_fit = ->
     b = graph_bounds()
@@ -126,6 +127,7 @@ zoom_to_fit = ->
     ty = -b.y * s + (ch / s - h) * s / 2
     zoom.translate([tx, ty]).scale s
     redraw true
+    return false
 
 window.full_screen_click = full_screen_click
 window.zoom_to_fit = zoom_to_fit
