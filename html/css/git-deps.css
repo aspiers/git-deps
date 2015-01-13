@@ -16,6 +16,10 @@ body {
     right: 0;
 }
 
+h1 {
+    margin: 0.1em;
+}
+
 #top p {
     margin-right: 320px; /* Avoid overlap with noty boxes */
 }
