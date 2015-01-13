@@ -36,7 +36,7 @@ git add one
 git commit -m 'one'
 tag one
 
-for f in two three; do
+for f in two; do
     cp one $f
     git add $f
     git commit -m "$f"
