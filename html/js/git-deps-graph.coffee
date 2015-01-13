@@ -423,8 +423,8 @@ add_plus_icon = (node_element) ->
     icon = n.insert('use')
         .attr('class', 'plus-icon')
         .attr('xlink:href', '#plus-icon')
-        .attr('x', rw/2 - PLUS_ICON_WIDTH/2)
-        .attr('y', rh   - PLUS_ICON_WIDTH/2)
+        .attr('x', rw/2)
+        .attr('y', rh - PLUS_ICON_WIDTH/2)
         .attr('width',  0)
         .attr('height', 0)
     icon
@@ -442,17 +442,16 @@ icon_ease_in = (icon, rw) ->
         .duration(200)
         .attr('width',  PLUS_ICON_WIDTH)
         .attr('height', PLUS_ICON_WIDTH)
-        .attrTween('x', (d, i, a) ->
-            d3.interpolateNumber(rw/2, rw/2 - PLUS_ICON_WIDTH/2))
+        .attr('x', rw/2 - PLUS_ICON_WIDTH/2)
 
 icon_ease_out = (icon, rw) ->
     icon.transition()
+        .attr(rw/2 - PLUS_ICON_WIDTH/2)
         .ease('cubic-out')
         .duration(200)
         .attr('width',  0)
         .attr('height', 0)
-        .attrTween('x', (d, i, a) ->
-            d3.interpolateNumber(rw/2 - PLUS_ICON_WIDTH/2, rw/2))
+        .attr('x', rw/2)
 
 tip_html = (d) ->
     fragment = $(tip_template).clone()
