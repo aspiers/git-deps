@@ -33,13 +33,13 @@ ten
 EOF
 
 git add one
-git commit -m 'one'
+git commit -m 'create file one'
 tag one
 
 for f in two; do
     cp one $f
     git add $f
-    git commit -m "$f"
+    git commit -m "create file $f"
     tag "$f"
 done
 
