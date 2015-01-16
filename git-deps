@@ -774,7 +774,10 @@ def main():
     if options.serve:
         serve(options)
     else:
-        cli(options, args)
+        try:
+            cli(options, args)
+        except InvalidCommitish as e:
+            abort(e.message())
 
 
 if __name__ == "__main__":
