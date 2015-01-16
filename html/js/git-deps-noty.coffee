@@ -1,4 +1,4 @@
-require "noty"
+noty = require "noty"
 
 # Different noty types:
 # alert, success, error, warning, information, confirmation
@@ -10,7 +10,7 @@ noty_debug   = (text) -> notyfication "information", text
 
 # "notyfication" - haha, did you see what I did there?
 notyfication = (type, text) ->
-  window.noty(
+  noty(
     text: text
     type: type
     layout: "topRight"
