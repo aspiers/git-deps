@@ -393,9 +393,9 @@ position_nodes = (rects, labels) ->
         .on("mouseout", tip.hide)
 
     d3cola.start 10, 20, 20
-    d3cola.on("tick", tick_handler)
+    d3cola.on "tick", tick_handler
 
-    # d3cola.on("end", routeEdges);
+    # d3cola.on "end", routeEdges
 
     # turn on overlap avoidance after first convergence
     # d3cola.on("end", () ->
