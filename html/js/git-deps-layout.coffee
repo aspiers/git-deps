@@ -157,7 +157,7 @@ row_ordering_constraints = (row_groups) ->
         lower_node = row_groups[lower_y][0]
         constraints.push \
             min_separation_constraint \
-                MIN_ROW_GAP, 'y',
+                'y', MIN_ROW_GAP,
                 gdd.node_index[upper_node.sha1],
                 gdd.node_index[lower_node.sha1]
 
