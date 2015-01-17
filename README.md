@@ -164,3 +164,10 @@ submitted a
 [Hack Week project page](https://hackweek.suse.com/11/projects/366)
 and
 [announced my intentions on the `git` mailing list](http://article.gmane.org/gmane.comp.version-control.git/262000).
+
+License
+-------
+
+Released under [GPL version 2](COPYING) in order to be consistent with
+[`git`'s license](https://github.com/git/git/blob/master/COPYING), but
+I'm open to the idea of dual-licensing if there's a convincing reason.
