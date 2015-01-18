@@ -83,12 +83,18 @@ build_constraints = ->
         # Multiple constraints per row.
         row_node_ordering_constraints(row_nodes)
 
-    # Finally we need separation constraints ensuring that the
-    # top-to-bottom ordering assigned by dagre is preserved.  Since
-    # all nodes within a single row are already constrained to the
-    # same y coordinate from above, it should be enough to only
-    # have separation between a single node in adjacent rows.
-    row_ordering_constraints(row_groups)
+    # We need separation constraints ensuring that the top-to-bottom
+    # ordering assigned by dagre is preserved.  Since all nodes within
+    # a single row are already constrained to the same y coordinate
+    # from above, one would have hoped it would be enough to only have
+    # separation between a single node in adjacent rows:
+    #
+    # row_ordering_constraints(row_groups)
+
+    # However, due to https://github.com/tgdwyer/WebCola/issues/61
+    # there is more flexibility for y-coordinates within a row than we
+    # want, so instead we order rows using dependencies.
+    dependency_ordering_constraints()
 
 debug_constraints = (cs = constraints) ->
     for c in cs
@@ -165,6 +171,29 @@ row_ordering_constraints = (row_groups) ->
         i++
     debug_constraints()
     return
+
+dependency_ordering_constraints = () ->
+    debug 'dependency_ordering_constraints'
+
+    for parent_sha1, children of gdd.deps
+        child_sha1s = Object.keys(children).sort (sha1) -> node(sha1).x
+        dependency_ordering_constraint(parent_sha1, child_sha1s[0])
+        len = child_sha1s.length
+        if len > 1
+            dependency_ordering_constraint(parent_sha1, child_sha1s[len-1])
+        if len > 2
+            middle = Math.floor(len / 2)
+            dependency_ordering_constraint(parent_sha1, child_sha1s[middle])
+
+    debug_constraints()
+    return
+
+dependency_ordering_constraint = (parent_sha1, child_sha1) ->
+    constraints.push \
+        min_separation_constraint \
+        'y', MIN_ROW_GAP,
+        gdd.node_index[parent_sha1],
+        gdd.node_index[child_sha1]
 
 ##################################################################
 # helpers
