@@ -46,6 +46,7 @@ options = undefined # Options will be retrieved from web server
 jQuery ->
     d3.json "options", (error, data) ->
         options = data
+        gdl.debug = options.debug
 
     d3.html "tip-template.html", (error, html) ->
         tip_template = html
