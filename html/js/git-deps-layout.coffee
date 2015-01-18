@@ -18,7 +18,7 @@ constraints = []
 row_groups = {}
 
 debug = (msg) ->
-    if DEBUG
+    if exports.debug
         console.log msg
 
 dagre_layout = ->
@@ -90,9 +90,10 @@ build_constraints = ->
     # have separation between a single node in adjacent rows.
     row_ordering_constraints(row_groups)
 
-debug_constraints = () ->
-    for c in constraints
+debug_constraints = (cs = constraints) ->
+    for c in cs
         debug c
+    return
 
 row_alignment_constraints = (row_groups) ->
     row_alignment_constraint(row_nodes) \
@@ -213,4 +214,8 @@ module.exports = exports =
 
     # Functions
     build_constraints: build_constraints
+    debug_constraints: debug_constraints
     node: node
+
+    # Variables
+    debug: DEBUG
