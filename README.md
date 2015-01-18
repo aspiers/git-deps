@@ -2,7 +2,10 @@ git-deps
 ========
 
 `git-deps` is a tool for performing automatic analysis of dependencies
-between commits in a [git](http://git-scm.com/) repository.
+between commits in a [git](http://git-scm.com/) repository.  Here's
+a screencast demonstration:
+
+[![YouTube screencast](./html/images/youtube-thumbnail.png)](http://youtu.be/irQ5gMMz-gE)
 
 Background theory
 -----------------
