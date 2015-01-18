@@ -27,7 +27,7 @@
     "dependencies": {
         "d3-tip": "~0.6.6",
         "d3": "~3.5.3",
-        "webcola": "aspiers/WebCola#fix/main-entrypoints",
+        "webcola": "tgdwyer/WebCola",
         "jquery": "~2.1.3",
         "noty": "aspiers/noty#fix/commonjs",
         "browserify": "*",
