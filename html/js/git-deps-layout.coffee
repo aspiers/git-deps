@@ -72,7 +72,7 @@ build_constraints = ->
 
     # We want alignment constraints between all nodes which dagre
     # assigned the same y value.
-    row_alignment_constraints(row_groups)
+    #row_alignment_constraints(row_groups)
 
     # We need separation constraints ensuring that the left-to-right
     # ordering within each row assigned by dagre is preserved.
@@ -147,9 +147,11 @@ row_node_ordering_constraints = (row_nodes) ->
         left_i  = gdd.node_index[left.sha1]
         right_i = gdd.node_index[right.sha1]
         debug "  #{left_i} < #{right_i} (#{left.x} < #{right.x})"
-        mm = min_max_ordered_separation_constraints \
-            'x', MIN_NODE_X_GAP, MAX_NODE_X_GAP, left_i, right_i
-        exports.constraints = constraints = constraints.concat mm
+        # mm = min_max_ordered_separation_constraints \
+        #     'x', MIN_NODE_X_GAP, MAX_NODE_X_GAP, left_i, right_i
+        min = min_separation_constraint \
+            'x', MIN_NODE_X_GAP, left_i, right_i
+        exports.constraints = constraints = constraints.concat min
         i++
     return
 
