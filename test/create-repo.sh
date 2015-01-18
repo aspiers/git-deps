@@ -17,7 +17,7 @@ cd $test_repo
 git init
 git config user.email git-deps-test@fake.address
 
-# Start with three independently committed files
+# Start with two independently committed files
 
 cat <<EOF > one
 one
