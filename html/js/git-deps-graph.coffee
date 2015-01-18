@@ -507,7 +507,6 @@ tick_handler = ->
         @parentNode.insertBefore this, this if isIE()
 
     paths.attr "d", (d) ->
-
         # Undocumented: https://github.com/tgdwyer/WebCola/issues/52
         cola.vpsc.makeEdgeBetween \
             d,
