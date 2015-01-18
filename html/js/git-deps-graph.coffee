@@ -165,7 +165,6 @@ init_svg = ->
     svg_defs fg
 
 update_cola = ->
-    gdl.build_constraints()
     d3cola
         .nodes(gdd.nodes)
         .links(gdd.links)
@@ -187,6 +186,7 @@ draw_graph = (commitish) ->
         new_data_notification new_data
         focus_commitish_input()
 
+        gdl.build_constraints()
         update_cola()
 
         paths = fg.selectAll(".link")
