@@ -19,7 +19,8 @@ git config user.email git-deps-test@fake.address
 
 # Start with two independently committed files
 
-cat <<EOF > one
+for f in file-{a,b}; do
+    cat <<EOF > $f
 one
 two
 three
@@ -32,34 +33,28 @@ nine
 ten
 EOF
 
-git add one
-git commit -m 'create file one'
-tag one
-
-for f in two; do
-    cp one $f
     git add $f
-    git commit -m "create file $f"
-    tag "$f"
+    git commit -m "create $f"
+    tag $f
 done
 
 # Now start making changes
 
-sed -i 's/three/three a/' one
-git commit -am 'one: change three to three a'
-tag one-three-a  # depends on one
+sed -i 's/three/three a/' file-a
+git commit -am 'file-a: change three to three a'
+tag file-a-three-a  # depends on file-a
 
-sed -i 's/three/three a/' two
-git commit -am 'two: change three to three a'
-tag two-three-a  # depends on two
+sed -i 's/three/three a/' file-b
+git commit -am 'file-b: change three to three a'
+tag file-b-three-a  # depends on file-b
 
 # Change non-overlapping part of previously changed file
-sed -i 's/eight/eight a/' one
-git commit -am 'one: change eight to eight a'
-tag one-eight-a  # depends on one
+sed -i 's/eight/eight a/' file-a
+git commit -am 'file-a: change eight to eight a'
+tag file-a-eight-a  # depends on file-a
 
 # Change previously changed line
-sed -i 's/three a/three b/' one
-git commit -am 'one: change three a to three b'
-tag one-three-b  # depends on one-three-a
+sed -i 's/three a/three b/' file-a
+git commit -am 'file-a: change three a to three b'
+tag file-a-three-b  # depends on file-a-three-a
 
