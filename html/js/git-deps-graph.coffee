@@ -199,12 +199,14 @@ draw_graph = (commitish) ->
 
         g_enter = nodes.enter().append("g")
             .attr("class", "node")
-            # Failed attempt to use dagre layout as starting positions
-            # https://github.com/tgdwyer/WebCola/issues/63
-            # .each((d, i) ->
-            #     n = gdl.node d.sha1
-            #     d.x = n.x
-            #     d.y = n.y
+        # Questionable attempt to use dagre layout as starting positions
+        # https://github.com/tgdwyer/WebCola/issues/63
+        nodes.each (d, i) ->
+                n = gdl.node d.sha1
+                d.x = n.x
+                d.y = n.y
+        nodes.attr "transform", (d) ->
+            translate d.x, d.y
 
         # N.B. has to be done on the update selection, i.e. *after* the enter!
         nodes.call(d3cola.drag)
