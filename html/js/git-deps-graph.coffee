@@ -25,7 +25,7 @@ color = d3.scale.category20()
 
 global.d3cola = cola.d3adaptor()
 d3cola
-    .flowLayout("y", 150)
+    .flowLayout("y", 100)
     .avoidOverlaps(true)
     #.linkDistance(60)
     #.symmetricDiffLinkLengths(30)
