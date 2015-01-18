@@ -81,7 +81,9 @@ build_constraints = ->
         continue if row_nodes.length <= 1
 
         # Multiple constraints per row.
+        debug "ordering for row y=#{y}"
         row_node_ordering_constraints(row_nodes)
+    debug_constraints()
 
     # We need separation constraints ensuring that the top-to-bottom
     # ordering assigned by dagre is preserved.  Since all nodes within
@@ -142,14 +144,13 @@ row_node_ordering_constraints = (row_nodes) ->
     while i < row_nodes.length - 1
         left  = row_nodes[i]
         right = row_nodes[i+1]
+        left_i  = gdd.node_index[left.sha1]
+        right_i = gdd.node_index[right.sha1]
+        debug "  #{left_i} < #{right_i} (#{left.x} < #{right.x})"
         mm = min_max_ordered_separation_constraints \
-            'x', MIN_NODE_X_GAP, MAX_NODE_X_GAP,
-            gdd.node_index[left.sha1],
-            gdd.node_index[right.sha1]
+            'x', MIN_NODE_X_GAP, MAX_NODE_X_GAP, left_i, right_i
         exports.constraints = constraints = constraints.concat mm
-
         i++
-    debug_constraints()
     return
 
 row_ordering_constraints = (row_groups) ->
