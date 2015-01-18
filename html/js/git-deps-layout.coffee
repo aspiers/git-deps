@@ -1,8 +1,8 @@
 DEBUG = false
 
-MIN_ROW_GAP = 100
-MIN_NODE_X_GAP = 50
-MAX_NODE_X_GAP = 200
+MIN_ROW_GAP = 60
+MIN_NODE_X_GAP = 100  # presumably includes the node width
+MAX_NODE_X_GAP = 300
 MAX_NODE_Y_GAP = 80
 
 dagre = require "dagre"
