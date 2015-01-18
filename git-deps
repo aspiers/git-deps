@@ -606,8 +606,11 @@ def parse_args():
     parser = argparse.ArgumentParser(
         description='Auto-detects commits on which the given '
                     'commit(s) depend.',
-        usage='%(prog)s [options] COMMIT-ISH [COMMIT-ISH...]'
+        usage='%(prog)s [options] COMMIT-ISH [COMMIT-ISH...]',
+        add_help=False
     )
+    parser.add_argument('-h', action='help',
+                        help='Show this help message and exit')
     parser.add_argument('-l', '--log', dest='log', action='store_true',
                         help='Show commit logs for calculated dependencies')
     parser.add_argument('-j', '--json', dest='json', action='store_true',
