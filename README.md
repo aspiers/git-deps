@@ -80,7 +80,9 @@ packages for it.  For example, on openSUSE, just do:
 
     sudo zypper install python-pygit2
 
-Then just copy or symlink `git-deps` so it's anywhere on your `$PATH`.
+Then just symlink `git-deps` so it's anywhere on your `$PATH`, e.g.
+
+    ln -s /path/to/git-deps/repo/git-deps ~/bin
 
 If you want to use the shiny new graph visualization web server
 functionality, you will need to install some dependencies:
