@@ -243,8 +243,11 @@ init_tip = () ->
     global.tip = tip
     fg.call tip
 
-# This hack is to work around something which looks like a bug in d3
-# or d3-tip.  tip.show is defined as:
+# A wrapper around tip.show is required to perform multiple visual
+# actions when the mouse hovers over a node; however even if the only
+# action required was to show the tool tip, the wrapper would still be
+# required in order to work around something which looks like a bug in
+# d3 or d3-tip.  tip.show is defined as:
 #
 #   function() {
 #       var args = Array.prototype.slice.call(arguments)
@@ -267,16 +270,46 @@ init_tip = () ->
 # However I tried rects.call ... instead of nodes.call as suggested in
 # that SO article, but it resulted in the callback not being triggered
 # at all.  By *always* providing the exact SVGElement the tip is
-# supposed to target, the desired behaviour is obtained.  If tip_show
-# is only used in tip_dragend_handler then the target gets memoised,
-# and a normal hover-based tip.show shows the target last shown by a
-# drag, rather than the node being hovered over.  Weird, and annoying.
-tip_show = (d, i) ->
+# supposed to target, the desired behaviour is obtained.  If
+# node_mouseover is only used in tip_dragend_handler then the target
+# gets memoised, and a normal hover-based tip.show shows the target
+# last shown by a drag, rather than the node being hovered over.
+# Weird, and annoying.
+node_mouseover = (d, i) ->
     tip.show d, i, nodes[0][i]
+    highlight_nodes d3.select(nodes[0][i]), false
+    highlight_parents(d, i, true)
+    highlight_children(d, i, true)
+
+node_mouseout = (d, i) ->
+    tip.hide d, i, nodes[0][i]
+    highlight_nodes d3.select(nodes[0][i]), false
+    highlight_parents(d, i, false)
+    highlight_children(d, i, false)
+
+highlight_parents = (d, i, highlight) ->
+    sha1 = gdd.nodes[i].sha1
+    parents = nodes.filter (d, i) ->
+        d.sha1 of (gdd.rdeps[sha1]  || {})
+    highlight_nodes parents, highlight, 'rgb(74, 200, 148)'
+
+highlight_children = (d, i, highlight) ->
+    sha1 = gdd.nodes[i].sha1
+    children = nodes.filter (d, i) ->
+        d.sha1 of (gdd.deps[sha1]  || {})
+    highlight_nodes children, highlight, 'rgb(128, 197, 247)'
+
+highlight_nodes = (selection, highlight, colour='#c0c0c0') ->
+    selection.selectAll('rect')
+        .transition()
+        .ease('cubic-out')
+        .duration(200)
+        .style('stroke', if highlight then colour else '#e5e5e5')
+        .style('stroke-width', if highlight then '4px' else '2px')
 
 tip_dragend_handler = (d, i, elt) ->
     focus_commitish_input()
-    tip_show d, i
+    node_mouseover d, i
 
 init_tip_event_handlers = (selection) ->
     # We have to reuse the same drag object, otherwise only one
@@ -386,15 +419,15 @@ position_nodes = (rects, labels) ->
     rects
         .attr("width", (d, i) -> d.rect_width)
         .attr("height", (d, i) -> d.rect_height)
-        .on("mouseover", tip_show)
-        .on("mouseout", tip.hide)
+        .on("mouseover", node_mouseover)
+        .on("mouseout", node_mouseout)
 
     # Centre labels
     labels
         .attr("x", (d) -> d.rect_width / 2)
         .attr("y", (d) -> d.rect_height / 2)
-        .on("mouseover", tip_show)
-        .on("mouseout", tip.hide)
+        .on("mouseover", node_mouseover)
+        .on("mouseout", node_mouseout)
 
     d3cola.start 10, 20, 20
     d3cola.on "tick", tick_handler
