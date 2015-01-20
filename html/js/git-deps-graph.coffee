@@ -194,6 +194,7 @@ draw_graph = (commitish) ->
             .data(gdd.links, link_key)
         paths.enter().append("svg:path")
             .attr("class", "link")
+            .attr("stroke", (d) -> color(link_key(d)))
         nodes = fg.selectAll(".node")
             .data(gdd.nodes, (d) -> d.sha1)
         global.nodes = nodes
