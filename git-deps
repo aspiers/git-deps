@@ -542,13 +542,13 @@ class DependencyDetector(object):
         return False
 
     def branch_contains(self, commit, branch):
-        sha1 = commit.hex[:8]
-        self.logger.debug("        Does %s contain %s?" %
-                          (branch, sha1))
+        sha1 = commit.hex
         branch_commit = self.get_commit(branch)
         branch_sha1 = branch_commit.hex
+        self.logger.debug("        Does %s (%s) contain %s?" %
+                          (branch, branch_sha1[:8], sha1[:8]))
 
-        if commit.hex not in self.branch_contains_cache:
+        if sha1 not in self.branch_contains_cache:
             self.branch_contains_cache[sha1] = {}
         if branch_sha1 in self.branch_contains_cache[sha1]:
             memoized = self.branch_contains_cache[sha1][branch_sha1]
@@ -558,7 +558,7 @@ class DependencyDetector(object):
         cmd = ['git', 'merge-base', sha1, branch_sha1]
         # self.logger.debug(" ".join(cmd))
         out = subprocess.check_output(cmd).strip()
-        # self.logger.debug(out)
+        self.logger.debug("        merge-base returned: %s" % out[:8])
         result = out == sha1
         self.logger.debug("          %s" % result)
         self.branch_contains_cache[sha1][branch_sha1] = result
