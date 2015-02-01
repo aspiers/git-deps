@@ -92,8 +92,11 @@ functionality, you will need to install some dependencies:
 
         cd html
         npm install
-        browserify -t coffeeify -d js/git-deps-graph.js -o js/bundle.js
+        browserify -t coffeeify -d js/git-deps-graph.coffee -o js/bundle.js
 
+    (If you are developing `git-deps` then replace `browserify` with
+    `watchify -v` in order to continually regenerate `bundle.js`
+    whenever any of the input files change.)
 *   You will need the [Flask](http://flask.pocoo.org/) Python
     module installed.
 
