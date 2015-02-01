@@ -204,9 +204,9 @@ draw_graph = (commitish) ->
         # Questionable attempt to use dagre layout as starting positions
         # https://github.com/tgdwyer/WebCola/issues/63
         nodes.each (d, i) ->
-                n = gdl.node d.sha1
-                d.x = n.x
-                d.y = n.y
+            n = gdl.node d.sha1
+            d.x = n.x
+            d.y = n.y
         nodes.attr "transform", (d) ->
             translate d.x, d.y
 
