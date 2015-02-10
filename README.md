@@ -42,11 +42,33 @@ Sometimes it is useful to understand the nature of parts of this DAG,
 as its nature will impact the success or failure of operations
 including merge, rebase, cherry-pick etc.
 
+### Use case 1: porting between branches
+
 For example when porting a commit "A" between git branches via `git
 cherry-pick`, it can be useful to programmatically determine in advance
 the minimum number of other dependent commits which would also need to
 be cherry-picked to provide the context for commit "A" to cleanly
 apply.
+
+### Use case 2: splitting a patch series
+
+Large patch series or pull requests can be quite daunting for project
+maintainers, since they are hard to conquer in one sitting.  For this
+reason it's generally best to keep the number of commits in any
+submission reasonably small.  However during normal hacking, you might
+accumulate a large number of patches before you start to contemplate
+submitting any of them upstream.  In this case, `git-deps` can help
+you determine how to break them up into smaller chunks.  Simply run
+
+    git deps -e $upstream_branch -s
+
+and then create a graph starting from the head of your local
+development branch, recursively expanding all the dependencies.  This
+will allow you to untangle things and expose subgraphs which can be
+cleanly split off into separate patch series or pull requests for
+submission.
+
+### Use case 3: aiding collaborative communication
 
 Another use case might be to better understand levels of specialism /
 cross-functionality within an agile team.  If I author a commit which
@@ -57,11 +79,7 @@ effectively changing "their" code.  Monitoring those relationships
 over time might shed some light on how agile teams should best
 coordinate efforts on shared code bases.
 
-I'm sure there are other use cases I haven't yet thought of.  At first
-I thought that it might provide a useful way to programmatically
-predict whether operations such as merge / rebase / cherry-pick would
-succeed, but actually it's probably cheaper and more reliable simply
-to perform the operation and then roll back.
+### Caveat
 
 Note the dependency graph is likely to be semantically incomplete; for
 example it would not auto-detect dependencies between a commit A which
@@ -69,6 +87,18 @@ changes code and another commit B which changes documentation or tests
 to reflect the code changes in commit A.  (Although of course it's
 usually best practice to logically group such changes together in a
 single commit.)  But this should not stop it from being useful.
+
+### Other uses
+
+I'm sure there are other use cases I haven't yet thought of.  If you
+have any good ideas, [please submit them](CONTRIBUTING.md)!
+
+### Non-use cases
+
+At first I thought that `git-deps` might provide a useful way to
+programmatically predict whether operations such as merge / rebase /
+cherry-pick would succeed, but actually it's probably cheaper and more
+reliable simply to perform the operation and then roll back.
 
 Installation
 ------------
