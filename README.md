@@ -48,7 +48,9 @@ For example when porting a commit "A" between git branches via `git
 cherry-pick`, it can be useful to programmatically determine in advance
 the minimum number of other dependent commits which would also need to
 be cherry-picked to provide the context for commit "A" to cleanly
-apply.
+apply.  Here's a quick demo!
+
+[![YouTube porting screencast](./html/images/youtube-porting-thumbnail.png)](http://youtu.be/DVksJMXxVIM)
 
 ### Use case 2: splitting a patch series
 
