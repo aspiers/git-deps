@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 #
 # git-deps - automatically detect dependencies between git commits
 # Copyright (C) 2013 Adam Spiers <git@adamspiers.org>
