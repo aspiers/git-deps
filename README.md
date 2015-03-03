@@ -119,6 +119,11 @@ Then just symlink `git-deps` so it's anywhere on your `$PATH`, e.g.
 If you want to use the shiny new graph visualization web server
 functionality, you will need to install some dependencies:
 
+*   Install the command line version of `browserify` with
+
+         npm install -g browserify
+    
+    (as a root)
 *   To install the required Javascript libraries, you will need
     [`npm`](https://www.npmjs.com/) installed, and then type:
 
