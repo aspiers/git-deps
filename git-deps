@@ -458,6 +458,9 @@ class DependencyDetector(object):
             self.dependencies[dependent_sha1] = {}
             self.notify_listeners('new_dependent', dependent)
 
+        cmd = ['git', 'rev-parse', '--abbrev-ref', 'HEAD']
+        cur_branch = subprocess.check_output(cmd).rstrip()
+
         line_to_culprit = {}
 
         for line in blame.split('\n'):
@@ -489,6 +492,17 @@ class DependencyDetector(object):
                         '        Dependency %s via line %s already done' %
                         (dependency_sha1[:8], line_num,))
                     continue
+
+                if self.options.new:
+                    cmd = ['git', 'branch', '--contains', dependency_sha1]
+                    branches_cont = subprocess.check_output(cmd)
+                    included = False
+                    for branch in branches_cont.split('\n'):
+                        if "* %s"%cur_branch == branch:
+                            included = True
+                    if included:
+                        continue
+
 
                 self.logger.debug(
                     '        New dependency %s via line %s (%s)' %
@@ -623,6 +637,8 @@ def parse_args():
                         help='Port number for webserver [%(default)s]')
     parser.add_argument('-r', '--recurse', dest='recurse', action='store_true',
                         help='Follow dependencies recursively')
+    parser.add_argument('-n', '--new', dest='new', action='store_true',
+                        help='Show only commits not included in current branch')
     parser.add_argument('-e', '--exclude-commits', dest='exclude_commits',
                         action='append', metavar='COMMITISH',
                         help='Exclude commits which are ancestors of the '
