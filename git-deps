@@ -618,6 +618,9 @@ def parse_args():
     parser.add_argument('-s', '--serve', dest='serve', action='store_true',
                         help='Run a web server for visualizing the '
                         'dependency graph')
+    parser.add_argument('-b', '--bind-ip', dest='bindaddr', type=str,
+                        metavar='IP', default='127.0.0.1',
+                        help='IP address for webserver to bind to [%(default)s]')
     parser.add_argument('-p', '--port', dest='port', type=int, metavar='PORT',
                         default=5000,
                         help='Port number for webserver [%(default)s]')
@@ -767,7 +770,7 @@ def serve(options):
               "insecure!")
         print("!! Arbitrary code can be executed from browser!")
         print()
-    webserver.run(port=options.port, debug=options.debug)
+    webserver.run(port=options.port, debug=options.debug, host=options.bindaddr)
 
 
 def main():
