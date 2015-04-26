@@ -767,7 +767,7 @@ def serve(options):
               "insecure!")
         print("!! Arbitrary code can be executed from browser!")
         print()
-    webserver.run(port=options.port, debug=options.debug)
+    webserver.run(host='0.0.0.0', port=options.port, debug=options.debug)
 
 
 def main():
