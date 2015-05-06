@@ -105,6 +105,8 @@ reliable simply to perform the operation and then roll back.
 Installation
 ------------
 
+### Manual installation
+
 `git-deps` requires [Pygit2](http://www.pygit2.org/), so first
 [install that](http://www.pygit2.org/install.html).  If you are using
 Linux, there is a good chance that your distribution already offers
@@ -134,6 +136,13 @@ functionality, you will need to install some dependencies:
     whenever any of the input files change.)
 *   You will need the [Flask](http://flask.pocoo.org/) Python
     module installed.
+
+### Installation via Docker
+
+Rather than following the above manual steps, you can try
+[an alternative approach created by Paul Wellner Bou which facilitates running `git-deps` in a Docker container](https://github.com/paulwellnerbou/git-deps-docker).
+This has been tested on Ubuntu 14.10, where it was used as a way to
+circumvent difficulties with installing `libgit2` >= 0.22.
 
 Usage
 -----
