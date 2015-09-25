@@ -118,7 +118,7 @@ packages for it.  For example, on openSUSE, just do:
 
 Then just symlink `git-deps` so it's anywhere on your `$PATH`, e.g.
 
-    ln -s /path/to/git-deps/repo/git-deps ~/bin
+    ln -s /path/to/git-deps/repo/git-deps.py ~/bin/git-deps
 
 If you want to use the shiny new graph visualization web server
 functionality, you will need to install some dependencies:
