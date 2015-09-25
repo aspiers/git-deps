@@ -1,3 +1,5 @@
+[![Code Climate](https://codeclimate.com/github/aspiers/git-deps/badges/gpa.svg)](https://codeclimate.com/github/aspiers/git-deps)
+
 git-deps
 ========
 
