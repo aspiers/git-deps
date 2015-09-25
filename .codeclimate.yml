@@ -1,0 +1,7 @@
+languages:
+  Ruby: false
+  JavaScript: true
+  PHP: false
+  Python: true
+# exclude_paths:
+# - "foo/bar.rb"
