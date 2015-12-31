@@ -398,6 +398,12 @@ class DependencyDetector(object):
                               dependent.hex[:8])
             self.notify_listeners('new_commit', dependent)
 
+            if self.is_cherry_picked(dependent):
+                self.logger.debug("%s is already cherry picked", dependent.hex[:8])
+                continue
+            else:
+                self.logger.debug("%s is not cherry picked", dependent.hex[:8])
+
             for parent in dependent.parents:
                 self.find_dependencies_with_parent(dependent, parent)
             self.done.append(dependent.hex)
@@ -540,6 +546,20 @@ class DependencyDetector(object):
                 if self.branch_contains(commit, exclude):
                     return True
         return False
+
+    def is_cherry_picked(self, commit):
+        sha1 = commit.hex
+        self.logger.debug("        Is %s cherry-picked ?" %
+                          (sha1[:8]))
+        grepString = "cherry picked from commit " + sha1
+
+        cmd = ['git', 'log', '--grep='+grepString]
+        out = subprocess.check_output(cmd)
+
+        if not out:
+            return False
+        else:
+            return True
 
     def branch_contains(self, commit, branch):
         sha1 = commit.hex
