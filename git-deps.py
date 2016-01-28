@@ -420,7 +420,7 @@ class DependencyDetector(object):
         diff = self.repo.diff(parent, dependent,
                               context_lines=self.options.context_lines)
         for patch in diff:
-            path = patch.old_file_path
+            path = patch.delta.old_file.path
             self.logger.debug("    Examining hunks in %s" % path)
             for hunk in patch.hunks:
                 self.blame_hunk(dependent, parent, path, hunk)
@@ -522,14 +522,14 @@ class DependencyDetector(object):
         hunk_header = '@@ %s %s @@' % (line_range_before, line_range_after)
         self.logger.debug(diff_format % ('--------', '-----', '', hunk_header))
         line_num = hunk.old_start
-        for mode, line in hunk.lines:
-            if mode == '+':
+        for line in hunk.lines:
+            if line.origin == '+':
                 rev = ln = ''
             else:
                 rev = line_to_culprit[line_num]
                 ln = line_num
                 line_num += 1
-            self.logger.debug(diff_format % (rev, ln, mode, line.rstrip()))
+            self.logger.debug(diff_format % (rev, ln, line.origin, line.content.rstrip()))
 
     def oneline(self, commit):
         return commit.message.split('\n', 1)[0]
