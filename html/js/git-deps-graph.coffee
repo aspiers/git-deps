@@ -356,13 +356,16 @@ launch_viewer = (d) ->
 new_data_notification = (new_data) ->
     new_nodes = new_data[0]
     new_deps = new_data[1]
-    root = new_data[2]
+    query = new_data[2]
     notification =
-        if root.commitish == root.sha1
-            "Analysed dependencies of #{root.abbrev}"
+        if query.revspec == query.tip_sha1
+            "Analysed dependencies of #{query.revspec}"
+        else if query.revisions.length == 1
+            "<span class=\"commit-ref\">#{query.revspec}</span>
+                resolved as #{query.tip_abbrev}"
         else
-            "<span class=\"commit-ref\">#{root.commitish}</span>
-                resolved as #{root.sha1}"
+            "<span class=\"commit-ref\">#{query.revspec}</span>
+                expanded; tip is #{query.tip_abbrev}"
     notification += "<p>#{new_nodes} new commit"
     notification += "s" unless new_nodes == 1
     notification += "; #{new_deps} new " +

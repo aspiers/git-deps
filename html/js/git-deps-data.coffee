@@ -82,7 +82,7 @@ add_data = (data) ->
         return [
             new_nodes
             new_deps
-            data.root
+            data.query
         ]
 
     return false

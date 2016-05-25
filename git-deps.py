@@ -107,6 +107,19 @@ class CLIDependencyListener(DependencyListener):
     too long for useful output if recursion is enabled.
     """
 
+    def __init__(self, options):
+        super(CLIDependencyListener, self).__init__(options)
+
+        # Count each mention of each revision, so we can avoid duplicating
+        # commits in the output.
+        self._revs = {}
+
+    def new_commit(self, commit):
+        rev = commit.hex
+        if rev not in self._revs:
+            self._revs[rev] = 0
+        self._revs[rev] += 1
+
     def new_dependency(self, dependent, dependency, path, line_num):
         dependent_sha1 = dependent.hex
         dependency_sha1 = dependency.hex
@@ -117,10 +130,10 @@ class CLIDependencyListener(DependencyListener):
             else:
                 print("%s %s" % (dependent_sha1, dependency_sha1))
         else:
-            if not self.options.log:
+            if not self.options.log and self._revs[dependency_sha1] <= 1:
                 print(dependency_sha1)
 
-        if self.options.log:
+        if self.options.log and self._revs[dependency_sha1] <= 1:
             cmd = [
                 'git',
                 '--no-pager',
@@ -281,6 +294,12 @@ class GitUtils(object):
 
         return matching
 
+    @classmethod
+    def rev_list(cls, rev_range):
+        cmd = ['git', 'rev-list', rev_range]
+        return subprocess.check_output(cmd).strip().split('\n')
+
+
 class InvalidCommitish(StandardError):
     def __init__(self, commitish):
         self.commitish = commitish
@@ -366,6 +385,9 @@ class DependencyDetector(object):
         logger.setLevel(logging.DEBUG)
         logger.addHandler(handler)
         return logger
+
+    def seen_commit(self, rev):
+        return rev in self.commits
 
     def get_commit(self, rev):
         if rev in self.commits:
@@ -670,11 +692,12 @@ def cli(options, args):
 
     detector.add_listener(listener)
 
-    for dependent_rev in args:
-        try:
-            detector.find_dependencies(dependent_rev)
-        except KeyboardInterrupt:
-            pass
+    for revspec in args:
+        for rev in GitUtils.rev_list(revspec):
+            try:
+                detector.find_dependencies(rev)
+            except KeyboardInterrupt:
+                pass
 
     if options.json:
         print(json.dumps(listener.json(), sort_keys=True, indent=4))
@@ -743,26 +766,43 @@ def serve(options):
         client_options['repo_path'] = os.getcwd()
         return jsonify(client_options)
 
-    @webserver.route('/deps.json/<commitish>')
-    def deps(commitish):
+    @webserver.route('/deps.json/<revspec>')
+    def deps(revspec):
         detector = DependencyDetector(options)
         listener = JSONDependencyListener(options)
         detector.add_listener(listener)
 
-        try:
-            root_commit = detector.get_commit(commitish)
-        except InvalidCommitish as e:
-            return json_error(
-                422, 'Invalid commitish',
-                "Could not resolve commitish '%s'" % commitish,
-                commitish=commitish)
+        if '..' in revspec:
+            try:
+                revisions = GitUtils.rev_list(revspec)
+            except subprocess.CalledProcessError as e:
+                return json_err(
+                    422, 'Invalid revision range',
+                    "Could not resolve revision range '%s'" % revspec,
+                    revspec=revspec)
+        else:
+            revisions = [revspec]
 
-        detector.find_dependencies(commitish)
+        for rev in revisions:
+            try:
+                commit = detector.get_commit(rev)
+            except InvalidCommitish as e:
+                return json_error(
+                    422, 'Invalid revision',
+                    "Could not resolve revision '%s'" % rev,
+                    rev=rev)
+
+            detector.find_dependencies(rev)
+
+        tip_commit = detector.get_commit(revisions[0])
+        tip_sha1 = tip_commit.hex
+
         json = listener.json()
-        json['root'] = {
-            'commitish': commitish,
-            'sha1': root_commit.hex,
-            'abbrev': GitUtils.abbreviate_sha1(root_commit.hex),
+        json['query'] = {
+            'revspec': revspec,
+            'revisions': revisions,
+            'tip_sha1': tip_sha1,
+            'tip_abbrev': GitUtils.abbreviate_sha1(tip_sha1),
         }
         return jsonify(json)
 
