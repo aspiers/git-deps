@@ -124,7 +124,7 @@ class CLIDependencyListener(DependencyListener):
         dependent_sha1 = dependent.hex
         dependency_sha1 = dependency.hex
 
-        if self.options.recurse:
+        if self.options.multi:
             if self.options.log:
                 print("%s depends on:" % dependent_sha1)
             else:
@@ -665,6 +665,11 @@ def parse_args():
 
     options, args = parser.parse_known_args()
 
+    # Are we potentially detecting dependencies for more than one commit?
+    # Even if we're not recursing, the user could specify multiple commits
+    # via CLI arguments.
+    options.multi = options.recurse
+
     if options.serve:
         if options.log:
             parser.error('--log does not make sense in webserver mode.')
@@ -692,8 +697,15 @@ def cli(options, args):
 
     detector.add_listener(listener)
 
+    if len(args) > 1:
+        options.multi = True
+
     for revspec in args:
-        for rev in GitUtils.rev_list(revspec):
+        revs = GitUtils.rev_list(revspec)
+        if len(revs) > 1:
+            options.multi = True
+
+        for rev in revs:
             try:
                 detector.find_dependencies(rev)
             except KeyboardInterrupt:
