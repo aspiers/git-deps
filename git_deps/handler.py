@@ -15,11 +15,11 @@ def abort(msg, exitcode=1):
 def usage():
     abort("usage: git-handler URL")
 
-def main():
-    if len(sys.argv) != 2:
+def main(args):
+    if len(args) != 1:
         usage()
 
-    url = urlparse(sys.argv[1])
+    url = args[0]
 
     if url.scheme != 'gitfile':
         abort("URL must use gitfile:// scheme")
@@ -30,5 +30,9 @@ def main():
 
     subprocess.Popen(['gitk', '--all', '--select-commit=%s' % rev])
 
+def run():
+    main(sys.argv[1:])
+
+
 if __name__ == "__main__":
-    main()
+    run()

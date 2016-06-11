@@ -7,7 +7,7 @@ git-deps
 between commits in a [git](http://git-scm.com/) repository.  Here's
 a screencast demonstration:
 
-[![YouTube screencast](./html/images/youtube-thumbnail.png)](http://youtu.be/irQ5gMMz-gE)
+[![YouTube screencast](./images/youtube-thumbnail.png)](http://youtu.be/irQ5gMMz-gE)
 
 I also spoke about the tool in
 [episode #32 of the GitMinutes podcast](http://episodes.gitminutes.com/2015/03/gitminutes-32-adam-spiers-on-git-deps.html).
@@ -55,7 +55,7 @@ the minimum number of other dependent commits which would also need to
 be cherry-picked to provide the context for commit "A" to cleanly
 apply.  Here's a quick demo!
 
-[![YouTube porting screencast](./html/images/youtube-porting-thumbnail.png)](http://youtu.be/DVksJMXxVIM)
+[![YouTube porting screencast](./images/youtube-porting-thumbnail.png)](http://youtu.be/DVksJMXxVIM)
 
 ### Use case 2: splitting a patch series
 
@@ -107,47 +107,11 @@ programmatically predict whether operations such as merge / rebase /
 cherry-pick would succeed, but actually it's probably cheaper and more
 reliable simply to perform the operation and then roll back.
 
+
 Installation
 ------------
 
-### Manual installation
-
-`git-deps` requires [Pygit2](http://www.pygit2.org/), so first
-[install that](http://www.pygit2.org/install.html).  If you are using
-Linux, there is a good chance that your distribution already offers
-packages for it.  For example, on openSUSE, just do:
-
-    sudo zypper install python-pygit2
-
-Then just symlink `git-deps` so it's anywhere on your `$PATH`, e.g.
-
-    ln -s /path/to/git-deps/repo/git-deps.py ~/bin/git-deps
-
-If you want to use the shiny new graph visualization web server
-functionality, you will need to install some dependencies:
-
-*   As `root`, install the command line version of `browserify` with
-
-         npm install -g browserify
-*   To install the required Javascript libraries, you will need
-    [`npm`](https://www.npmjs.com/) installed, and then type:
-
-        cd html
-        npm install
-        browserify -t coffeeify -d js/git-deps-graph.coffee -o js/bundle.js
-
-    (If you are developing `git-deps` then replace `browserify` with
-    `watchify -v` in order to continually regenerate `bundle.js`
-    whenever any of the input files change.)
-*   You will need the [Flask](http://flask.pocoo.org/) Python
-    module installed.
-
-### Installation via Docker
-
-Rather than following the above manual steps, you can try
-[an alternative approach created by Paul Wellner Bou which facilitates running `git-deps` in a Docker container](https://github.com/paulwellnerbou/git-deps-docker).
-This has been tested on Ubuntu 14.10, where it was used as a way to
-circumvent difficulties with installing `libgit2` >= 0.22.
+Please see [the `INSTALL.md` file](INSTALL.md).
 
 Usage
 -----
