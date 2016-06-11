@@ -81,7 +81,7 @@ def serve(options):
             try:
                 revisions = GitUtils.rev_list(revspec)
             except subprocess.CalledProcessError:
-                return json_err(
+                return json_error(
                     422, 'Invalid revision range',
                     "Could not resolve revision range '%s'" % revspec,
                     revspec=revspec)
