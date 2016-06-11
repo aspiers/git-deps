@@ -80,7 +80,7 @@ def serve(options):
         if '..' in revspec:
             try:
                 revisions = GitUtils.rev_list(revspec)
-            except subprocess.CalledProcessError as e:
+            except subprocess.CalledProcessError:
                 return json_err(
                     422, 'Invalid revision range',
                     "Could not resolve revision range '%s'" % revspec,
@@ -90,8 +90,8 @@ def serve(options):
 
         for rev in revisions:
             try:
-                commit = detector.get_commit(rev)
-            except InvalidCommitish as e:
+                detector.get_commit(rev)
+            except InvalidCommitish:
                 return json_error(
                     422, 'Invalid revision',
                     "Could not resolve revision '%s'" % rev,
@@ -119,4 +119,5 @@ def serve(options):
               "insecure!")
         print("!! Arbitrary code can be executed from browser!")
         print()
-    webserver.run(port=options.port, debug=options.debug, host=options.bindaddr)
+    webserver.run(port=options.port, debug=options.debug,
+                  host=options.bindaddr)

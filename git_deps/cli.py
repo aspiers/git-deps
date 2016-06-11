@@ -58,7 +58,8 @@ def parse_args():
                         'dependency graph')
     parser.add_argument('-b', '--bind-ip', dest='bindaddr', type=str,
                         metavar='IP', default='127.0.0.1',
-                        help='IP address for webserver to bind to [%(default)s]')
+                        help='IP address for webserver to '
+                        'bind to [%(default)s]')
     parser.add_argument('-p', '--port', dest='port', type=int, metavar='PORT',
                         default=5000,
                         help='Port number for webserver [%(default)s]')

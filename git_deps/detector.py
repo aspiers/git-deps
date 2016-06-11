@@ -160,9 +160,8 @@ class DependencyDetector(object):
         because without the lines from those commits, the hunk would
         not apply correctly.
         """
-        first_line_num = hunk.old_start
         line_range_before = "-%d,%d" % (hunk.old_start, hunk.old_lines)
-        line_range_after  = "+%d,%d" % (hunk.new_start, hunk.new_lines)
+        line_range_after = "+%d,%d" % (hunk.new_start, hunk.new_lines)
         self.logger.debug("      Blaming hunk %s @ %s" %
                           (line_range_before, parent.hex[:8]))
 
@@ -259,7 +258,8 @@ class DependencyDetector(object):
                 rev = line_to_culprit[line_num]
                 ln = line_num
                 line_num += 1
-            self.logger.debug(diff_format % (rev, ln, line.origin, line.content.rstrip()))
+            self.logger.debug(diff_format %
+                              (rev, ln, line.origin, line.content.rstrip()))
 
     def oneline(self, commit):
         return commit.message.split('\n', 1)[0]
