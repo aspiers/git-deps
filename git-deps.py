@@ -46,6 +46,10 @@ except ImportError:
             install_guide = \
                 "You should be able to install it with something like:\n\n" \
                 "  sudo zypper install python-pygit2"
+        elif distro == 'debian':
+            install_guide = \
+                "You should be able to install it with something like:\n\n" \
+                "  sudo apt-get install python-pygit2"
 
     if install_guide is None:
         msg += "\n\nIf you figure out a way to install it on your platform,\n" \
