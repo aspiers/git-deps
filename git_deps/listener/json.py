@@ -58,9 +58,6 @@ class JSONDependencyListener(DependencyListener):
         self._commits[sha1] = len(self._json['commits']) - 1
         return self._commits[sha1]
 
-    def add_link(self, source, target):
-        self._json['dependencies'].append
-
     def new_commit(self, commit):
         self.add_commit(commit)
 
