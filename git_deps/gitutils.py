@@ -49,6 +49,10 @@ class GitUtils(object):
         return out
 
     @classmethod
+    def oneline(cls, commit):
+        return commit.message.split('\n', 1)[0]
+
+    @classmethod
     def refs_to(cls, sha1, repo):
         """Returns all refs pointing to the given SHA1."""
         matching = []
