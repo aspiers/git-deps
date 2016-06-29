@@ -80,7 +80,10 @@ class DependencyDetector(object):
             return self.commits[rev]
 
         try:
-            self.commits[rev] = self.repo.revparse_single(rev)
+            commit = self.repo.revparse_single(rev)
+            if isinstance(commit, pygit2.Tag):
+                commit = commit.get_object()
+            self.commits[rev] = commit
         except (KeyError, ValueError):
             raise InvalidCommitish(rev)
 
