@@ -7,10 +7,7 @@ import subprocess
 import sys
 from urlparse import urlparse
 
-
-def abort(msg, exitcode=1):
-    print(msg, file=sys.stderr)
-    sys.exit(exitcode)
+from git_deps.utils import abort
 
 
 def usage():
