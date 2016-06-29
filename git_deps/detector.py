@@ -168,8 +168,8 @@ class DependencyDetector(object):
 
         dependent_sha1 = dependent.hex
         if dependent_sha1 not in self.dependencies:
-            self.logger.debug('        New dependent: %s (%s)' %
-                              (dependent_sha1[:8], GitUtils.oneline(dependent)))
+            self.logger.debug('        New dependent: %s' %
+                              GitUtils.commit_summary(dependent))
             self.dependencies[dependent_sha1] = {}
             self.notify_listeners('new_dependent', dependent)
 
