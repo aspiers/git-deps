@@ -1,11 +1,9 @@
-import logging
 import re
 import subprocess
-import sys
 
 import pygit2
 
-from git_deps.utils import abort
+from git_deps.utils import abort, debug_logger
 from git_deps.listener.base import DependencyListener
 from git_deps.errors import InvalidCommitish
 
@@ -77,16 +75,7 @@ class DependencyDetector(object):
         if not self.options.debug:
             return logging.getLogger(self.__class__.__name__)
 
-        log_format = '%(asctime)-15s %(levelname)-6s %(message)s'
-        date_format = '%b %d %H:%M:%S'
-        formatter = logging.Formatter(fmt=log_format, datefmt=date_format)
-        handler = logging.StreamHandler(stream=sys.stdout)
-        handler.setFormatter(formatter)
-        # logger = logging.getLogger(__name__)
-        logger = logging.getLogger(self.__class__.__name__)
-        logger.setLevel(logging.DEBUG)
-        logger.addHandler(handler)
-        return logger
+        return debug_logger(self.__class__.__name__)
 
     def seen_commit(self, rev):
         return rev in self.commits
