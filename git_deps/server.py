@@ -5,7 +5,7 @@ from gitutils import GitUtils
 from git_deps.detector import DependencyDetector
 from git_deps.errors import InvalidCommitish
 from git_deps.listener.json import JSONDependencyListener
-from git_deps.utils import abort
+from git_deps.utils import abort, standard_logger
 
 
 def serve(options):
@@ -16,10 +16,13 @@ def serve(options):
     except ImportError:
         abort("Cannot find flask module which is required for webserver mode.")
 
+    logger = standard_logger(__name__, options.debug)
+
     webserver = Flask('git-deps')
     here = os.path.dirname(os.path.realpath(__file__))
     root = os.path.join(here, 'html')
     webserver.root_path = root
+    logger.debug("Webserver root is %s" % root)
 
     ##########################################################
     # Static content
