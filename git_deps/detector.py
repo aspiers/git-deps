@@ -3,7 +3,7 @@ import subprocess
 
 import pygit2
 
-from git_deps.utils import abort, debug_logger
+from git_deps.utils import abort, standard_logger
 from git_deps.listener.base import DependencyListener
 from git_deps.errors import InvalidCommitish
 
@@ -23,7 +23,8 @@ class DependencyDetector(object):
         self.options = options
 
         if logger is None:
-            self.logger = self.default_logger()
+            self.logger = standard_logger(self.__class__.__name__,
+                                          options.debug)
 
         if repo_path is None:
             try:
@@ -70,12 +71,6 @@ class DependencyDetector(object):
         for listener in self.listeners:
             fn = getattr(listener, event)
             fn(*args)
-
-    def default_logger(self):
-        if not self.options.debug:
-            return logging.getLogger(self.__class__.__name__)
-
-        return debug_logger(self.__class__.__name__)
 
     def seen_commit(self, rev):
         return rev in self.commits
