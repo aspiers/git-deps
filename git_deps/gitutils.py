@@ -1,6 +1,8 @@
+import pygit2
 import re
 import subprocess
 
+from git_deps.errors import InvalidCommitish
 
 class GitUtils(object):
     @classmethod
@@ -74,3 +76,16 @@ class GitUtils(object):
     def rev_list(cls, rev_range):
         cmd = ['git', 'rev-list', rev_range]
         return subprocess.check_output(cmd).strip().split('\n')
+
+    @classmethod
+    def ref_commit(cls, repo, rev):
+        try:
+            commit = repo.revparse_single(rev)
+        except (KeyError, ValueError):
+            raise InvalidCommitish(rev)
+
+        if isinstance(commit, pygit2.Tag):
+            commit = commit.get_object()
+
+        return commit
+
