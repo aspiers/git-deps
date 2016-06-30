@@ -20,20 +20,17 @@ class DependencyDetector(object):
     tree represented (conceptually) by a list of edges.
     """
 
-    def __init__(self, options, repo_path=None, logger=None):
+    def __init__(self, options, repo=None, logger=None):
         self.options = options
 
         if logger is None:
             self.logger = standard_logger(self.__class__.__name__,
                                           options.debug)
 
-        if repo_path is None:
-            try:
-                repo_path = pygit2.discover_repository('.')
-            except KeyError:
-                abort("Couldn't find a repository in the current directory.")
-
-        self.repo = pygit2.Repository(repo_path)
+        if repo is None:
+            self.repo = GitUtils.get_repo()
+        else:
+            self.repo = repo
 
         # Nested dict mapping dependents -> dependencies -> files
         # causing that dependency -> numbers of lines within that file

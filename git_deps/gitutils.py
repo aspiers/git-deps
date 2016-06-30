@@ -3,6 +3,8 @@ import re
 import subprocess
 
 from git_deps.errors import InvalidCommitish
+from git_deps.utils import abort
+
 
 class GitUtils(object):
     @classmethod
@@ -89,3 +91,11 @@ class GitUtils(object):
 
         return commit
 
+    @classmethod
+    def get_repo(cls, path='.'):
+        try:
+            repo_path = pygit2.discover_repository(path)
+        except KeyError:
+            abort("Couldn't find a repository in the current directory.")
+
+        return pygit2.Repository(repo_path)
