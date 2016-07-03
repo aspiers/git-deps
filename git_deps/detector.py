@@ -110,6 +110,12 @@ class DependencyDetector(object):
             del self.todo_d[dependent_sha1]
             self.logger.debug("  Processing %s from TODO list" %
                               dependent_sha1[:8])
+
+            if dependent_sha1 in self.done_d:
+                self.logger.debug("  %s already done previously" %
+                                  dependent_sha1)
+                continue
+
             self.notify_listeners('new_commit', dependent)
 
             for parent in dependent.parents:
