@@ -227,10 +227,15 @@ class DependencyDetector(object):
                                       dependent, dependency, path, line_num)
 
             if line_num in dep_sources[path]:
-                abort("line %d already found when blaming %s:%s" %
-                      (line_num, parent.hex[:8], path))
+                abort("line %d already found when blaming %s:%s\n"
+                      "old:\n  %s\n"
+                      "new:\n  %s" %
+                      (line_num, parent.hex[:8], path,
+                       dep_sources[path][line_num], line))
 
-            dep_sources[path][line_num] = True
+            dep_sources[path][line_num] = line
+            self.logger.debug("          New line for %s -> %s: %s" %
+                              (dependent_sha1[:8], dependency_sha1[:8], line))
             self.notify_listeners('new_line',
                                   dependent, dependency, path, line_num)
 
