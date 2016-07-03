@@ -106,19 +106,20 @@ class DependencyDetector(object):
             else:
                 self.logger.debug("  TODO list now: %s" % " ".join(sha1s))
             dependent = self.todo.pop(0)
-            del self.todo_d[dependent.hex]
+            dependent_sha1 = dependent.hex
+            del self.todo_d[dependent_sha1]
             self.logger.debug("  Processing %s from TODO list" %
-                              dependent.hex[:8])
+                              dependent_sha1[:8])
             self.notify_listeners('new_commit', dependent)
 
             for parent in dependent.parents:
                 self.find_dependencies_with_parent(dependent, parent)
-            self.done.append(dependent.hex)
-            self.done_d[dependent.hex] = True
+            self.done.append(dependent_sha1)
+            self.done_d[dependent_sha1] = True
             self.logger.debug("  Found all dependencies for %s" %
-                              dependent.hex[:8])
+                              dependent_sha1[:8])
             # A commit won't have any dependencies if it only added new files
-            dependencies = self.dependencies.get(dependent.hex, {})
+            dependencies = self.dependencies.get(dependent_sha1, {})
             self.notify_listeners('dependent_done', dependent, dependencies)
 
         self.logger.debug("Finished processing TODO list")
