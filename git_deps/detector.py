@@ -96,12 +96,18 @@ class DependencyDetector(object):
         self.todo.append(dependent)
         self.todo_d[dependent.hex] = True
 
+        first_time = True
+
         while self.todo:
             sha1s = [commit.hex[:8] for commit in self.todo]
-            self.logger.debug("TODO list: %s" % " ".join(sha1s))
+            if first_time:
+                self.logger.debug("Initial TODO list: %s" % " ".join(sha1s))
+                first_time = False
+            else:
+                self.logger.debug("  TODO list now: %s" % " ".join(sha1s))
             dependent = self.todo.pop(0)
             del self.todo_d[dependent.hex]
-            self.logger.debug("Processing %s from TODO list" %
+            self.logger.debug("  Processing %s from TODO list" %
                               dependent.hex[:8])
             self.notify_listeners('new_commit', dependent)
 
@@ -109,12 +115,13 @@ class DependencyDetector(object):
                 self.find_dependencies_with_parent(dependent, parent)
             self.done.append(dependent.hex)
             self.done_d[dependent.hex] = True
-            self.logger.debug("Found all dependencies for %s" %
+            self.logger.debug("  Found all dependencies for %s" %
                               dependent.hex[:8])
             # A commit won't have any dependencies if it only added new files
             dependencies = self.dependencies.get(dependent.hex, {})
             self.notify_listeners('dependent_done', dependent, dependencies)
 
+        self.logger.debug("Finished processing TODO list")
         self.notify_listeners('all_done')
 
     def find_dependencies_with_parent(self, dependent, parent):
@@ -122,13 +129,13 @@ class DependencyDetector(object):
         parent commit.  This will be called multiple times for merge
         commits which have multiple parents.
         """
-        self.logger.debug("  Finding dependencies of %s via parent %s" %
+        self.logger.debug("    Finding dependencies of %s via parent %s" %
                           (dependent.hex[:8], parent.hex[:8]))
         diff = self.repo.diff(parent, dependent,
                               context_lines=self.options.context_lines)
         for patch in diff:
             path = patch.delta.old_file.path
-            self.logger.debug("    Examining hunks in %s" % path)
+            self.logger.debug("      Examining hunks in %s" % path)
             for hunk in patch.hunks:
                 self.blame_hunk(dependent, parent, path, hunk)
 
@@ -141,7 +148,7 @@ class DependencyDetector(object):
         """
         line_range_before = "-%d,%d" % (hunk.old_start, hunk.old_lines)
         line_range_after = "+%d,%d" % (hunk.new_start, hunk.new_lines)
-        self.logger.debug("      Blaming hunk %s @ %s" %
+        self.logger.debug("        Blaming hunk %s @ %s" %
                           (line_range_before, parent.hex[:8]))
 
         if not self.tree_lookup(path, parent):
@@ -159,15 +166,15 @@ class DependencyDetector(object):
 
         dependent_sha1 = dependent.hex
         if dependent_sha1 not in self.dependencies:
-            self.logger.debug('        New dependent: %s' %
+            self.logger.debug("          New dependent: %s" %
                               GitUtils.commit_summary(dependent))
             self.dependencies[dependent_sha1] = {}
-            self.notify_listeners('new_dependent', dependent)
+            self.notify_listeners("new_dependent", dependent)
 
         line_to_culprit = {}
 
         for line in blame.split('\n'):
-            # self.logger.debug('      !' + line.rstrip())
+            self.logger.debug("        !" + line.rstrip())
             m = re.match('^([0-9a-f]{40}) (\d+) (\d+)( \d+)?$', line)
             if not m:
                 continue
@@ -178,7 +185,7 @@ class DependencyDetector(object):
 
             if self.is_excluded(dependency):
                 self.logger.debug(
-                    '        Excluding dependency %s from line %s (%s)' %
+                    "        Excluding dependency %s from line %s (%s)" %
                     (dependency_sha1[:8], line_num,
                      GitUtils.oneline(dependency)))
                 continue
@@ -186,19 +193,19 @@ class DependencyDetector(object):
             if dependency_sha1 not in self.dependencies[dependent_sha1]:
                 if dependency_sha1 in self.todo_d:
                     self.logger.debug(
-                        '        Dependency %s via line %s already in TODO' %
-                        (dependency_sha1[:8], line_num,))
+                        "        Dependency on %s via line %s already in TODO"
+                        % (dependency_sha1[:8], line_num,))
                     continue
 
                 if dependency_sha1 in self.done_d:
                     self.logger.debug(
-                        '        Dependency %s via line %s already done' %
+                        "        Dependency on %s via line %s already done" %
                         (dependency_sha1[:8], line_num,))
                     continue
 
                 self.logger.debug(
-                    '        New dependency %s via line %s (%s)' %
-                    (dependency_sha1[:8], line_num,
+                    "          New dependency %s -> %s via line %s (%s)" %
+                    (dependent_sha1[:8], dependency_sha1[:8], line_num,
                      GitUtils.oneline(dependency)))
                 self.dependencies[dependent_sha1][dependency_sha1] = {}
                 self.notify_listeners('new_commit', dependency)
@@ -208,7 +215,8 @@ class DependencyDetector(object):
                     if self.options.recurse:
                         self.todo.append(dependency)
                         self.todo_d[dependency.hex] = True
-                        self.logger.debug('          added to TODO')
+                        self.logger.debug("  + Added %s to TODO" %
+                                          dependency.hex[:8])
 
             dep_sources = self.dependencies[dependent_sha1][dependency_sha1]
 
@@ -252,22 +260,22 @@ class DependencyDetector(object):
         sha1 = commit.hex
         branch_commit = self.get_commit(branch)
         branch_sha1 = branch_commit.hex
-        self.logger.debug("        Does %s (%s) contain %s?" %
+        self.logger.debug("          Does %s (%s) contain %s?" %
                           (branch, branch_sha1[:8], sha1[:8]))
 
         if sha1 not in self.branch_contains_cache:
             self.branch_contains_cache[sha1] = {}
         if branch_sha1 in self.branch_contains_cache[sha1]:
             memoized = self.branch_contains_cache[sha1][branch_sha1]
-            self.logger.debug("          %s (memoized)" % memoized)
+            self.logger.debug("            %s (memoized)" % memoized)
             return memoized
 
         cmd = ['git', 'merge-base', sha1, branch_sha1]
-        # self.logger.debug(" ".join(cmd))
+        # self.logger.debug("   ".join(cmd))
         out = subprocess.check_output(cmd).strip()
-        self.logger.debug("        merge-base returned: %s" % out[:8])
+        self.logger.debug("          merge-base returned: %s" % out[:8])
         result = out == sha1
-        self.logger.debug("          %s" % result)
+        self.logger.debug("            %s" % result)
         self.branch_contains_cache[sha1][branch_sha1] = result
         return result
 
@@ -285,18 +293,18 @@ class DependencyDetector(object):
             if isinstance(tree_or_blob, pygit2.Tree):
                 if dirent in tree_or_blob:
                     tree_or_blob = self.repo[tree_or_blob[dirent].oid]
-                    # self.logger.debug('%s in %s' % (dirent, path))
+                    # self.logger.debug("  %s in %s" % (dirent, path))
                     if path:
                         path += '/'
                     path += dirent
                 else:
                     # This is probably because we were called on a
                     # commit whose parent added a new directory.
-                    self.logger.debug('      %s not in %s in %s' %
+                    self.logger.debug("        %s not in %s in %s" %
                                       (dirent, path, commit.hex[:8]))
                     return None
             else:
-                self.logger.debug('      %s not a tree in %s' %
+                self.logger.debug("        %s not a tree in %s" %
                                   (tree_or_blob, commit.hex[:8]))
                 return None
         return tree_or_blob
