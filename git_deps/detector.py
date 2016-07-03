@@ -198,6 +198,18 @@ class DependencyDetector(object):
                 continue
 
             if dependency_sha1 not in self.dependencies[dependent_sha1]:
+                if not self.seen_commit(dependency):
+                    self.notify_listeners("new_commit", dependency)
+                    self.dependencies[dependent_sha1][dependency_sha1] = {}
+
+                self.notify_listeners("new_dependency",
+                                      dependent, dependency, path, line_num)
+
+                self.logger.debug(
+                    "          New dependency %s -> %s via line %s (%s)" %
+                    (dependent_sha1[:8], dependency_sha1[:8], line_num,
+                     GitUtils.oneline(dependency)))
+
                 if dependency_sha1 in self.todo_d:
                     self.logger.debug(
                         "        Dependency on %s via line %s already in TODO"
@@ -210,14 +222,6 @@ class DependencyDetector(object):
                         (dependency_sha1[:8], line_num,))
                     continue
 
-                self.logger.debug(
-                    "          New dependency %s -> %s via line %s (%s)" %
-                    (dependent_sha1[:8], dependency_sha1[:8], line_num,
-                     GitUtils.oneline(dependency)))
-                self.dependencies[dependent_sha1][dependency_sha1] = {}
-                self.notify_listeners('new_commit', dependency)
-                self.notify_listeners('new_dependency',
-                                      dependent, dependency, path, line_num)
                 if dependency_sha1 not in self.dependencies:
                     if self.options.recurse:
                         self.todo.append(dependency)
