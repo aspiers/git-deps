@@ -1,0 +1,25 @@
+name: git-deps
+version: 0.1
+summary: A tool for performing analysis of dependencies between git commits
+description: |
+    git-deps is a tool for performing automatic analysis of dependencies
+    between commits in a git repository.
+
+confinement: strict
+
+apps:
+    git-deps:
+        command: git-deps/git-deps.py
+        plugs:
+            - home
+
+parts:
+    git-deps:
+        plugin: copy
+        source: .
+        files:
+            .: git-deps
+        stage-packages:
+            - git
+            - python2.7
+            - python-pygit2
