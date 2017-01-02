@@ -212,8 +212,8 @@ Then normal life intervened, and no progress was made for another
 year.
 
 Thanks to SUSE's generous [Hack Week](https://hackweek.suse.com/)
-policy, I have the luxury of being able to spending some of early
-January 2015 working to bring this tool to the next level.  I have
+policy, I had the luxury of being able to spending some of early
+January 2015 working to bring this tool to the next level.  I
 submitted a
 [Hack Week project page](https://hackweek.suse.com/11/projects/366)
 and
