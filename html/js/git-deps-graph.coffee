@@ -4,6 +4,12 @@ d3 = require "d3"
 d3tip = require "d3-tip"
 d3tip d3
 
+# Hacky workaround:
+# https://github.com/tgdwyer/WebCola/issues/145#issuecomment-271316856
+window.d3 = d3
+
+cola = require "webcola"
+
 global.gdn = require "./git-deps-noty.coffee"
 global.gdd = require "./git-deps-data.coffee"
 global.gdl = require "./git-deps-layout.coffee"
@@ -548,8 +554,7 @@ tick_handler = ->
 
     paths.attr "d", (d) ->
         # Undocumented: https://github.com/tgdwyer/WebCola/issues/52
-        cola.vpsc.makeEdgeBetween \
-            d,
+        route = cola.makeEdgeBetween \
             d.source.innerBounds,
             d.target.innerBounds,
             # This value is related to but not equal to the
@@ -557,8 +562,8 @@ tick_handler = ->
             5
 
         lineData = [
-            {x: d.sourceIntersection.x, y: d.sourceIntersection.y},
-            {x: d.arrowStart.x, y: d.arrowStart.y}
+            {x: route.sourceIntersection.x, y: route.sourceIntersection.y},
+            {x: route.arrowStart.x, y: route.arrowStart.y}
         ]
         return lineFunction lineData
 
