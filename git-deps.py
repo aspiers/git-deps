@@ -549,6 +549,8 @@ class DependencyDetector(object):
         self.logger.debug(diff_format % ('--------', '-----', '', hunk_header))
         line_num = hunk.old_start
         for line in hunk.lines:
+            if "\n\\ No newline at end of file" == line.content.rstrip():
+                break
             if line.origin == '+':
                 rev = ln = ''
             else:
