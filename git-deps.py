@@ -416,6 +416,7 @@ class DependencyDetector(object):
         self.todo_d[dependent.hex] = True
 
         while self.todo:
+            count = 0
             sha1s = [commit.hex[:8] for commit in self.todo]
             self.logger.debug("TODO list: %s" % " ".join(sha1s))
             dependent = self.todo.pop(0)
@@ -423,6 +424,14 @@ class DependencyDetector(object):
             self.logger.debug("Processing %s from TODO list" %
                               dependent.hex[:8])
             self.notify_listeners('new_commit', dependent)
+
+            for parent in dependent.parents:
+                count = count + 1
+
+            # If a commit has more than one parent it is a merge commit
+            # Skip checking dependencies for merge commits
+            if count > 1:
+                continue
 
             for parent in dependent.parents:
                 self.find_dependencies_with_parent(dependent, parent)
