@@ -400,6 +400,16 @@ class DependencyDetector(object):
 
         return self.commits[rev]
 
+    def get_revisions(self, revspec):
+        try:
+            self.get_commit(revspec)
+            return [revspec]
+        except InvalidCommitish:
+            try:
+                return GitUtils.rev_list(revspec)
+            except subprocess.CalledProcessError:
+                raise InvalidCommitish(revspec)
+
     def find_dependencies(self, dependent_rev, recurse=None):
         """Find all dependencies of the given revision, recursively traversing
         the dependency tree if requested.
@@ -703,7 +713,8 @@ def cli(options, args):
         options.multi = True
 
     for revspec in args:
-        revs = GitUtils.rev_list(revspec)
+        revs = detector.get_revisions(revspec)
+
         if len(revs) > 1:
             options.multi = True
 
@@ -786,26 +797,15 @@ def serve(options):
         listener = JSONDependencyListener(options)
         detector.add_listener(listener)
 
-        if '..' in revspec:
-            try:
-                revisions = GitUtils.rev_list(revspec)
-            except subprocess.CalledProcessError as e:
-                return json_err(
-                    422, 'Invalid revision range',
-                    "Could not resolve revision range '%s'" % revspec,
-                    revspec=revspec)
-        else:
-            revisions = [revspec]
+        try:
+            revisions = detector.get_revisions(revspec)
+        except:
+            return json_err(
+                422, 'Invalid revision or revision range',
+                "Could not resolve '%s'" % revspec,
+                revspec=revspec)
 
         for rev in revisions:
-            try:
-                commit = detector.get_commit(rev)
-            except InvalidCommitish as e:
-                return json_error(
-                    422, 'Invalid revision',
-                    "Could not resolve revision '%s'" % rev,
-                    rev=rev)
-
             detector.find_dependencies(rev)
 
         tip_commit = detector.get_commit(revisions[0])
