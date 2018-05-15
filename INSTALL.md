@@ -29,7 +29,7 @@ and then install `git-deps`:
 In this case it should be enough to install libgit2 via your
 distribution's packaging tool, e.g. on openSUSE:
 
-    sudo zypper install libgit2-22
+    sudo zypper install libgit2-24
 
 Then install `git-deps` which should also automatically install pygit2:
 
