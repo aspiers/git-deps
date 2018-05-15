@@ -12,6 +12,8 @@ matrix:
     env: TOX_ENV=py36
 addons:
   apt:
+    sources:
+      debian-sid
     update: true
     packages:
       libgit2-24
