@@ -10,6 +10,11 @@ matrix:
     env: TOX_ENV=py34
   - python: 3.6
     env: TOX_ENV=py36
+addons:
+  apt:
+    packages:
+      libgit2-24
+      libgit2-dev
 install:
 - pip install tox
 script:
