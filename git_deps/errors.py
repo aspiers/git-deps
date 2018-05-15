@@ -1,4 +1,4 @@
-class InvalidCommitish(StandardError):
+class InvalidCommitish(Exception):
     def __init__(self, commitish):
         self.commitish = commitish
 
