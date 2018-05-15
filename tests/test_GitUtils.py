@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import pytest
+# import pytest
 from git_deps.gitutils import GitUtils
 
 __author__ = "Adam Spiers"
