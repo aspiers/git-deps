@@ -1,2 +1,2 @@
-pygit2>=0.22.1
+pygit2 >= 0.27.0
 flask
