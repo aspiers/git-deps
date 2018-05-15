@@ -12,6 +12,7 @@ matrix:
     env: TOX_ENV=py36
 addons:
   apt:
+    update: true
     packages:
       libgit2-24
       libgit2-dev
