@@ -1,7 +1,7 @@
 import os
 import subprocess
 
-from gitutils import GitUtils
+from git_deps.gitutils import GitUtils
 from git_deps.detector import DependencyDetector
 from git_deps.errors import InvalidCommitish
 from git_deps.listener.json import JSONDependencyListener
