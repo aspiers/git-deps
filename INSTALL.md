@@ -20,7 +20,11 @@ or on Debian:
 
     sudo apt-get install python-pygit2
 
-and then install `git-deps`:
+pygit2's website also has installation instructions for
+[Windows](http://www.pygit2.org/install.html#installing-on-windows)
+and [Mac OS](http://www.pygit2.org/install.html#installing-on-os-x).
+
+Finally, install `git-deps` via `pip`:
 
     pip install git-deps
 
@@ -62,7 +66,9 @@ Now `git-deps` should be on your `$PATH`, which means that executing
 If you want to use the shiny new graph visualization web server
 functionality, you will need to install some additional dependencies:
 
-*   As `root`, install the command line version of `browserify` with
+*   Install `browserify`.  For example (at least on Linux) if you want
+    it to be accessible directly from the command-line then you can
+    use the `-g` option of `npm` by running this as `root`:
 
          npm install -g browserify
 
