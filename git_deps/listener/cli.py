@@ -46,7 +46,7 @@ class CLIDependencyListener(DependencyListener):
                 'log', '-n1',
                 dependency_sha1
             ]
-            print(subprocess.check_output(cmd))
+            print(subprocess.check_output(cmd, universal_newlines=True))
             # dependency = detector.get_commit(dependency_sha1)
             # print(dependency.message + "\n")
 

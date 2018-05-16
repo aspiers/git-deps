@@ -169,7 +169,7 @@ class DependencyDetector(object):
             '-L', "%d,+%d" % (hunk.old_start, hunk.old_lines),
             parent.hex, '--', path
         ]
-        blame = subprocess.check_output(cmd)
+        blame = subprocess.check_output(cmd, universal_newlines=True)
 
         dependent_sha1 = dependent.hex
         if dependent_sha1 not in self.dependencies:
@@ -288,7 +288,7 @@ class DependencyDetector(object):
 
         cmd = ['git', 'merge-base', sha1, branch_sha1]
         # self.logger.debug("   ".join(cmd))
-        out = subprocess.check_output(cmd).strip()
+        out = subprocess.check_output(cmd, universal_newlines=True).strip()
         self.logger.debug("          merge-base returned: %s" % out[:8])
         result = out == sha1
         self.logger.debug("            %s" % result)

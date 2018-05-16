@@ -15,7 +15,7 @@ class GitUtils(object):
         # we will be able to do this via pygit2.
         cmd = ['git', 'rev-parse', '--short', sha1]
         # cls.logger.debug(" ".join(cmd))
-        out = subprocess.check_output(cmd).strip()
+        out = subprocess.check_output(cmd, universal_newlines=True).strip()
         # cls.logger.debug(out)
         return out
 
@@ -39,7 +39,8 @@ class GitUtils(object):
         # cls.logger.debug(" ".join(cmd))
         out = None
         try:
-            out = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
+            out = subprocess.check_output(
+                cmd, stderr=subprocess.STDOUT, universal_newlines=True)
         except subprocess.CalledProcessError as e:
             if e.output.find('No tags can describe') != -1:
                 return ''
@@ -77,7 +78,8 @@ class GitUtils(object):
     @classmethod
     def rev_list(cls, rev_range):
         cmd = ['git', 'rev-list', rev_range]
-        return subprocess.check_output(cmd).strip().split('\n')
+        return subprocess.check_output(cmd, universal_newlines=True) \
+                         .strip().split('\n')
 
     @classmethod
     def ref_commit(cls, repo, rev):
