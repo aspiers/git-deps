@@ -33,10 +33,6 @@ from git_deps.listener.cli import CLIDependencyListener
 from git_deps.server import serve
 from git_deps.utils import abort
 
-__author__ = "Adam Spiers"
-__copyright__ = "Adam Spiers"
-__license__ = "GPL-2+"
-
 
 def parse_args():
     parser = argparse.ArgumentParser(
