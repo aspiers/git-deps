@@ -63,6 +63,12 @@ Now `git-deps` should be on your `$PATH`, which means that executing
 
 ## Install support for web-based graph visualization (`--serve` option)
 
+The web-based graph visualization code uses Javascript and relies on
+many third-party modules.  Currently only one approach to installation
+is listed below, but any Javascript experts who have suggestions about
+other ways to install are [warmly encouraged to submit
+them](CONTRIBUTING.md).
+
 If you want to use the shiny new graph visualization web server
 functionality, you will need to install some additional dependencies:
 
