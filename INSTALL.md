@@ -79,13 +79,16 @@ it and also `git deps` (with a space, not a hyphen) should both work.
 ## Install support for web-based graph visualization (`--serve` option)
 
 The web-based graph visualization code uses Javascript and relies on
-many third-party modules.  Currently only one approach to installation
-is listed below, but any Javascript experts who have suggestions about
-other ways to install are [warmly encouraged to submit
-them](CONTRIBUTING.md).
+many third-party modules.  If you've installed `git-deps` via `pip`
+then these files should all be magically installed without any extra
+effort, so you can skip reading the rest of this section.
 
-If you want to use the shiny new graph visualization web server
-functionality, you will need to install some additional dependencies:
+If however you are installing `git-deps` from source and you want to
+use the shiny new graph visualization web server functionality, you
+will need to fetch these Javascript libraries yourself.  Currently
+only one approach to installation is listed below, but any Javascript
+experts who have suggestions about other ways to install are [warmly
+encouraged to submit them](CONTRIBUTING.md).
 
 *   Install `browserify`.  For example (at least on Linux) if you want
     it to be accessible directly from the command-line then you can
@@ -107,4 +110,5 @@ functionality, you will need to install some additional dependencies:
 *   You will need the [Flask](http://flask.pocoo.org/) Python
     module installed.
 
-Then `git deps --serve` should work.
+Now you should be able to run `git deps --serve` and point your
+browser at the URL it outputs.
