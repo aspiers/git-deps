@@ -1,0 +1,24 @@
+sudo: false
+language: python
+matrix:
+  include:
+  - python: 2.7
+    env: TOX_ENV=flake8
+  - python: 2.7
+    env: TOX_ENV=py27
+  - python: 3.4
+    env: TOX_ENV=py34
+  - python: 3.6
+    env: TOX_ENV=py36
+addons:
+  apt:
+    sources:
+      debian-sid
+    update: true
+    packages:
+      libgit2-24
+      libgit2-dev
+install:
+- pip install tox
+script:
+- tox -e $TOX_ENV
