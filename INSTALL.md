@@ -74,7 +74,7 @@ which was [recently introduced to
 ## Check installation
 
 Now `git-deps` should be on your `$PATH`, which means that executing
-`git deps` (with a space, not a hyphen) should also work.
+it and also `git deps` (with a space, not a hyphen) should both work.
 
 ## Install support for web-based graph visualization (`--serve` option)
 
