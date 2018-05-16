@@ -65,6 +65,7 @@ functionality, you will need to install some additional dependencies:
 *   As `root`, install the command line version of `browserify` with
 
          npm install -g browserify
+
 *   To install the required Javascript libraries, you will need
     [`npm`](https://www.npmjs.com/) installed, and then type:
 
@@ -75,6 +76,7 @@ functionality, you will need to install some additional dependencies:
     (If you are developing `git-deps` then replace `browserify` with
     `watchify -v` in order to continually regenerate `bundle.js`
     whenever any of the input files change.)
+
 *   You will need the [Flask](http://flask.pocoo.org/) Python
     module installed.
 
