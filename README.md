@@ -129,28 +129,23 @@ dependencies, and so on until it cannot find any more.  In recursion
 mode, two SHA1s are output per line, indicating that the first depends
 on the second.
 
+### Web UI for visualizing and navigating the dependency graph
+
 If you run with the `--serve` option then it will start a lightweight
 webserver and output a URL you can connect to for dynamically
-visualizing and navigating the dependency graph.
+visualizing and navigating the dependency graph.  
 
-### Setting up a `gitfile://` URL handler
+Optionally choose a commit-ish (the form defaults to `master`), click
+the `Submit` button, and you should see a graph appear with one node
+per commit.  By hovering the mouse over a node you will see more
+details, and a little `+` icon will appear which can be clicked to
+calculate dependencies of that commit, further growing the dependency
+tree.  You can zoom in and
+out with the mousewheel, and drag the background to pan around.  
 
-If you double-click any commit node on the dependency graph, your
-browser will be asked to launch a handler for a `gitfile://...` URL
-which points to that commit within the repository path on your local
-filesystem.  So if you configure your browser desktop environment,
-you can have a program such as [`gitk`](http://git-scm.com/docs/gitk)
-launch for viewing further details of that commit.  Obviously this
-only makes sense when viewing the graph via http://localhost.
-
-On most Linux machines, this can be set up via something like the
-following:
-
-    # First cd to the top of this git-deps repo.
-    repo="`pwd`"
-    ln -sf $repo/gitfile-handler ~/bin
-    ln -sf $repo/gitfile-handler.desktop ~/.local/share/applications
-    xdg-mime default gitfile-handler.desktop x-scheme-handler/gitfile
+If you set up a MIME handler for the `gitfile://` protocol during
+setup, [as documented](INSTALL.md) you will be able to double-click on
+nodes to launch a viewer to inspect individual commits in more detail.
 
 Development / support / feedback
 --------------------------------

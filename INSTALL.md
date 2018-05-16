@@ -112,3 +112,33 @@ encouraged to submit them](CONTRIBUTING.md).
 
 Now you should be able to run `git deps --serve` and point your
 browser at the URL it outputs.
+
+### Setting up a `gitfile://` URL handler
+
+It is possible to set a `gitfile://` URL handler so that if you
+double-click any commit node on the dependency graph, your browser
+will launch that handler with a URL which points to that commit within
+the repository path on your local filesystem.  So if you configure
+your browser desktop environment, you can have a program such as
+[`gitk`](http://git-scm.com/docs/gitk) launch for viewing further
+details of that commit.  Obviously this only makes sense when viewing
+the graph via http://localhost.
+
+On most Linux machines, this can be set up by first locating the
+[Desktop
+Entry](https://standards.freedesktop.org/desktop-entry-spec/latest/)
+file which is provided in the distribution for convenient
+installation:
+
+    pip show -f git-deps | grep gitfile-handler.desktop
+
+Once you have located it, it needs to be copied or symlinked into the
+right location, e.g.
+
+    ln -sf /usr/share/git_deps/gitfile-handler.desktop \
+        ~/.local/share/applications
+
+and then the desktop file has to be registered as a handler for the
+`gitfile` protocol:
+
+    xdg-mime default gitfile-handler.desktop x-scheme-handler/gitfile
