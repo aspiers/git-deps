@@ -181,6 +181,13 @@ submitted a
 and
 [announced my intentions on the `git` mailing list](http://article.gmane.org/gmane.comp.version-control.git/262000).
 
+Again in May 2018 I took advantage of another Hack Week to package
+`git-deps` properly as a Python module in order to improve the
+installation process.  This was in preparation for demonstrating the
+software at [a Meetup
+event](https://www.meetup.com/londongit/events/248694943/) of the [Git
+London User Group](https://www.meetup.com/londongit/).
+
 License
 -------
 
