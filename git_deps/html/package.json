@@ -25,14 +25,14 @@
         "tests"
     ],
     "dependencies": {
-        "d3-tip": "~0.6.6",
-        "d3": "~3.5.3",
-        "webcola": "aspiers/WebCola#git-deps-master",
-        "jquery": "~3.0.0",
-        "noty": "~v2.4.1",
         "browserify": "*",
         "coffeeify": "~1.0.0",
-        "dagre": "~0.7.1"
+        "d3": "~3.5.3",
+        "d3-tip": "~0.6.6",
+        "dagre": "^0.8.2",
+        "jquery": "~3.0.0",
+        "noty": "~v2.4.1",
+        "webcola": "aspiers/WebCola#git-deps-master"
     },
     "devDependencies": {
         "watchify": "*"
