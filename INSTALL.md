@@ -7,6 +7,10 @@ pygit2 are both Python modules, but libgit2 is not.  This means
 that there are a few ways to approach installation, detailed below.
 Corrections and additions to these instructions are very welcome!
 
+Before you pick an option, it is very important to consider that [only
+certain combinations of libgit2 and pygit2 will work
+together](http://www.pygit2.org/install.html#version-numbers).
+
 ## Option 1: Install pygit2 and libgit2 from OS packages, and `git-deps` as a Python module
 
 if you are using Linux, there is a good chance that your distribution
@@ -30,14 +34,19 @@ Finally, install `git-deps` via `pip`:
 
 ## Option 2: Install libgit2 from OS packages, and `git-deps` / pygit2 as Python modules
 
-In this case it should be enough to install libgit2 via your
+In this case it may be enough to install libgit2 via your
 distribution's packaging tool, e.g. on openSUSE:
 
     sudo zypper install libgit2-24
 
-Then install `git-deps` which should also automatically install pygit2:
+Then install `git-deps` which should also automatically install pygit2
+as one of its dependencies:
 
     pip install git-deps
+
+However be aware that this will pick a pygit2 version based on
+`requirements.txt` from `git-deps`, which may not be compatible with
+the libgit2 you have installed from OS packages.
 
 ## Option 3: Install everything from source
 
