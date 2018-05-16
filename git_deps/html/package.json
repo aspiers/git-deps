@@ -31,7 +31,7 @@
         "jquery": "~3.0.0",
         "noty": "~v2.4.1",
         "browserify": "*",
-        "coffeeify" : "~1.0.0",
+        "coffeeify": "~1.0.0",
         "dagre": "~0.7.1"
     },
     "devDependencies": {
