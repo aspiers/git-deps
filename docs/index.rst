@@ -6,7 +6,7 @@ This will become the main documentation of **git-deps**.
 
 Unfortunately it hasn't been written yet, but in the mean time there
 is plenty of useful information on `the GitHub project
-<https://github.com/aspiers/git-deps/>`_
+<https://github.com/aspiers/git-deps/>`_.
 
 
 Contents
