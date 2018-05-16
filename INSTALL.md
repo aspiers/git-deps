@@ -13,6 +13,8 @@ together](http://www.pygit2.org/install.html#version-numbers).
 
 ## Option 1: Install pygit2 and libgit2 from OS packages, and `git-deps` as a Python module
 
+### Install OS packages
+
 if you are using Linux, there is a good chance that your distribution
 already offers packages for both pygit2 and libgit2, in which case
 installing pygit2 from packages should also automatically install
@@ -28,9 +30,16 @@ pygit2's website also has installation instructions for
 [Windows](http://www.pygit2.org/install.html#installing-on-windows)
 and [Mac OS](http://www.pygit2.org/install.html#installing-on-os-x).
 
-Finally, install `git-deps` via `pip`:
+### Install `git-deps` via `pip`
 
-    pip install git-deps
+Finally, install `git-deps` via `pip`, for example system-wide on
+Linux via:
+
+    sudo pip install git-deps
+
+or just for the current user:
+
+    pip install --user git-deps
 
 ## Option 2: Install libgit2 from OS packages, and `git-deps` / pygit2 as Python modules
 
@@ -39,14 +48,12 @@ distribution's packaging tool, e.g. on openSUSE:
 
     sudo zypper install libgit2-24
 
-Then install `git-deps` which should also automatically install pygit2
-as one of its dependencies:
-
-    pip install git-deps
-
-However be aware that this will pick a pygit2 version based on
-`requirements.txt` from `git-deps`, which may not be compatible with
-the libgit2 you have installed from OS packages.
+Then install `git-deps` via `pip` as described in option 1 above.
+This should also automatically install pygit2 as one of its
+dependencies.  However be aware that this will pick a pygit2 version
+based on [`requirements.txt`](requirements.txt) from `git-deps`, which
+may not be compatible with the libgit2 you have installed from OS
+packages.  Suggestions for workaround to this are welcome!
 
 ## Option 3: Install everything from source
 
