@@ -3,7 +3,7 @@
 """
     Setup file for git_deps.
 
-    This file was generated with PyScaffold 2.5.6, a tool that easily
+    This file was generated with PyScaffold, a tool that easily
     puts up a scaffold for your new Python project. Learn more under:
     http://pyscaffold.readthedocs.org/
 """
@@ -18,7 +18,7 @@ def setup_package():
     setup(
         setup_requires=[
             'six',
-            'pyscaffold>=2.5a0,<2.6a0',
+            'pyscaffold>=2.5.10,<2.6a0',
             'setuptools-markdown',
         ] + sphinx,
         long_description_markdown_filename='README.md',
