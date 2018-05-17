@@ -43,7 +43,7 @@ main () {
     cd $test_repo
 
     git init
-    git config user.email git-deps-test@fake.address
+    git config user.email git-test@fake.address
 
     # Start with two independently committed files
     for f in file-{a,b}; do
