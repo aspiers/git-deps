@@ -70,13 +70,32 @@ feature () {
     edit file-c four foo
     edit file-c ten qux
 
-    # Switch back to master
+    git checkout master
+}
+
+# For demonstrating a backporting use-case
+port () {
+    cd $test_repo
+
+    # Add some more commits to master
+    edit file-b four qux
+    edit file-a two wibble
+    edit file-a nine wobble
+
+    # Start a stable branch
+    git checkout -b stable file-a-three-foo
+    edit file-a three blah
+
     git checkout master
 }
 
 case "$1" in
     feature)
         feature
+        ;;
+    port)
+        main
+        port
         ;;
     *)
         main
