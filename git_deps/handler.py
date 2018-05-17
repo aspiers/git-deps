@@ -9,7 +9,11 @@ import re
 import subprocess
 import sys
 import urllib
-from urlparse import urlparse
+
+try:
+    from urllib.parse import urlparse  # Python 3
+except ImportError:
+    from urlparse import urlparse      # Python 2
 
 from git_deps.utils import abort
 
