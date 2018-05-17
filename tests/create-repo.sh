@@ -51,14 +51,14 @@ main () {
     done
 
     # Now start making changes
-    edit file-a three a  # depends on file-a tag
-    edit file-b three a  # depends on file-b tag
+    edit file-a three foo  # depends on file-a tag
+    edit file-b three bar  # depends on file-b tag
 
     # Change non-overlapping part of previously changed file
-    edit file-a eight a  # depends on file-a tag
+    edit file-a eight foo  # depends on file-a tag
 
     # Change previously changed line
-    edit file-a three b  # depends on file-a-three-a tag
+    edit file-a three baz  # depends on file-a-three-a tag
 }
 
 main
