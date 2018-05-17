@@ -54,6 +54,15 @@ main () {
     edit file-a three foo  # depends on file-a tag
     edit file-b three bar  # depends on file-b tag
 
+    # Start a feature branch
+    git checkout -b feature
+    new_file file-c
+    edit file-c four foo
+    edit file-c ten qux
+
+    # Switch back to master
+    git checkout master
+
     # Change non-overlapping part of previously changed file
     edit file-a eight foo  # depends on file-a tag
 
