@@ -28,6 +28,15 @@ tag () {
     read
 }
 
+edit () {
+    file="$1"
+    line="$2"
+    new="$3"
+    sed -i "s/^$line.*/$line $new/" $file
+    git commit -am "$file: change $line to $line $new"
+    tag $file-$line-$new
+}
+
 main () {
     rm -rf $test_repo
     mkdir $test_repo
@@ -42,24 +51,14 @@ main () {
     done
 
     # Now start making changes
-
-    sed -i 's/three/three a/' file-a
-    git commit -am 'file-a: change three to three a'
-    tag file-a-three-a  # depends on file-a
-
-    sed -i 's/three/three a/' file-b
-    git commit -am 'file-b: change three to three a'
-    tag file-b-three-a  # depends on file-b
+    edit file-a three a  # depends on file-a tag
+    edit file-b three a  # depends on file-b tag
 
     # Change non-overlapping part of previously changed file
-    sed -i 's/eight/eight a/' file-a
-    git commit -am 'file-a: change eight to eight a'
-    tag file-a-eight-a  # depends on file-a
+    edit file-a eight a  # depends on file-a tag
 
     # Change previously changed line
-    sed -i 's/three a/three b/' file-a
-    git commit -am 'file-a: change three a to three b'
-    tag file-a-three-b  # depends on file-a-three-a
+    edit file-a three b  # depends on file-a-three-a tag
 }
 
 main
