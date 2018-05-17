@@ -2,6 +2,15 @@
 Changelog
 =========
 
+Version 1.0.2
+=============
+
+- Improve documentation.
+
+- Add a guide for maintainers.
+
+- Add a tox environment for sdist building.
+
 Version 1.0.1
 =============
 
