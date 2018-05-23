@@ -53,7 +53,11 @@ This should also automatically install pygit2 as one of its
 dependencies.  However be aware that this will pick a pygit2 version
 based on [`requirements.txt`](requirements.txt) from `git-deps`, which
 may not be compatible with the libgit2 you have installed from OS
-packages.  Suggestions for workaround to this are welcome!
+packages.  This can be fixed by telling `pip install` which version of
+pygit2 you want.  For example if you have installed libgit2
+0.24.0, you could do:
+
+    pip install pygit2==0.24 git-deps
 
 ## Option 3: Install everything from source
 
