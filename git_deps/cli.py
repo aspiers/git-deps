@@ -35,6 +35,9 @@ from git_deps.utils import abort
 
 
 def parse_args():
+    #####################################################################
+    # REMINDER!!  If you change this, remember to update README.md too.
+    #####################################################################
     parser = argparse.ArgumentParser(
         description='Auto-detects commits on which the given '
                     'commit(s) depend.',
