@@ -163,13 +163,7 @@ class DependencyDetector(object):
             # which was not previously in the parent.
             return
 
-        cmd = [
-            'git', 'blame',
-            '--porcelain',
-            '-L', "%d,+%d" % (hunk.old_start, hunk.old_lines),
-            parent.hex, '--', path
-        ]
-        blame = subprocess.check_output(cmd, universal_newlines=True)
+        blame = self.run_blame(hunk, parent, path)
 
         dependent_sha1 = dependent.hex
         if dependent_sha1 not in self.dependencies:
@@ -264,6 +258,15 @@ class DependencyDetector(object):
                 line_num += 1
             self.logger.debug(diff_format %
                               (rev, ln, line.origin, line.content.rstrip()))
+
+    def run_blame(self, hunk, parent, path):
+        cmd = [
+            'git', 'blame',
+            '--porcelain',
+            '-L', "%d,+%d" % (hunk.old_start, hunk.old_lines),
+            parent.hex, '--', path
+        ]
+        return subprocess.check_output(cmd, universal_newlines=True)
 
     def is_excluded(self, commit):
         if self.options.exclude_commits is not None:
