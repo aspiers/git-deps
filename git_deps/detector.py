@@ -166,11 +166,7 @@ class DependencyDetector(object):
         blame = self.run_blame(hunk, parent, path)
 
         dependent_sha1 = dependent.hex
-        if dependent_sha1 not in self.dependencies:
-            self.logger.debug("          New dependent: %s" %
-                              GitUtils.commit_summary(dependent))
-            self.dependencies[dependent_sha1] = {}
-            self.notify_listeners("new_dependent", dependent)
+        self.register_new_dependent(dependent, dependent_sha1)
 
         line_to_culprit = {}
 
@@ -258,6 +254,13 @@ class DependencyDetector(object):
                 line_num += 1
             self.logger.debug(diff_format %
                               (rev, ln, line.origin, line.content.rstrip()))
+
+    def register_new_dependent(self, dependent, dependent_sha1):
+        if dependent_sha1 not in self.dependencies:
+            self.logger.debug("          New dependent: %s" %
+                              GitUtils.commit_summary(dependent))
+            self.dependencies[dependent_sha1] = {}
+            self.notify_listeners("new_dependent", dependent)
 
     def run_blame(self, hunk, parent, path):
         cmd = [
