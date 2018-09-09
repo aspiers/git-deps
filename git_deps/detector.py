@@ -207,7 +207,7 @@ class DependencyDetector(object):
 
     def debug_hunk(self, line_range_before, line_range_after, hunk,
                    line_to_culprit):
-        diff_format = '      |%8.8s %5s %s%s'
+        diff_format = '        |%8.8s %5s %s%s'
         hunk_header = '@@ %s %s @@' % (line_range_before, line_range_after)
         self.logger.debug(diff_format % ('--------', '-----', '', hunk_header))
         line_num = hunk.old_start
