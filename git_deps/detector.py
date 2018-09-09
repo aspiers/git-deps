@@ -179,7 +179,7 @@ class DependencyDetector(object):
 
     def process_hunk_line(self, dependent, dependent_sha1,
                           path, line, line_to_culprit):
-        self.logger.debug("        !" + line.rstrip())
+        self.logger.debug("          ! " + line.rstrip())
         m = re.match('^([0-9a-f]{40}) (\d+) (\d+)( \d+)?$', line)
         if not m:
             return
@@ -191,7 +191,7 @@ class DependencyDetector(object):
 
         if self.is_excluded(dependency):
             self.logger.debug(
-                "        Excluding dependency %s from line %s (%s)" %
+                "          Excluding dependency %s from line %s (%s)" %
                 (dependency_sha1[:8], line_num,
                  GitUtils.oneline(dependency)))
             return
@@ -207,7 +207,7 @@ class DependencyDetector(object):
 
     def debug_hunk(self, line_range_before, line_range_after, hunk,
                    line_to_culprit):
-        diff_format = '        |%8.8s %5s %s%s'
+        diff_format = '          | %8.8s %5s %s%s'
         hunk_header = '@@ %s %s @@' % (line_range_before, line_range_after)
         self.logger.debug(diff_format % ('--------', '-----', '', hunk_header))
         line_num = hunk.old_start
