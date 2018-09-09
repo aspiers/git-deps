@@ -192,25 +192,9 @@ class DependencyDetector(object):
                                             dependency, dependency_sha1,
                                             path, line_num)
 
-            dep_sources = self.dependencies[dependent_sha1][dependency_sha1]
-
-            if path not in dep_sources:
-                dep_sources[path] = {}
-                self.notify_listeners('new_path',
-                                      dependent, dependency, path, line_num)
-
-            if line_num in dep_sources[path]:
-                abort("line %d already found when blaming %s:%s\n"
-                      "old:\n  %s\n"
-                      "new:\n  %s" %
-                      (line_num, parent.hex[:8], path,
-                       dep_sources[path][line_num], line))
-
-            dep_sources[path][line_num] = line
-            self.logger.debug("          New line for %s -> %s: %s" %
-                              (dependent_sha1[:8], dependency_sha1[:8], line))
-            self.notify_listeners('new_line',
-                                  dependent, dependency, path, line_num)
+            self.record_dependency_source(dependent, dependent_sha1,
+                                          dependency, dependency_sha1,
+                                          path, line_num, line)
 
         diff_format = '      |%8.8s %5s %s%s'
         hunk_header = '@@ %s %s @@' % (line_range_before, line_range_after)
@@ -284,6 +268,29 @@ class DependencyDetector(object):
                 self.todo_d[dependency.hex] = True
                 self.logger.debug("  + Added %s to TODO" %
                                   dependency.hex[:8])
+
+    def record_dependency_source(self, dependent, dependent_sha1,
+                                 dependency, dependency_sha1,
+                                 path, line_num, line):
+        dep_sources = self.dependencies[dependent_sha1][dependency_sha1]
+
+        if path not in dep_sources:
+            dep_sources[path] = {}
+            self.notify_listeners('new_path',
+                                  dependent, dependency, path, line_num)
+
+        if line_num in dep_sources[path]:
+            abort("line %d already found when blaming %s:%s\n"
+                  "old:\n  %s\n"
+                  "new:\n  %s" %
+                  (line_num, parent.hex[:8], path,
+                   dep_sources[path][line_num], line))
+
+        dep_sources[path][line_num] = line
+        self.logger.debug("          New line for %s -> %s: %s" %
+                          (dependent_sha1[:8], dependency_sha1[:8], line))
+        self.notify_listeners('new_line',
+                              dependent, dependency, path, line_num)
 
     def branch_contains(self, commit, branch):
         sha1 = commit.hex
