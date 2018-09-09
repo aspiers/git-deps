@@ -171,33 +171,39 @@ class DependencyDetector(object):
         line_to_culprit = {}
 
         for line in blame.split('\n'):
-            self.logger.debug("        !" + line.rstrip())
-            m = re.match('^([0-9a-f]{40}) (\d+) (\d+)( \d+)?$', line)
-            if not m:
-                continue
-            dependency_sha1, orig_line_num, line_num = m.group(1, 2, 3)
-            line_num = int(line_num)
-            dependency = self.get_commit(dependency_sha1)
-            line_to_culprit[line_num] = dependency.hex
-
-            if self.is_excluded(dependency):
-                self.logger.debug(
-                    "        Excluding dependency %s from line %s (%s)" %
-                    (dependency_sha1[:8], line_num,
-                     GitUtils.oneline(dependency)))
-                continue
-
-            if dependency_sha1 not in self.dependencies[dependent_sha1]:
-                self.process_new_dependency(dependent, dependent_sha1,
-                                            dependency, dependency_sha1,
-                                            path, line_num)
-
-            self.record_dependency_source(dependent, dependent_sha1,
-                                          dependency, dependency_sha1,
-                                          path, line_num, line)
+            self.process_hunk_line(dependent, dependent_sha1,
+                                   path, line, line_to_culprit)
 
         self.debug_hunk(line_range_before, line_range_after, hunk,
                         line_to_culprit)
+
+    def process_hunk_line(self, dependent, dependent_sha1,
+                          path, line, line_to_culprit):
+        self.logger.debug("        !" + line.rstrip())
+        m = re.match('^([0-9a-f]{40}) (\d+) (\d+)( \d+)?$', line)
+        if not m:
+            return
+
+        dependency_sha1, orig_line_num, line_num = m.group(1, 2, 3)
+        line_num = int(line_num)
+        dependency = self.get_commit(dependency_sha1)
+        line_to_culprit[line_num] = dependency.hex
+
+        if self.is_excluded(dependency):
+            self.logger.debug(
+                "        Excluding dependency %s from line %s (%s)" %
+                (dependency_sha1[:8], line_num,
+                 GitUtils.oneline(dependency)))
+            return
+
+        if dependency_sha1 not in self.dependencies[dependent_sha1]:
+            self.process_new_dependency(dependent, dependent_sha1,
+                                        dependency, dependency_sha1,
+                                        path, line_num)
+
+        self.record_dependency_source(dependent, dependent_sha1,
+                                      dependency, dependency_sha1,
+                                      path, line_num, line)
 
     def debug_hunk(self, line_range_before, line_range_after, hunk,
                    line_to_culprit):
