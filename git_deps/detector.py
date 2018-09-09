@@ -188,36 +188,9 @@ class DependencyDetector(object):
                 continue
 
             if dependency_sha1 not in self.dependencies[dependent_sha1]:
-                if not self.seen_commit(dependency):
-                    self.notify_listeners("new_commit", dependency)
-                    self.dependencies[dependent_sha1][dependency_sha1] = {}
-
-                self.notify_listeners("new_dependency",
-                                      dependent, dependency, path, line_num)
-
-                self.logger.debug(
-                    "          New dependency %s -> %s via line %s (%s)" %
-                    (dependent_sha1[:8], dependency_sha1[:8], line_num,
-                     GitUtils.oneline(dependency)))
-
-                if dependency_sha1 in self.todo_d:
-                    self.logger.debug(
-                        "        Dependency on %s via line %s already in TODO"
-                        % (dependency_sha1[:8], line_num,))
-                    continue
-
-                if dependency_sha1 in self.done_d:
-                    self.logger.debug(
-                        "        Dependency on %s via line %s already done" %
-                        (dependency_sha1[:8], line_num,))
-                    continue
-
-                if dependency_sha1 not in self.dependencies:
-                    if self.options.recurse:
-                        self.todo.append(dependency)
-                        self.todo_d[dependency.hex] = True
-                        self.logger.debug("  + Added %s to TODO" %
-                                          dependency.hex[:8])
+                self.process_new_dependency(dependent, dependent_sha1,
+                                            dependency, dependency_sha1,
+                                            path, line_num)
 
             dep_sources = self.dependencies[dependent_sha1][dependency_sha1]
 
@@ -277,6 +250,40 @@ class DependencyDetector(object):
                 if self.branch_contains(commit, exclude):
                     return True
         return False
+
+    def process_new_dependency(self,dependent, dependent_sha1,
+                               dependency, dependency_sha1,
+                               path, line_num):
+        if not self.seen_commit(dependency):
+            self.notify_listeners("new_commit", dependency)
+            self.dependencies[dependent_sha1][dependency_sha1] = {}
+
+        self.notify_listeners("new_dependency",
+                              dependent, dependency, path, line_num)
+
+        self.logger.debug(
+            "          New dependency %s -> %s via line %s (%s)" %
+            (dependent_sha1[:8], dependency_sha1[:8], line_num,
+             GitUtils.oneline(dependency)))
+
+        if dependency_sha1 in self.todo_d:
+            self.logger.debug(
+                "        Dependency on %s via line %s already in TODO"
+                % (dependency_sha1[:8], line_num,))
+            return
+
+        if dependency_sha1 in self.done_d:
+            self.logger.debug(
+                "        Dependency on %s via line %s already done" %
+                (dependency_sha1[:8], line_num,))
+            return
+
+        if dependency_sha1 not in self.dependencies:
+            if self.options.recurse:
+                self.todo.append(dependency)
+                self.todo_d[dependency.hex] = True
+                self.logger.debug("  + Added %s to TODO" %
+                                  dependency.hex[:8])
 
     def branch_contains(self, commit, branch):
         sha1 = commit.hex
