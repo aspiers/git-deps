@@ -196,6 +196,11 @@ class DependencyDetector(object):
                                           dependency, dependency_sha1,
                                           path, line_num, line)
 
+        self.debug_hunk(line_range_before, line_range_after, hunk,
+                        line_to_culprit)
+
+    def debug_hunk(self, line_range_before, line_range_after, hunk,
+                   line_to_culprit):
         diff_format = '      |%8.8s %5s %s%s'
         hunk_header = '@@ %s %s @@' % (line_range_before, line_range_after)
         self.logger.debug(diff_format % ('--------', '-----', '', hunk_header))
