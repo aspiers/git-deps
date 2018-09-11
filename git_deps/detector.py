@@ -171,13 +171,13 @@ class DependencyDetector(object):
         line_to_culprit = {}
 
         for line in blame.split('\n'):
-            self.process_hunk_line(dependent, dependent_sha1,
+            self.process_hunk_line(dependent, dependent_sha1, parent,
                                    path, line, line_to_culprit)
 
         self.debug_hunk(line_range_before, line_range_after, hunk,
                         line_to_culprit)
 
-    def process_hunk_line(self, dependent, dependent_sha1,
+    def process_hunk_line(self, dependent, dependent_sha1, parent,
                           path, line, line_to_culprit):
         self.logger.debug("          ! " + line.rstrip())
         m = re.match('^([0-9a-f]{40}) (\d+) (\d+)( \d+)?$', line)
@@ -201,7 +201,8 @@ class DependencyDetector(object):
                                         dependency, dependency_sha1,
                                         path, line_num)
 
-        self.record_dependency_source(dependent, dependent_sha1,
+        self.record_dependency_source(parent,
+                                      dependent, dependent_sha1,
                                       dependency, dependency_sha1,
                                       path, line_num, line)
 
@@ -280,7 +281,8 @@ class DependencyDetector(object):
                 self.logger.info("  + Added %s to TODO" %
                                   dependency.hex[:8])
 
-    def record_dependency_source(self, dependent, dependent_sha1,
+    def record_dependency_source(self, parent,
+                                 dependent, dependent_sha1,
                                  dependency, dependency_sha1,
                                  path, line_num, line):
         dep_sources = self.dependencies[dependent_sha1][dependency_sha1]
