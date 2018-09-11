@@ -118,8 +118,8 @@ class DependencyDetector(object):
 
             self.notify_listeners('new_commit', dependent)
 
-            for parent in dependent.parents:
-                self.find_dependencies_with_parent(dependent, parent)
+            parent = dependent.parents[0]
+            self.find_dependencies_with_parent(dependent, parent)
             self.done.append(dependent_sha1)
             self.done_d[dependent_sha1] = True
             self.logger.info("  Found all dependencies for %s" %
