@@ -101,18 +101,18 @@ class DependencyDetector(object):
         while self.todo:
             sha1s = [commit.hex[:8] for commit in self.todo]
             if first_time:
-                self.logger.debug("Initial TODO list: %s" % " ".join(sha1s))
+                self.logger.info("Initial TODO list: %s" % " ".join(sha1s))
                 first_time = False
             else:
-                self.logger.debug("  TODO list now: %s" % " ".join(sha1s))
+                self.logger.info("  TODO list now: %s" % " ".join(sha1s))
             dependent = self.todo.pop(0)
             dependent_sha1 = dependent.hex
             del self.todo_d[dependent_sha1]
-            self.logger.debug("  Processing %s from TODO list" %
+            self.logger.info("  Processing %s from TODO list" %
                               dependent_sha1[:8])
 
             if dependent_sha1 in self.done_d:
-                self.logger.debug("  %s already done previously" %
+                self.logger.info("  %s already done previously" %
                                   dependent_sha1)
                 continue
 
@@ -122,13 +122,13 @@ class DependencyDetector(object):
                 self.find_dependencies_with_parent(dependent, parent)
             self.done.append(dependent_sha1)
             self.done_d[dependent_sha1] = True
-            self.logger.debug("  Found all dependencies for %s" %
+            self.logger.info("  Found all dependencies for %s" %
                               dependent_sha1[:8])
             # A commit won't have any dependencies if it only added new files
             dependencies = self.dependencies.get(dependent_sha1, {})
             self.notify_listeners('dependent_done', dependent, dependencies)
 
-        self.logger.debug("Finished processing TODO list")
+        self.logger.info("Finished processing TODO list")
         self.notify_listeners('all_done')
 
     def find_dependencies_with_parent(self, dependent, parent):
@@ -136,13 +136,13 @@ class DependencyDetector(object):
         given parent commit.  This will be called multiple times for
         merge commits which have multiple parents.
         """
-        self.logger.debug("    Finding dependencies of %s via parent %s" %
+        self.logger.info("    Finding dependencies of %s via parent %s" %
                           (dependent.hex[:8], parent.hex[:8]))
         diff = self.repo.diff(parent, dependent,
                               context_lines=self.options.context_lines)
         for patch in diff:
             path = patch.delta.old_file.path
-            self.logger.debug("      Examining hunks in %s" % path)
+            self.logger.info("      Examining hunks in %s" % path)
             for hunk in patch.hunks:
                 self.blame_diff_hunk(dependent, parent, path, hunk)
 
@@ -155,7 +155,7 @@ class DependencyDetector(object):
         """
         line_range_before = "-%d,%d" % (hunk.old_start, hunk.old_lines)
         line_range_after = "+%d,%d" % (hunk.new_start, hunk.new_lines)
-        self.logger.debug("        Blaming hunk %s @ %s (listed below)" %
+        self.logger.info("        Blaming hunk %s @ %s (listed below)" %
                           (line_range_before, parent.hex[:8]))
 
         if not self.tree_lookup(path, parent):
@@ -225,7 +225,7 @@ class DependencyDetector(object):
 
     def register_new_dependent(self, dependent, dependent_sha1):
         if dependent_sha1 not in self.dependencies:
-            self.logger.debug("          New dependent: %s" %
+            self.logger.info("          New dependent: %s" %
                               GitUtils.commit_summary(dependent))
             self.dependencies[dependent_sha1] = {}
             self.notify_listeners("new_dependent", dependent)
@@ -256,19 +256,19 @@ class DependencyDetector(object):
         self.notify_listeners("new_dependency",
                               dependent, dependency, path, line_num)
 
-        self.logger.debug(
+        self.logger.info(
             "          New dependency %s -> %s via line %s (%s)" %
             (dependent_sha1[:8], dependency_sha1[:8], line_num,
              GitUtils.oneline(dependency)))
 
         if dependency_sha1 in self.todo_d:
-            self.logger.debug(
+            self.logger.info(
                 "        Dependency on %s via line %s already in TODO"
                 % (dependency_sha1[:8], line_num,))
             return
 
         if dependency_sha1 in self.done_d:
-            self.logger.debug(
+            self.logger.info(
                 "        Dependency on %s via line %s already done" %
                 (dependency_sha1[:8], line_num,))
             return
@@ -277,7 +277,7 @@ class DependencyDetector(object):
             if self.options.recurse:
                 self.todo.append(dependency)
                 self.todo_d[dependency.hex] = True
-                self.logger.debug("  + Added %s to TODO" %
+                self.logger.info("  + Added %s to TODO" %
                                   dependency.hex[:8])
 
     def record_dependency_source(self, dependent, dependent_sha1,
