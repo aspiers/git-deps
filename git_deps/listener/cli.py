@@ -32,6 +32,9 @@ class CLIDependencyListener(DependencyListener):
         if self.options.multi:
             if self.options.log:
                 print("%s depends on:" % dependent_sha1)
+                if self._revs[dependency_sha1] > 1:
+                    print("commit %s (already shown above)\n"
+                          % dependency_sha1)
             else:
                 print("%s %s" % (dependent_sha1, dependency_sha1))
         else:
