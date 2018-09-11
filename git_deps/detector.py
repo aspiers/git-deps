@@ -155,7 +155,7 @@ class DependencyDetector(object):
         """
         line_range_before = "-%d,%d" % (hunk.old_start, hunk.old_lines)
         line_range_after = "+%d,%d" % (hunk.new_start, hunk.new_lines)
-        self.logger.debug("        Blaming hunk %s @ %s" %
+        self.logger.debug("        Blaming hunk %s @ %s (listed below)" %
                           (line_range_before, parent.hex[:8]))
 
         if not self.tree_lookup(path, parent):
