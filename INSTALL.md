@@ -76,12 +76,6 @@ Rather than following the above manual steps, you can try
 This has been tested on Ubuntu 14.10, where it was used as a way to
 circumvent difficulties with installing libgit2 >= 0.22.
 
-However, at the time of writing, [this repository needs to be adapted
-to the module-based installation
-mechanism](https://github.com/paulwellnerbou/git-deps-docker/issues/2)
-which was [recently introduced to
-`git-deps`](https://github.com/aspiers/git-deps/pull/71).
-
 ## Check installation
 
 Now `git-deps` should be on your `$PATH`, which means that executing
