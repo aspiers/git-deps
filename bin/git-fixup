@@ -1,0 +1,17 @@
+#!/bin/bash
+
+if ! git commit -m 'fixup commit'; then
+    echo >&2 "Failed to create fixup commit; aborting."
+    exit 1
+fi
+
+deps=( $( git deps HEAD^! ) )
+if [ ${#deps[@]} != 1 ]; then
+    echo >&2 "Failed to find a single dependency of the fixup commit; aborting."
+    git reset --soft HEAD^
+    exit 1
+fi
+
+git commit --amend --fixup=$deps
+
+# TODO: support optionally triggering the rebase.

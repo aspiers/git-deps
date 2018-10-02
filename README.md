@@ -95,6 +95,66 @@ to reflect the code changes in commit A.  (Although of course it's
 usually best practice to logically group such changes together in a
 single commit.)  But this should not stop it from being useful.
 
+### Use case 4: automatic squashing of fixup commits
+
+It is often desirable to amend an existing commit which is in the
+current branch but not at its head.  This can be done by creating a
+new commit which amends (only) the existing commit, and then use `git
+rebase --interactive` in order to squash the two commits together into
+a new one which reuses the commit message from the original.
+`git-commit[1]` has a nice feature which makes this process convenient
+even when the commit to be amended is not at the head of the current
+branch.  It is described in [the `git-commit[1]` man
+page](https://git-scm.com/docs/git-commit):
+
+> `--fixup=<commit>`
+>
+> Construct a commit message for use with `rebase --autosquash`.  The
+> commit message will be the subject line from the specified commit
+> with a prefix of `"fixup! "`. See `git-rebase[1]` for details.
+
+The corresponding details in the [`git-rebase[1]` man
+page](https://git-scm.com/docs/git-rebase) are:
+
+> `--autosquash, --no-autosquash`
+>
+> When the commit log message begins with `"squash! ..."` (or `"fixup!
+> ..."`), and there is already a commit in the todo list that matches
+> the same ..., automatically modify the todo list of `rebase -i` so
+> that the commit marked for squashing comes right after the commit to
+> be modified, and change the action of the moved commit from pick to
+> squash (or fixup). A commit matches the ...  if the commit subject
+> matches, or if the ...  refers to the commit’s hash. As a fall-back,
+> partial matches of the commit subject work, too. The recommended way
+> to create fixup/squash commits is by using the `--fixup`/`--squash`
+> options of `git-commit(1)`
+
+However, this process still requires manually determining which commit
+should be passed to the `--fixup` option.  Fortunately `git-deps` can
+automate this for us.  To eliminate this extra work, this repository
+provides a simple script which wraps around `git-deps` to automate the
+whole process.  First the user should ensure that any desired
+amendments to the existing commit are staged in git's index.  Then
+they can run the `git-fixup` script which performs the following
+steps:
+
+1. These staged amendments to existing commit are committed using
+   temporary commit message.
+
+2. `git deps HEAD^!` is run to determine which previously existing
+   commit this new commit is intended to "patch".  This should only
+   result in a single dependency, otherwise the script aborts with an
+   error.
+
+3. The temporary commit's message is amended into the correct `fixup`
+   form.  On the next `git rebase --interactive` which includes the
+   original commit to be amended, `git-rebase` will automatically set
+   up the sequencer to apply the amendment (fixup) into the original.
+
+In the future, this script could be extended to optionally run the
+interactive `rebase`, so that the whole amendment process is taken
+care of by `git-fixup`.
+
 ### Other uses
 
 I'm sure there are other use cases I haven't yet thought of.  If you
