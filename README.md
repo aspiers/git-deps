@@ -80,11 +80,10 @@ submission.
 Another use case might be to better understand levels of specialism /
 cross-functionality within an agile team.  If I author a commit which
 modifies (say) lines 34-37 and 102-109 of a file, the authors of the
-dependent commits forms a list which indicates the group of people I
-should potentially consider asking to review my commit, since I'm
-effectively changing "their" code.  Monitoring those relationships
-over time might shed some light on how agile teams should best
-coordinate efforts on shared code bases.
+dependent commits are people I should potentially consider asking to
+review my commit, since I'm effectively changing "their" code.
+Monitoring those relationships over time might shed some light on how
+agile teams should best coordinate efforts on shared code bases.
 
 ### Caveat
 
@@ -92,8 +91,11 @@ Note the dependency graph is likely to be semantically incomplete; for
 example it would not auto-detect dependencies between a commit A which
 changes code and another commit B which changes documentation or tests
 to reflect the code changes in commit A.  (Although of course it's
-usually best practice to logically group such changes together in a
-single commit.)  But this should not stop it from being useful.
+usually best practice to either logically group such changes together
+in a single commit, or use an alternate meta-history grouping
+mechanism such as
+[`git-dendrify`](https://github.com/bennorth/git-dendrify).)  But
+this should not stop it from being useful.
 
 ### Use case 4: automatic squashing of fixup commits
 
