@@ -26,6 +26,8 @@ Contents
   - [Use case 3: aiding collaborative communication](#use-case-3-aiding-collaborative-communication)
   - [Use case 4: automatic squashing of fixup commits](#use-case-4-automatic-squashing-of-fixup-commits)
   - [Use case 5: rewriting commit history](#use-case-5-rewriting-commit-history)
+- [Installation](INSTALL.md)
+- [Usage](USAGE.md)
 - [Textual vs. semantic (in)dependence](#textual-vs-semantic-independence)
 - [Development / support / feedback](#development--support--feedback)
 - [History](HISTORY.md)
