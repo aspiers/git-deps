@@ -14,6 +14,7 @@ I also spoke about the tool in
 
 - [Background theory](#background-theory)
 - [Motivation](#motivation)
+- [Textual vs. semantic (in)dependence](#textual-vs-semantic-independence)
 - [Development / support / feedback](#development--support--feedback)
 - [History](#history)
 - [License](#license)
@@ -47,6 +48,17 @@ As with many dependency relationships, these dependencies form edges
 in a DAG (directed acyclic graph) whose nodes correspond to commits.
 Note that a node can only depend on a subset of its ancestors.
 
+### Caveat
+
+It is important to be aware that any dependency graph inferred by
+`git-deps` may be semantically incomplete; for example it would not
+auto-detect dependencies between a commit A which changes code and
+another commit B which changes documentation or tests to reflect the
+code changes in commit A.  Therefore `git-deps` should not be used
+with blind faith.  For more details, see [the section on Textual
+vs. semantic (in)dependence](#textual-vs-semantic-independence) below.
+
+
 Motivation
 ----------
 
@@ -63,6 +75,20 @@ be cherry-picked to provide the context for commit "A" to cleanly
 apply.  Here's a quick demo!
 
 [![YouTube porting screencast](./images/youtube-porting-thumbnail.png)](http://youtu.be/DVksJMXxVIM)
+
+**CAVEAT**: `git-deps` is not AI and only does a textual dependency
+analysis, therefore it does not guarantee there is no simpler way to
+backport.  It also may infer more dependencies than strictly necessary
+due the default setting of one line of fuzz (diff context).  Shrinking
+this to zero lines may produce a more conservative dependency tree,
+but it's also riskier and more likely to cause conflicts or even bad
+code on cherry-pick.  git-deps just provides a first estimate.
+
+Therefore combining it with human analysis of the commits in the
+dependency tree is strongly recommended.  This may reveal
+opportunities for selective pruning or other editing of commits during
+the backport process which may be able to reduce the number of commits
+which are required.
 
 ### Use case 2: splitting a patch series
 
@@ -91,18 +117,6 @@ dependent commits are people I should potentially consider asking to
 review my commit, since I'm effectively changing "their" code.
 Monitoring those relationships over time might shed some light on how
 agile teams should best coordinate efforts on shared code bases.
-
-### Caveat
-
-Note the dependency graph is likely to be semantically incomplete; for
-example it would not auto-detect dependencies between a commit A which
-changes code and another commit B which changes documentation or tests
-to reflect the code changes in commit A.  (Although of course it's
-usually best practice to either logically group such changes together
-in a single commit, or use an alternate meta-history grouping
-mechanism such as
-[`git-dendrify`](https://github.com/bennorth/git-dendrify).)  But
-this should not stop it from being useful.
 
 ### Use case 4: automatic squashing of fixup commits
 
@@ -236,6 +250,66 @@ background to pan around.
 If you set up a MIME handler for the `gitfile://` protocol during
 setup, [as documented](INSTALL.md) you will be able to double-click on
 nodes to launch a viewer to inspect individual commits in more detail.
+
+Textual vs. semantic (in)dependence
+-----------------------------------
+
+Astute readers will note that textual independence as detected by
+`git-deps` is not the same as semantic / logical independence.
+Textual independence means that the changes can be applied in any
+order without incurring conflicts, but this is not a reliable
+indicator of logical independence.
+
+For example a change to a function and corresponding changes to the
+tests and/or documentation for that function would typically exist in
+different files.  So if those changes were in separate commits within
+a branch, running `git-deps` on the commits would not detect any
+dependency between them even though they are logically related,
+because changes in different files (or even in different areas of the
+same files) are textually independent.
+
+So in this case, `git-deps` would not behave exactly how we might
+want.  And for as long as AI is an unsolved problem, it is very
+unlikely that it will ever develop totally reliable behaviour.  So
+does that mean `git-deps` is useless?  Absolutely not!
+
+Firstly, when [best
+practices](https://crealytics.com/blog/5-reasons-keeping-git-commits-small/)
+for [commit
+structuring](https://wiki.openstack.org/wiki/GitCommitMessages#Structural_split_of_changes)
+are adhered to, changes which are strongly logically related should be
+placed within the same commit anyway.  So in the example above, a
+change to a function and corresponding changes to the tests and/or
+documentation for that function should all be within a single commit.
+(Although this is not the only valid approach; for a more advanced
+meta-history grouping mechanism, see
+[`git-dendrify`](https://github.com/bennorth/git-dendrify).)
+
+Secondly, whilst textual independence does not imply logical
+independence, the converse is expected to be more commonly true:
+logical independence often implies textual independence (or stated
+another way, textual dependence often implies logical dependence).  So
+while it might not be too uncommon for `git-deps` to fail to detect
+the dependency between logically-related changes, it should be rarer
+that it incorrectly infers a dependency between logically unrelated
+changes.  In other words, its false negatives are generally expected
+to be more common than its false positives.  As a result it is likely
+to be more useful in determining a lower bound on dependencies than an
+upper bound.  Having said that, more research is needed on this.
+
+Thirdly, it is often unhelpful to allow [the quest for the perfect
+become the enemy of the
+good](https://en.wikipedia.org/wiki/Perfect_is_the_enemy_of_good) - a
+tool does not have to be perfect to be useful; it only has to be
+better than performing the same task without the tool.
+
+Further discussion on some of these points can be found in [an old
+thread from the git mailing
+list](https://public-inbox.org/git/20160528112417.GD11256@pacific.linksys.moosehall/).
+
+Ultimately though, ["the proof is in the
+pudding"](https://en.wiktionary.org/wiki/the_proof_is_in_the_pudding),
+so try it out and see!
 
 Development / support / feedback
 --------------------------------
