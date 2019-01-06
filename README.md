@@ -9,8 +9,15 @@ a screencast demonstration:
 
 [![YouTube screencast](./images/youtube-thumbnail.png)](http://youtu.be/irQ5gMMz-gE)
 
-I also spoke about the tool in
-[episode #32 of the GitMinutes podcast](http://episodes.gitminutes.com/2015/03/gitminutes-32-adam-spiers-on-git-deps.html).
+I have also publically spoken about the tool several times:
+
+- [episode #32 of the GitMinutes podcast in 2015](http://episodes.gitminutes.com/2015/03/gitminutes-32-adam-spiers-on-git-deps.html)
+- [a presentation I gave at the London Git User Meetup in May 2018](https://aspiers.github.io/london-git-automagic-may-2018/)
+- [a presentation I gave at the OpenStack PTG in Denver, Sept 2018](https://aspiers.github.io/denver-git-automagic-sept-2018/)
+
+
+Contents
+--------
 
 - [Background theory](#background-theory)
 - [Motivation](#motivation)
