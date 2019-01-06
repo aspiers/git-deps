@@ -219,6 +219,7 @@ Installation
 
 Please see [the `INSTALL.md` file](INSTALL.md).
 
+
 Usage
 -----
 
@@ -273,6 +274,7 @@ background to pan around.
 If you set up a MIME handler for the `gitfile://` protocol during
 setup, [as documented](INSTALL.md) you will be able to double-click on
 nodes to launch a viewer to inspect individual commits in more detail.
+
 
 Textual vs. semantic (in)dependence
 -----------------------------------
@@ -334,10 +336,12 @@ Ultimately though, ["the proof is in the
 pudding"](https://en.wiktionary.org/wiki/the_proof_is_in_the_pudding),
 so try it out and see!
 
+
 Development / support / feedback
 --------------------------------
 
 Please see [the CONTRIBUTING file](CONTRIBUTING.md).
+
 
 History
 -------
@@ -374,6 +378,7 @@ installation process.  This was in preparation for demonstrating the
 software at [a Meetup
 event](https://www.meetup.com/londongit/events/248694943/) of the [Git
 London User Group](https://www.meetup.com/londongit/).
+
 
 License
 -------
