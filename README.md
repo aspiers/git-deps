@@ -308,7 +308,7 @@ so try it out and see!
 Development / support / feedback
 --------------------------------
 
-Please see [the CONTRIBUTING file](CONTRIBUTING.md).
+Please see [the `CONTRIBUTING.md` file](CONTRIBUTING.md).
 
 
 History
