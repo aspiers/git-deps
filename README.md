@@ -12,6 +12,13 @@ a screencast demonstration:
 I also spoke about the tool in
 [episode #32 of the GitMinutes podcast](http://episodes.gitminutes.com/2015/03/gitminutes-32-adam-spiers-on-git-deps.html).
 
+- [Background theory](#background-theory)
+- [Motivation](#motivation)
+- [Development / support / feedback](#development--support--feedback)
+- [History](#history)
+- [License](#license)
+
+
 Background theory
 -----------------
 
