@@ -21,6 +21,11 @@ Contents
 
 - [Background theory](#background-theory)
 - [Motivation](#motivation)
+  - [Use case 1: porting between branches](#use-case-1-porting-between-branches)
+  - [Use case 2: splitting a patch series into independent topics](#use-case-2-splitting-a-patch-series-into-independent-topics)
+  - [Use case 3: aiding collaborative communication](#use-case-3-aiding-collaborative-communication)
+  - [Use case 4: automatic squashing of fixup commits](#use-case-4-automatic-squashing-of-fixup-commits)
+  - [Use case 5: rewriting commit history](#use-case-5-rewriting-commit-history)
 - [Textual vs. semantic (in)dependence](#textual-vs-semantic-independence)
 - [Development / support / feedback](#development--support--feedback)
 - [History](#history)
@@ -78,6 +83,12 @@ Several use cases are listed in detail below.  They are also
 2018](https://aspiers.github.io/denver-git-automagic-sept-2018/#/git-deps-motivation)
 (see also [the video](https://youtu.be/f6anrSKCIgI?t=216)).
 
+
+- [Use case 1: porting between branches](#use-case-1-porting-between-branches)
+- [Use case 2: splitting a patch series into independent topics](#use-case-2-splitting-a-patch-series-into-independent-topics)
+- [Use case 3: aiding collaborative communication](#use-case-3-aiding-collaborative-communication)
+- [Use case 4: automatic squashing of fixup commits](#use-case-4-automatic-squashing-of-fixup-commits)
+- [Use case 5: rewriting commit history](#use-case-5-rewriting-commit-history)
 
 ### Use case 1: porting between branches
 
