@@ -31,6 +31,7 @@ Contents
 - [Textual vs. semantic (in)dependence](#textual-vs-semantic-independence)
 - [Development / support / feedback](#development--support--feedback)
 - [History](HISTORY.md)
+- [Credits](#credits)
 - [License](#license)
 
 
@@ -165,6 +166,14 @@ History
 -------
 
 Please see [the `HISTORY.md` file](HISTORY.md).
+
+
+Credits
+------
+
+Special thanks to [SUSE](https://suse.com) for partially sponsoring
+the development of this software.  Thanks also to everyone who has
+contributed code, bug reports, and other feedback.
 
 
 License
