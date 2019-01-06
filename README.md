@@ -66,6 +66,12 @@ Sometimes it is useful to understand the nature of parts of this DAG,
 as its nature will impact the success or failure of operations
 including merge, rebase, cherry-pick etc.
 
+Several use cases are listed in detail below.  They are also
+[mentioned in the presentation I gave in September
+2018](https://aspiers.github.io/denver-git-automagic-sept-2018/#/git-deps-motivation)
+(see also [the video](https://youtu.be/f6anrSKCIgI?t=216)).
+
+
 ### Use case 1: porting between branches
 
 For example when porting a commit "A" between git branches via `git
@@ -90,7 +96,7 @@ opportunities for selective pruning or other editing of commits during
 the backport process which may be able to reduce the number of commits
 which are required.
 
-### Use case 2: splitting a patch series
+### Use case 2: splitting a patch series into independent topics
 
 Large patch series or pull requests can be quite daunting for project
 maintainers, since they are hard to conquer in one sitting.  For this
@@ -107,6 +113,14 @@ development branch, recursively expanding all the dependencies.  This
 will allow you to untangle things and expose subgraphs which can be
 cleanly split off into separate patch series or pull requests for
 submission.
+
+In fact this technique is sufficiently useful but tedious to do
+manually that I wrote a whole separate tool
+[`git-explode`](https://github.com/aspiers/git-explode) to automate
+the process.  It uses `git-deps` as a library module behind the scenes
+for the dependency inference.  See [the
+`README`](https://github.com/aspiers/git-explode/blob/master/README.rst)
+for more details.
 
 ### Use case 3: aiding collaborative communication
 
@@ -178,17 +192,26 @@ In the future, this script could be extended to optionally run the
 interactive `rebase`, so that the whole amendment process is taken
 care of by `git-fixup`.
 
+### Use case 5: rewriting commit history
+
+It is often useful to reorder or rewrite commit history within private
+branches, as part of a history polishing process which ensures that
+eventually published history is of a high quality (see ["On Sausage
+Making"](https://sethrobertson.github.io/GitBestPractices/#sausage)).
+
+However reordering or removing commits can cause conflicts.  Whilst
+`git-deps` can programmatically predict whether operations such as
+merge / rebase / cherry-pick would succeed, actually it's probably
+cheaper and more reliable simply to perform the operation and then
+roll back.  However `git-deps` could be used to detect ways to avoid
+these conflicts, for example reordering or removing a commit's
+dependencies along with the commit itself.  In the future tools could
+be built on top of `git-deps` to automate these processes.
+
 ### Other uses
 
 I'm sure there are other use cases I haven't yet thought of.  If you
 have any good ideas, [please submit them](CONTRIBUTING.md)!
-
-### Non-use cases
-
-At first I thought that `git-deps` might provide a useful way to
-programmatically predict whether operations such as merge / rebase /
-cherry-pick would succeed, but actually it's probably cheaper and more
-reliable simply to perform the operation and then roll back.
 
 
 Installation
