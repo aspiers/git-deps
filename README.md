@@ -274,6 +274,6 @@ London User Group](https://www.meetup.com/londongit/).
 License
 -------
 
-Released under [GPL version 2](COPYING) in order to be consistent with
+Released under [GPL version 2](LICENSE.txt) in order to be consistent with
 [`git`'s license](https://github.com/git/git/blob/master/COPYING), but
 I'm open to the idea of dual-licensing if there's a convincing reason.
