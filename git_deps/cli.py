@@ -22,6 +22,7 @@ from __future__ import print_function
 
 import argparse
 import json
+import os
 import sys
 
 from git_deps import __version__
@@ -134,6 +135,7 @@ def main(args):
     if options.serve:
         serve(options)
     else:
+        sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 0)
         try:
             cli(options, args)
         except InvalidCommitish as e:
