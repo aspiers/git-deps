@@ -55,7 +55,11 @@ class GitUtils(object):
 
     @classmethod
     def oneline(cls, commit):
-        return commit.message.split('\n', 1)[0]
+        try:
+            ret = commit.message.split('\n', 1)[0]
+        except UnicodeDecodeError:
+            ret = "Invalid utf-8 commit message"
+        return ret
 
     @classmethod
     def commit_summary(cls, commit):
