@@ -80,7 +80,7 @@ Motivation
 Sometimes it is useful to understand the nature of parts of this
 dependency graph, as its nature will impact the success or failure of
 operations including merge, rebase, cherry-pick etc.  Please see [the
-`USE-CASES.md` file](INSTALL.md) for more details.
+`USE-CASES.md` file](USE-CASES.md) for more details.
 
 
 Installation
