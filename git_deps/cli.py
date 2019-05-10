@@ -135,7 +135,7 @@ def main(args):
     if options.serve:
         serve(options)
     else:
-        sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 0)
+        sys.stdout = os.fdopen(sys.stdout.fileno(), 'w')
         try:
             cli(options, args)
         except InvalidCommitish as e:
