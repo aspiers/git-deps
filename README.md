@@ -14,8 +14,8 @@ tools](https://blog.adamspiers.org/2018/06/14/git-auto-magic/), and
 also publically spoken about the tool several times:
 
 - [a presentation at the openSUSE Summit in Nashville, Apr 2019](https://aspiers.github.io/nashville-git-automagic-april-2019/)
-- [a presentation at the OpenStack PTG in Denver, Sept 2018](https://aspiers.github.io/denver-git-automagic-sept-2018/)
-- [a presentation at the London Git User Meetup in May 2018](https://aspiers.github.io/london-git-automagic-may-2018/)
+- [a presentation at the OpenStack PTG in Denver, Sept 2018](https://aspiers.github.io/denver-git-automagic-sept-2018/) ([watch the video](https://youtu.be/f6anrSKCIgI))
+- [a presentation at the London Git User Meetup in May 2018](https://aspiers.github.io/london-git-automagic-may-2018/) ([watch the video](https://skillsmatter.com/skillscasts/11825-git-auto-magic))
 - [episode #32 of the GitMinutes podcast in 2015](http://episodes.gitminutes.com/2015/03/gitminutes-32-adam-spiers-on-git-deps.html)
 
 
