@@ -30,7 +30,7 @@
         "d3": "~3.5.3",
         "d3-tip": "~0.6.6",
         "dagre": "^0.8.2",
-        "jquery": "~3.0.0",
+        "jquery": "~3.4.1",
         "noty": "~v2.4.1",
         "webcola": "aspiers/WebCola#git-deps-master"
     },
