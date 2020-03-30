@@ -16,7 +16,7 @@ addons:
       debian-sid
     update: true
     packages:
-      libgit2-24
+      libgit2-28
       libgit2-dev
 install:
 - pip install tox
