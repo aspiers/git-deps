@@ -10,10 +10,12 @@ matrix:
     env: TOX_ENV=py34
   - python: 3.6
     env: TOX_ENV=py36
+dist: bionic
 addons:
   apt:
     packages:
       libgit2-dev
+      libgit2-26
 install:
 - pip install tox
 script:
