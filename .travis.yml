@@ -1,13 +1,14 @@
 sudo: false
 language: python
+python:
+  - "2.7"
+  - "3.6"
 matrix:
   include:
   - python: 2.7
-    env: TOX_ENV=flake8
+    env: FLAKE8=YES 
   - python: 2.7
-    env: TOX_ENV=py27
   - python: 3.6
-    env: TOX_ENV=py36
 dist: bionic
 addons:
   apt:
@@ -17,4 +18,4 @@ addons:
 install:
   - pip install tox-travis
 script:
-  - tox -e $TOX_ENV
+  - tox
