@@ -109,11 +109,11 @@ class DependencyDetector(object):
             dependent_sha1 = dependent.hex
             del self.todo_d[dependent_sha1]
             self.logger.info("  Processing %s from TODO list" %
-                              dependent_sha1[:8])
+                             dependent_sha1[:8])
 
             if dependent_sha1 in self.done_d:
                 self.logger.info("  %s already done previously" %
-                                  dependent_sha1)
+                                 dependent_sha1)
                 continue
 
             self.notify_listeners('new_commit', dependent)
@@ -123,7 +123,7 @@ class DependencyDetector(object):
             self.done.append(dependent_sha1)
             self.done_d[dependent_sha1] = True
             self.logger.info("  Found all dependencies for %s" %
-                              dependent_sha1[:8])
+                             dependent_sha1[:8])
             # A commit won't have any dependencies if it only added new files
             dependencies = self.dependencies.get(dependent_sha1, {})
             self.notify_listeners('dependent_done', dependent, dependencies)
@@ -137,7 +137,7 @@ class DependencyDetector(object):
         merge commits which have multiple parents.
         """
         self.logger.info("    Finding dependencies of %s via parent %s" %
-                          (dependent.hex[:8], parent.hex[:8]))
+                         (dependent.hex[:8], parent.hex[:8]))
         diff = self.repo.diff(parent, dependent,
                               context_lines=self.options.context_lines)
         for patch in diff:
@@ -156,7 +156,7 @@ class DependencyDetector(object):
         line_range_before = "-%d,%d" % (hunk.old_start, hunk.old_lines)
         line_range_after = "+%d,%d" % (hunk.new_start, hunk.new_lines)
         self.logger.info("        Blaming hunk %s @ %s (listed below)" %
-                          (line_range_before, parent.hex[:8]))
+                         (line_range_before, parent.hex[:8]))
 
         if not self.tree_lookup(path, parent):
             # This is probably because dependent added a new directory
@@ -180,7 +180,7 @@ class DependencyDetector(object):
     def process_hunk_line(self, dependent, dependent_sha1, parent,
                           path, line, line_to_culprit):
         self.logger.debug("          ! " + line.rstrip())
-        m = re.match('^([0-9a-f]{40}) (\d+) (\d+)( \d+)?$', line)
+        m = re.match(r'^([0-9a-f]{40}) (\d+) (\d+)( \d+)?$', line)
         if not m:
             return
 
@@ -227,7 +227,7 @@ class DependencyDetector(object):
     def register_new_dependent(self, dependent, dependent_sha1):
         if dependent_sha1 not in self.dependencies:
             self.logger.info("          New dependent: %s" %
-                              GitUtils.commit_summary(dependent))
+                             GitUtils.commit_summary(dependent))
             self.dependencies[dependent_sha1] = {}
             self.notify_listeners("new_dependent", dependent)
 
@@ -247,7 +247,7 @@ class DependencyDetector(object):
                     return True
         return False
 
-    def process_new_dependency(self,dependent, dependent_sha1,
+    def process_new_dependency(self, dependent, dependent_sha1,
                                dependency, dependency_sha1,
                                path, line_num):
         if not self.seen_commit(dependency):
@@ -279,7 +279,7 @@ class DependencyDetector(object):
                 self.todo.append(dependency)
                 self.todo_d[dependency.hex] = True
                 self.logger.info("  + Added %s to TODO" %
-                                  dependency.hex[:8])
+                                 dependency.hex[:8])
 
     def record_dependency_source(self, parent,
                                  dependent, dependent_sha1,
