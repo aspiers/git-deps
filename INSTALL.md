@@ -132,25 +132,28 @@ only one approach to installation is listed below, but any Javascript
 experts who have suggestions about other ways to install are [warmly
 encouraged to submit them](CONTRIBUTING.md).
 
-*   Install `browserify`.  For example (at least on Linux) if you want
-    it to be accessible directly from the command-line then you can
-    use the `-g` option of `npm` by running this as `root`:
-
-         npm install -g browserify
-
 *   To install the required Javascript libraries, you will need
     [`npm`](https://www.npmjs.com/) installed, and then type:
 
         cd git_deps/html
         npm install
-        browserify -t coffeeify -d js/git-deps-graph.coffee -o js/bundle.js
+        node_modules/.bin/browserify -t coffeeify -d js/git-deps-graph.coffee -o js/bundle.js
 
     (If you are developing `git-deps` then replace `browserify` with
     `watchify -v` in order to continually regenerate `bundle.js`
     whenever any of the input files change.)
 
-*   You will need the [Flask](http://flask.pocoo.org/) Python
-    module installed.
+*   Optionally install `browserify` globally so that it's on your
+    `$PATH` and therefore executable directly rather than having to
+    specify the `node_modules/.bin` prefix.  For example (at least on
+    Linux) you can use the `-g` option of `npm` by running this as
+    `root`:
+
+         npm install -g browserify
+
+*   You will need the [Flask](http://flask.pocoo.org/) Python module
+    installed, but that should have already been taken care of by the
+    base installation described above (e.g. via `pip`).
 
 Now you should be able to run `git deps --serve` and point your
 browser at the URL it outputs.
