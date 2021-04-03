@@ -12,4 +12,5 @@ matrix:
 install:
 - pip install tox
 script:
+- tox -e flake8
 - tox -e $TOX_ENV
