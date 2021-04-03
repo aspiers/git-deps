@@ -15,10 +15,11 @@ Contents
 .. toctree::
    :maxdepth: 2
 
-   License <license>
-   Authors <authors>
    Changelog <changes>
    Module Reference <api/modules>
+   Maintainer's Guide <maintainer-guide>
+   Authors <authors>
+   License <license>
 
 
 Indices and tables
