@@ -11,6 +11,33 @@ Before you pick an option, it is very important to consider that [only
 certain combinations of libgit2 and pygit2 will work
 together](http://www.pygit2.org/install.html#version-numbers).
 
+Also, Python 2.x is no longer supported for `git-deps`, although as of
+April 2021 it may still work if you are lucky and know what you are
+doing.
+
+## Option 0 (easiest): let `pip` take care of everything
+
+As mentioned in [`pygit2`'s installation
+instructions](https://www.pygit2.org/install.html), `pip` 19.0 and
+later can install binary wheels of `pygit2` which include `libgit2`.
+This makes installation considerably easier, and should be as simple
+as:
+
+    sudo pip3 install git-deps
+
+or just for the current user:
+
+    pip3 install --user git-deps
+
+For a per-user install, you will probably have to also ensure that you
+have `~/.local/bin` on your path.  See [the `pip`
+documentation](https://pip.pypa.io/en/stable/) if you are unsure how
+this works.
+
+Also note that it may be `pip` rather than `pip3` on your system, but
+if so run `pip --version` to make sure that you aren't getting a
+Python 2.x environment by mistake.
+
 ## Option 1: Install pygit2 and libgit2 from OS packages, and `git-deps` as a Python module
 
 ### Install OS packages
@@ -18,13 +45,16 @@ together](http://www.pygit2.org/install.html#version-numbers).
 if you are using Linux, there is a good chance that your distribution
 already offers packages for both pygit2 and libgit2, in which case
 installing pygit2 from packages should also automatically install
-libgit2.  For example, on openSUSE, just do:
+libgit2.  For example, on openSUSE, just do something like:
 
-    sudo zypper install python-pygit2
+    sudo zypper install python38-pygit2
 
-or on Debian:
+Note that this assumes Python 3.8, which is the latest at the time of
+writing.
 
-    sudo apt-get install python-pygit2
+Similarly, on Debian:
+
+    sudo apt-get install python3-pygit2
 
 pygit2's website also has installation instructions for
 [Windows](http://www.pygit2.org/install.html#installing-on-windows)
@@ -35,11 +65,14 @@ and [Mac OS](http://www.pygit2.org/install.html#installing-on-os-x).
 Finally, install `git-deps` via `pip`, for example system-wide on
 Linux via:
 
-    sudo pip install git-deps
+    sudo pip3 install git-deps
 
 or just for the current user:
 
-    pip install --user git-deps
+    pip3 install --user git-deps
+
+(See the caveats in option 0 above about `pip` vs. `pip3` and per-user
+installs.)
 
 ## Option 2: Install libgit2 from OS packages, and `git-deps` / pygit2 as Python modules
 
@@ -68,6 +101,10 @@ Then clone this repository and follow the standard Python module
 installation route, e.g.
 
     python setup.py install
+
+or if you want to hack on git-deps:
+
+    pip install -e .
 
 ## Option 4: Installation via Docker
 
