@@ -122,7 +122,7 @@ def cli(options, args):
             try:
                 detector.find_dependencies(rev)
             except KeyboardInterrupt:
-                pass
+                break
 
     if options.json:
         print(json.dumps(listener.json(), sort_keys=True, indent=4))
