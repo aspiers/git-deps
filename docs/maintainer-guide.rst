@@ -27,14 +27,17 @@ How to make a new release of git-deps
 
 - Run ``tox`` to check everything is OK.
 
-- Decide a new version.  Release candidates should take the form
-  ``1.2.3rc4``.
+- Decide a new version, e.g.::
+
+    version=1.1.0
+
+  Release candidates should take the form ``1.2.3rc4``.
 
 - ``git tag -s $version``
 
 - ``tox -e sdist``
 
-- ``twine dist/git-deps-$version.tar.gz``
+- ``twine upload .tox/dist/git-deps-$version.zip``
 
 - Check the new version appears at `<https://pypi.org/project/git-deps/>`_.
 
