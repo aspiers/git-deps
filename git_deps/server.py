@@ -1,5 +1,6 @@
 import os
 import subprocess
+import sys
 
 from git_deps.gitutils import GitUtils
 from git_deps.detector import DependencyDetector
@@ -122,5 +123,17 @@ def serve(options):
               "insecure!")
         print("!! Arbitrary code can be executed from browser!")
         print()
-    webserver.run(port=options.port, debug=options.debug,
-                  host=options.bindaddr)
+    try:
+        webserver.run(port=options.port, debug=options.debug,
+                      host=options.bindaddr)
+    except OSError as e:
+        print("\n!!! ERROR: Could not start server:")
+        print("!!!")
+        print("!!!   " + str(e))
+        print("!!!")
+        if e.strerror == "Address already in use":
+            print("!!! Do you already have a git deps server running?")
+            print("!!! If so, stop it first and try again.")
+            print("!!!")
+        print("!!! Aborting.")
+        sys.exit(1)
