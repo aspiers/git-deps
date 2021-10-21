@@ -158,7 +158,7 @@ class DependencyDetector(object):
         self.logger.info("        Blaming hunk %s @ %s (listed below)" %
                          (line_range_before, parent.hex[:8]))
 
-        if not self.tree_lookup(path, parent):
+        if not self.tree_lookup(path, parent) or hunk.old_start == 0:
             # This is probably because dependent added a new directory
             # which was not previously in the parent.
             return
