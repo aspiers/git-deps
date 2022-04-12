@@ -12,8 +12,9 @@ from git_deps.utils import abort, standard_logger
 def serve(options):
     try:
         import flask
-        from flask import Flask, send_file, safe_join
+        from flask import Flask, send_file
         from flask.json import jsonify
+        from werkzeug.security import safe_join
     except ImportError:
         abort("Cannot find flask module which is required for webserver mode.")
 
