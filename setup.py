@@ -19,9 +19,9 @@ def setup_package():
         setup_requires=[
             'six',
             'pyscaffold>=2.5.10,<2.6a0',
-            'setuptools-markdown',
         ] + sphinx,
-        long_description_markdown_filename='README.md',
+        long_description='README.md',
+        long_description_content_type="text/markdown",
         use_pyscaffold=True
     )
 
