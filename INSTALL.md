@@ -11,9 +11,8 @@ Before you pick an option, it is very important to consider that [only
 certain combinations of libgit2 and pygit2 will work
 together](http://www.pygit2.org/install.html#version-numbers).
 
-Also, Python 2.x is no longer supported for `git-deps`, although as of
-April 2021 it may still work if you are lucky and know what you are
-doing.
+Also, Python < 3.7 is no longer supported for `git-deps` (since pygit2
+requires 3.7 or higher).
 
 ## Option 0 (easiest): let `pip` take care of everything
 
