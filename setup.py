@@ -20,8 +20,6 @@ def setup_package():
             'six',
             'pyscaffold>=2.5.10,<2.6a0',
         ] + sphinx,
-        long_description='README.md',
-        long_description_content_type="text/markdown",
         use_pyscaffold=True
     )
 
