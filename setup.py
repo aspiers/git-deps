@@ -17,7 +17,6 @@ def setup_package():
     sphinx = ['sphinx'] if needs_sphinx else []
     setup(
         setup_requires=[
-            'six',
             'pyscaffold',
         ] + sphinx,
         long_description='README.md',
