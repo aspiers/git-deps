@@ -118,8 +118,10 @@ class DependencyDetector(object):
 
             self.notify_listeners('new_commit', dependent)
 
-            parent = dependent.parents[0]
-            self.find_dependencies_with_parent(dependent, parent)
+            if dependent.parents: # the root commit does not have parents
+                parent = dependent.parents[0]
+                self.find_dependencies_with_parent(dependent, parent)
+
             self.done.append(dependent_sha1)
             self.done_d[dependent_sha1] = True
             self.logger.info("  Found all dependencies for %s" %
