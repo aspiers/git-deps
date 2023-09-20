@@ -172,24 +172,26 @@ class DependencyDetector(object):
 
         line_to_culprit = {}
 
-        for line in blame.split('\n'):
-            self.process_hunk_line(dependent, dependent_sha1, parent,
-                                   path, line, line_to_culprit)
+        for blame_hunk in blame:
+            self.process_blame_hunk(dependent, dependent_sha1, parent,
+                                   path, blame_hunk, line_to_culprit)
 
         self.debug_hunk(line_range_before, line_range_after, hunk,
                         line_to_culprit)
 
-    def process_hunk_line(self, dependent, dependent_sha1, parent,
-                          path, line, line_to_culprit):
-        self.logger.debug("          ! " + line.rstrip())
-        m = re.match(r'^([0-9a-f]{40}) (\d+) (\d+)( \d+)?$', line)
-        if not m:
-            return
+    def process_blame_hunk(self, dependent, dependent_sha1, parent,
+                          path, blame_hunk, line_to_culprit):
 
-        dependency_sha1, orig_line_num, line_num = m.group(1, 2, 3)
-        line_num = int(line_num)
+        orig_line_num = blame_hunk.orig_start_line_number
+        line_num = blame_hunk.final_start_line_number
+        dependency_sha1 = blame_hunk.orig_commit_id.hex
+        line_representation = f"{dependency_sha1} {orig_line_num} {line_num}"
+
+        self.logger.debug(f"          ! {line_representation}")
+
         dependency = self.get_commit(dependency_sha1)
-        line_to_culprit[line_num] = dependency.hex
+        for i in range(blame_hunk.lines_in_hunk):
+            line_to_culprit[line_num + i] = dependency.hex
 
         if self.is_excluded(dependency):
             self.logger.debug(
@@ -206,7 +208,7 @@ class DependencyDetector(object):
         self.record_dependency_source(parent,
                                       dependent, dependent_sha1,
                                       dependency, dependency_sha1,
-                                      path, line_num, line)
+                                      path, line_num, line_representation)
 
     def debug_hunk(self, line_range_before, line_range_after, hunk,
                    line_to_culprit):
@@ -234,13 +236,10 @@ class DependencyDetector(object):
             self.notify_listeners("new_dependent", dependent)
 
     def run_blame(self, hunk, parent, path):
-        cmd = [
-            'git', 'blame',
-            '--porcelain',
-            '-L', "%d,+%d" % (hunk.old_start, hunk.old_lines),
-            parent.hex, '--', path
-        ]
-        return subprocess.check_output(cmd, universal_newlines=True)
+        return self.repo.blame(path,
+                    newest_commit=parent.hex,
+                    min_line=hunk.old_start,
+                    max_line=hunk.old_start + hunk.old_lines - 1)
 
     def is_excluded(self, commit):
         if self.options.exclude_commits is not None:
