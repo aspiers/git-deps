@@ -16,8 +16,10 @@ git-deps 4f27a1e^! | sort | diff tests/expected_outputs/deps_4f27a1e -
 echo "* Dependencies of 1ba7ad5, a merge commit"
 git-deps 1ba7ad5^! | sort | diff tests/expected_outputs/deps_1ba7ad5 -
 
-# Currently failing:
-#echo "* Dependencies of the root commit"
-# git-deps b196757^! | sort # | diff tests/expected_outputs/deps_b196757 -
+echo "* Dependencies of the root commit"
+git-deps b196757^! | sort | diff tests/expected_outputs/deps_b196757 -
+
+echo "* Recursive dependencies of a4f27a1e, a regular commit"
+git-deps -r 4f27a1e^! | sort | diff tests/expected_outputs/recursive_deps_4f27a1e -
 
 echo "All tests passed!"
