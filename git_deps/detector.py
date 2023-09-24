@@ -7,6 +7,7 @@ from git_deps.utils import abort, standard_logger
 from git_deps.gitutils import GitUtils
 from git_deps.listener.base import DependencyListener
 from git_deps.errors import InvalidCommitish
+from git_deps.blame import blame_via_subprocess
 
 
 class DependencyDetector(object):
@@ -236,10 +237,16 @@ class DependencyDetector(object):
             self.notify_listeners("new_dependent", dependent)
 
     def run_blame(self, hunk, parent, path):
-        return self.repo.blame(path,
-                    newest_commit=parent.hex,
-                    min_line=hunk.old_start,
-                    max_line=hunk.old_start + hunk.old_lines - 1)
+        if self.options.pygit2_blame:
+            return self.repo.blame(path,
+                        newest_commit=parent.hex,
+                        min_line=hunk.old_start,
+                        max_line=hunk.old_start + hunk.old_lines - 1)
+        else:
+            return blame_via_subprocess(path,
+                        parent.hex,
+                        hunk.old_start,
+                        hunk.old_lines)
 
     def is_excluded(self, commit):
         if self.options.exclude_commits is not None:
