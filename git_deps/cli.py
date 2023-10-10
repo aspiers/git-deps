@@ -75,6 +75,8 @@ def parse_args():
                         '[%(default)s]')
     parser.add_argument('-d', '--debug', dest='debug', action='store_true',
                         help='Show debugging')
+    parser.add_argument('--pygit2-blame', dest='pygit2_blame', action='store_true',
+                        help="Use pygit2's blame algorithm (slower than git's)")
 
     options, args = parser.parse_known_args()
 
