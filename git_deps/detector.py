@@ -144,6 +144,9 @@ class DependencyDetector(object):
         diff = self.repo.diff(parent, dependent,
                               context_lines=self.options.context_lines)
         for patch in diff:
+            if patch.delta.old_file.mode == 0:
+                self.logger.info("      New file %s, no old hunks" % patch.delta.new_file.path)
+                continue
             path = patch.delta.old_file.path
             self.logger.info("      Examining hunks in %s" % path)
             for hunk in patch.hunks:
@@ -342,6 +345,7 @@ class DependencyDetector(object):
         tree only contains entries for the directory it refers to, not
         recursively for all subdirectories.
         """
+        self.logger.debug("        tree_lookup %s in %s" % (target_path, commit))
         segments = target_path.split("/")
         tree_or_blob = commit.tree
         path = ''
