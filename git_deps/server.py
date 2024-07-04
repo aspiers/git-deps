@@ -105,7 +105,7 @@ def serve(options):
             detector.find_dependencies(rev)
 
         tip_commit = detector.get_commit(revisions[0])
-        tip_sha1 = tip_commit.hex
+        tip_sha1 = str(tip_commit.id)
 
         json = listener.json()
         json['query'] = {

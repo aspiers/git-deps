@@ -20,14 +20,14 @@ class CLIDependencyListener(DependencyListener):
         self._revs = {}
 
     def new_commit(self, commit):
-        rev = commit.hex
+        rev = str(commit.id)
         if rev not in self._revs:
             self._revs[rev] = 0
         self._revs[rev] += 1
 
     def new_dependency(self, dependent, dependency, path, line_num):
-        dependent_sha1 = dependent.hex
-        dependency_sha1 = dependency.hex
+        dependent_sha1 = str(dependent.id)
+        dependency_sha1 = str(dependency.id)
 
         if self.options.multi:
             if self.options.log:

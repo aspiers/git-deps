@@ -31,7 +31,7 @@ class JSONDependencyListener(DependencyListener):
         """Adds the commit to the commits array if it doesn't already exist,
         and returns the commit's index in the array.
         """
-        sha1 = commit.hex
+        sha1 = str(commit.id)
         if sha1 in self._commits:
             return self._commits[sha1]
         title, separator, body = commit.message.partition("\n")
@@ -62,8 +62,8 @@ class JSONDependencyListener(DependencyListener):
         self.add_commit(commit)
 
     def new_dependency(self, parent, child, path, line_num):
-        ph = parent.hex
-        ch = child.hex
+        ph = str(parent.id)
+        ch = str(child.id)
 
         new_dep = {
             'parent': ph,
@@ -76,7 +76,7 @@ class JSONDependencyListener(DependencyListener):
         self._json['dependencies'].append(new_dep)
 
     def dependent_done(self, dependent, dependencies):
-        commit = self.get_commit(dependent.hex)
+        commit = self.get_commit(str(dependent.id))
         commit['explored'] = True
 
     def json(self):

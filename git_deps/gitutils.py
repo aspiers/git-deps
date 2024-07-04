@@ -63,7 +63,7 @@ class GitUtils(object):
 
     @classmethod
     def commit_summary(cls, commit):
-        return "%s %s" % (commit.hex[:8], cls.oneline(commit))
+        return "%s %s" % (str(commit.id)[:8], cls.oneline(commit))
 
     @classmethod
     def refs_to(cls, sha1, repo):
@@ -74,7 +74,7 @@ class GitUtils(object):
             dref = symref.resolve()
             oid = dref.target
             commit = repo.get(oid)
-            if commit.hex == sha1:
+            if str(commit.id) == sha1:
                 matching.append(symref.shorthand)
 
         return matching
