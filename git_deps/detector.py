@@ -95,19 +95,19 @@ class DependencyDetector(object):
             abort(e.message())
 
         self.todo.append(dependent)
-        self.todo_d[dependent.hex] = True
+        self.todo_d[str(dependent.id)] = True
 
         first_time = True
 
         while self.todo:
-            sha1s = [commit.hex[:8] for commit in self.todo]
+            sha1s = [str(commit.id)[:8] for commit in self.todo]
             if first_time:
                 self.logger.info("Initial TODO list: %s" % " ".join(sha1s))
                 first_time = False
             else:
                 self.logger.info("  TODO list now: %s" % " ".join(sha1s))
             dependent = self.todo.pop(0)
-            dependent_sha1 = dependent.hex
+            dependent_sha1 = str(dependent.id)
             del self.todo_d[dependent_sha1]
             self.logger.info("  Processing %s from TODO list" %
                              dependent_sha1[:8])
@@ -140,7 +140,7 @@ class DependencyDetector(object):
         merge commits which have multiple parents.
         """
         self.logger.info("    Finding dependencies of %s via parent %s" %
-                         (dependent.hex[:8], parent.hex[:8]))
+                         (str(dependent.id)[:8], str(parent.id)[:8]))
         diff = self.repo.diff(parent, dependent,
                               context_lines=self.options.context_lines)
         for patch in diff:
@@ -159,7 +159,7 @@ class DependencyDetector(object):
         line_range_before = "-%d,%d" % (hunk.old_start, hunk.old_lines)
         line_range_after = "+%d,%d" % (hunk.new_start, hunk.new_lines)
         self.logger.info("        Blaming hunk %s @ %s (listed below)" %
-                         (line_range_before, parent.hex[:8]))
+                         (line_range_before, str(parent.id)[:8]))
 
         if not self.tree_lookup(path, parent):
             # This is probably because dependent added a new directory
@@ -168,7 +168,7 @@ class DependencyDetector(object):
 
         blame = self.run_blame(hunk, parent, path)
 
-        dependent_sha1 = dependent.hex
+        dependent_sha1 = str(dependent.id)
         self.register_new_dependent(dependent, dependent_sha1)
 
         line_to_culprit = {}
@@ -192,7 +192,7 @@ class DependencyDetector(object):
 
         dependency = self.get_commit(dependency_sha1)
         for i in range(blame_hunk.lines_in_hunk):
-            line_to_culprit[line_num + i] = dependency.hex
+            line_to_culprit[line_num + i] = str(dependency.id)
 
         if self.is_excluded(dependency):
             self.logger.debug(
@@ -239,12 +239,12 @@ class DependencyDetector(object):
     def run_blame(self, hunk, parent, path):
         if self.options.pygit2_blame:
             return self.repo.blame(path,
-                        newest_commit=parent.hex,
+                        newest_commit=str(parent.id),
                         min_line=hunk.old_start,
                         max_line=hunk.old_start + hunk.old_lines - 1)
         else:
             return blame_via_subprocess(path,
-                        parent.hex,
+                        str(parent.id),
                         hunk.old_start,
                         hunk.old_lines)
 
@@ -285,9 +285,9 @@ class DependencyDetector(object):
         if dependency_sha1 not in self.dependencies:
             if self.options.recurse:
                 self.todo.append(dependency)
-                self.todo_d[dependency.hex] = True
+                self.todo_d[str(dependency.id)] = True
                 self.logger.info("  + Added %s to TODO" %
-                                 dependency.hex[:8])
+                                 str(dependency.id)[:8])
 
     def record_dependency_source(self, parent,
                                  dependent, dependent_sha1,
@@ -304,7 +304,7 @@ class DependencyDetector(object):
             abort("line %d already found when blaming %s:%s\n"
                   "old:\n  %s\n"
                   "new:\n  %s" %
-                  (line_num, parent.hex[:8], path,
+                  (line_num, str(parent.id)[:8], path,
                    dep_sources[path][line_num], line))
 
         dep_sources[path][line_num] = line
@@ -314,9 +314,9 @@ class DependencyDetector(object):
                               dependent, dependency, path, line_num)
 
     def branch_contains(self, commit, branch):
-        sha1 = commit.hex
+        sha1 = str(commit.id)
         branch_commit = self.get_commit(branch)
-        branch_sha1 = branch_commit.hex
+        branch_sha1 = str(branch_commit.id)
         self.logger.debug("          Does %s (%s) contain %s?" %
                           (branch, branch_sha1[:8], sha1[:8]))
 
@@ -349,7 +349,7 @@ class DependencyDetector(object):
             dirent = segments.pop(0)
             if isinstance(tree_or_blob, pygit2.Tree):
                 if dirent in tree_or_blob:
-                    tree_or_blob = self.repo[tree_or_blob[dirent].oid]
+                    tree_or_blob = self.repo[tree_or_blob[dirent].id]
                     # self.logger.debug("  %s in %s" % (dirent, path))
                     if path:
                         path += '/'
@@ -358,11 +358,11 @@ class DependencyDetector(object):
                     # This is probably because we were called on a
                     # commit whose parent added a new directory.
                     self.logger.debug("        %s not in %s in %s" %
-                                      (dirent, path, commit.hex[:8]))
+                                      (dirent, path, str(commit.id)[:8]))
                     return None
             else:
                 self.logger.debug("        %s not a tree in %s" %
-                                  (tree_or_blob, commit.hex[:8]))
+                                  (tree_or_blob, str(commit.id)[:8]))
                 return None
         return tree_or_blob
 
